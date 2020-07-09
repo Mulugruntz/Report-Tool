@@ -7,6 +7,8 @@ import logging
 import traceback
 
 import queue as queue
+import warnings
+
 import numpy as np
 import pyqtgraph as pg
 
@@ -16,7 +18,6 @@ from copy import deepcopy
 import classDialogBox
 import classCustomWidgets
 
-from classThread import *
 from classEquityChart import EquityChart
 
 import classRestCom
@@ -27,7 +28,10 @@ import classExport
 import funcMisc
 import igls
 
+from PyQt5 import QtCore
 from PyQt5 import QtGui, QtWidgets
+
+from classThread import TransactionThread, UpdateCommentsThread
 
 
 class ReportToolGUI(QtWidgets.QMainWindow):
@@ -2988,7 +2992,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             key = event.key()
 
             if key == QtCore.Qt.Key_unknown:
-                warnings.warn("Unknown key from a macro probably")  # FIXME
+                warnings.warn("Unknown key from a macro probably")
                 return
 
             # the user have clicked just and only the special keys Ctrl, Shift, Alt, Meta.

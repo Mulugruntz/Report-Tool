@@ -2,10 +2,7 @@ from cx_Freeze import setup, Executable
 
 import shutil
 import os
-import sys
 import requests.certs
-
-from glob import glob
 
 # Remove the build folder
 shutil.rmtree("build", ignore_errors=True)

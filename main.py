@@ -4,15 +4,10 @@ from PyQt5 import QtWidgets
 
 import os
 import sys
-import glob
-import datetime
 
-import logging
 import logging.config
 
-from classMainWindow import *
-from classDialogBox import *
-
+from classMainWindow import ReportToolGUI
 
 if getattr(sys, "frozen", False):
     os.environ["REQUESTS_CA_BUNDLE"] = os.path.join(os.getcwd(), "cacert.pem")

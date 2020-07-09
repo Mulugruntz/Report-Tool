@@ -1,4 +1,5 @@
 """ This module holds classes to custom base QtWidgets"""
+import warnings
 
 from PyQt5 import QtCore
 from PyQt5 import QtGui, QtWidgets
@@ -711,7 +712,7 @@ class CustomShortcutLineEdit(QtWidgets.QLineEdit):
             key = event.key()
 
             if key == QtCore.Qt.Key_unknown:
-                warnings.warn("Unknown key from a macro probably")  # TODO: check
+                warnings.warn("Unknown key from a macro probably")
                 return
 
             # the user have clicked just and only the special keys Ctrl, Shift, Alt, Meta.

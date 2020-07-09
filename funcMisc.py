@@ -10,7 +10,6 @@ import json
 import math
 
 import base64
-import traceback
 import logging
 import logging.config
 
