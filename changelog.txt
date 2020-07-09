@@ -1,0 +1,93 @@
+#########################################
+##########Report Tool Changelog##########
+#########################################
+
+
+####version 1.0####
+- Initial release.
+
+####version 1.1####
+- Add possiblity to take screenshot via the shorcut CTRL+P,
+- Add an options menu in main windows,
+- Add management of UK account,
+- Add some debug features in update_pos and fill_transaction_widget.
+
+####version 1.2####
+- Add possibility to show results in points, points/lot, currency, %,
+- Add possibility to switch between client account,
+- Add possibility to include or not fees/interest in calculation,
+- Add possibility to auto calculate initial capital,
+- Add a points/lot column in transactions table,
+- Modification of transaction requests (no more 20 transactions limit)
+- Connection trought proxies,
+- Exclude cash withdrawal, deposit transfer calculation,
+- Merge %trades won/lost/flat labels with nb of trades won/lost/flat,
+- Calculate avg win/loss, avg drawdown,
+- Manage UK account.
+
+####version 1.3####
+- Add possibility to customize charts and colors,
+- Add possibility to show or not max dd, depht and hight on chart,
+- Add cash in, cash out, transfer informations,
+- Add button in menu bar to take screenshot,
+- Add status label in status bar,
+- Add a set of icons,
+- Change name of application,
+- Modification of calculation of profit factor and points/lot,
+- Change names of screenshot,
+- Correct connection trhought proxy bug,
+- Improvement of funcMisc.calculate_summary functions.
+
+####version 1.3.1####
+- Add possibility to permanently hide infos about capital and account,
+- Correct equity curves,
+- Dock are no longer closable,
+- Change default settings,
+- Change application name.
+
+####version 1.4####
+- Add possibility to filter markets,
+- Add possibility to manage multiple accounts,
+- Add possibility to show/hide new hights, drawdowns, max drawdow,
+- Add consecutive losses/wins,
+- Change default settings,
+- Minor bugs fix/changes.
+
+####version 1.5####
+- Add possibility to auto-connect on startup,
+- Add possibility to agregate or not positions,
+- Add possibility to comment positions,
+- Add possibility to show dates on x axis,
+- Add an overview plot to select range to observe on main plot,
+- Add a button to refresh transactions,
+- Add a new dock (floating by default) that summarize a particular position,
+- Add options for screenshot,
+- Add possibilty to naviguate through graph using arrows keys,
+- Minor GUI changes,
+- Improve options management (graph are not longer re-plotted if not needed)
+- Some bugs are still not resolved, but can't spend time on them (see comments in main.py)
+
+####version 1.5.1####
+- Management of account in $AU, $SG, JPY, CHF, NOK, SEK,
+- Add a Mac OSX archive (thanks falex ;-)).
+
+####version 1.5.2####
+- Correct bug with CHF account,
+- Correct bug when cashin/out is made.
+
+####version 2.0####
+- Possibility to export data to .txt file,
+- Save state of GUI,
+- Encode password and api key,
+- Re-write debug features,
+- Improve keywords management,
+- Pep-8 formatting.
+
+####version 2.1####
+- Management of transaction type using config file,
+- Correct bug with proxy connection,
+- Correct bug with log files.
+
+####version 2.2####
+- Increase performance (decrease between v1.5 and 2.0 was due to an error in signal management),
+- Add possibilty to take screenshot using a configurable shortcut.

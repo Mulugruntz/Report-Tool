@@ -1,0 +1,15 @@
+{"base_url":
+            {
+            "demo":"https://demo-api.ig.com/gateway/deal",
+            "live": "https://api.ig.com/gateway/deal"
+             },
+
+"keyword":
+          {
+           "ORDER": ["ORDRE", "DEAL", "TRANS"],
+           "FEES": ["WITH", "CHART", "DIVIDEND", "DEPO"],
+           "CASH_IN": ["DEPO", "paiement", "dépôt", "payement"],
+           "CASH_OUT": ["WITH", "retourné", "retrait", "returned"],
+           "TRANSFER": ["DEPO", "WITH", "funds transfer"]
+          }
+}
