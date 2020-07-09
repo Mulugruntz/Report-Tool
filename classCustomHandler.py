@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-#-*- coding:utf-8 -*-
-
 """
 Module with class for custom logger
 Could be used by many of IG API related app

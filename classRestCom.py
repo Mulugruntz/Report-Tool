@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-#-*- coding:utf-8 -*-
-
 """Module with classes to interacts with IG Rest API"""
 import logging
 import requests
@@ -114,7 +111,7 @@ class IGAPI(object):
             return(response)
 
         # catch every requests exceptions
-        except requests.exceptions.RequestException, e:
+        except requests.exceptions.RequestException as e:
 
             # try to see if ig as send a clear error msg
             try:
@@ -178,7 +175,7 @@ class IGAPI(object):
             self._req_args["headers"] = self._headers
 
             body = r_connect.json()
-            self._ls_endpoint = body[u"lightstreamerEndpoint"]
+            self._ls_endpoint = body["lightstreamerEndpoint"]
 
             return
 
@@ -206,7 +203,7 @@ class IGAPI(object):
                          "CHF" : "CHF",
                          "NOK" : "krone",
                          "SEK" : "kronor",
-                         "JPY" : unicode(u"\u00A5")
+                         "JPY" : str("\u00A5")
                         }
 
         """

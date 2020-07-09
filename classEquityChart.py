@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-#-*- coding:utf-8 -*-
-
 from PyQt4 import QtCore
 from PyQt4 import QtGui
 
@@ -528,7 +525,7 @@ class EquityChart(pg.PlotWidget):
         state = comment[1]
 
         # create a new text item
-        if deal_id not in comments_items.keys() and text != "":
+        if deal_id not in comments_items and text != "":
 
             # create and configure a arrow item
             arrow    = classCustomGraphicsItems.CustomCurveArrow(curve)
@@ -577,7 +574,7 @@ class EquityChart(pg.PlotWidget):
             self.addItem(text_item)
 
         else:
-            if text == '' and deal_id in comments_items.keys():
+            if text == '' and deal_id in comments_items:
                 self.remove_text_item(deal_id)    # remove item
                 return
 

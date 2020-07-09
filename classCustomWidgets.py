@@ -1,7 +1,3 @@
-# !/usr/bin/env python
-# -*- coding:utf-8 -*-
-
-
 """ This module holds classes to custom base QtWidgets"""
 
 from PyQt4 import QtCore
@@ -277,7 +273,7 @@ class CustomDockWidget(QtGui.QDockWidget):
         self.setFeatures(QtGui.QDockWidget.DockWidgetFloatable|\
                          QtGui.QDockWidget.DockWidgetMovable)
 
-        last_row = len(pos_details_headers.keys())
+        last_row = len(pos_details_headers)
 
         # create one checkbox to show or not comment on graph
         self.checkbox_showongraph = CustomCheckBox(self)

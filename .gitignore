@@ -99,3 +99,6 @@ target/
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# PyCharm
+.idea/

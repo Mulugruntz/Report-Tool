@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-#-*- coding:utf-8 -*-
 
 from PyQt4 import QtCore
 from PyQt4 import QtGui
@@ -12,7 +10,7 @@ import json
 import logging
 import traceback
 
-import Queue as queue
+import queue as queue
 import numpy as np
 import pyqtgraph as pg
 
@@ -1432,12 +1430,12 @@ class ReportToolGUI(QtGui.QMainWindow):
                         self.statusBar().showMessage(msg)
                         self.logger_debug.log(logging.ERROR, msg)
 
-                except Exception, e:
+                except Exception as e:
                     msg = "An error occured, see log file"
                     self.statusBar().showMessage(msg)
                     self.logger_debug.log(logging.ERROR, traceback.format_exc())
 
-        except Exception, e:
+        except Exception as e:
             msg = "An error occured, see log file"
             self.statusBar().showMessage(msg)
             self.logger_debug.log(logging.ERROR, traceback.format_exc())
@@ -1557,8 +1555,8 @@ class ReportToolGUI(QtGui.QMainWindow):
 
         start_capital   = float(config["start_capital"])
         currency_symbol = config["currency_symbol"]
-        state_infos     = unicode(config["what_to_show"]["state_infos"])
-        state_size      = unicode(config["what_to_show"]["state_size"])
+        state_infos     = str(config["what_to_show"]["state_infos"])
+        state_size      = str(config["what_to_show"]["state_size"])
         states_dd       = config["what_to_show"]    # get what to show
         state_details   = config["what_to_show"]["state_details"]
         all_state       = config["all"]    # all markets or filter set
@@ -1686,7 +1684,7 @@ class ReportToolGUI(QtGui.QMainWindow):
                     pass
 
                 static_text = re.search(r"(.*?[A-z])\s", label_text).group()
-                static_text = static_text + "" + unicode(result_in).lower() + ": "
+                static_text = static_text + "" + str(result_in).lower() + ": "
 
             elif count == 0 or count == 2:
 
@@ -1802,11 +1800,11 @@ class ReportToolGUI(QtGui.QMainWindow):
         just the style eventually.
         """
 
-        sender = unicode(sender)
+        sender = str(sender)
 
         # list with options that don't require graph update
-        list_sender = [u"screenshot", u"result_in", u"what_to_print", u"shortcut",
-                       u"profit_color", u"loss_color", u"flat_color"]
+        list_sender = ["screenshot", "result_in", "what_to_print", "shortcut",
+                       "profit_color", "loss_color", "flat_color"]
 
         today = datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
@@ -1814,7 +1812,7 @@ class ReportToolGUI(QtGui.QMainWindow):
             self.statusBar().showMessage("Last update: " + today)
             return
 
-        elif sender == u"state_infos" or sender == u"state_size":
+        elif sender == "state_infos" or sender == "state_size":
 
             """
             Sender concerns options on what to hide when taking
@@ -1827,7 +1825,7 @@ class ReportToolGUI(QtGui.QMainWindow):
             for key in self.graph_dict.keys():
                 equity_plot = self.graph_dict[key]["equity_plot"]
 
-                vline_pos   = int(len(transactions.keys())/2)    # set a line pos
+                vline_pos   = len(transactions) // 2    # set a line pos
 
                 # simulate a mouse click near the new pos
                 vline_coord = equity_plot.plotItem\
@@ -1842,12 +1840,12 @@ class ReportToolGUI(QtGui.QMainWindow):
                 try:
                     self.update_trade_details(**trade_args)
 
-                except Exception, e:
+                except Exception as e:
                     msg = "An error occured, see log file"
                     self.statusBar().showMessage(msg)
                     self.logger_debug.log(logging.ERROR, traceback.format_exc())
 
-        elif u"ec_" in sender:
+        elif "ec_" in sender:
 
             """
             Sender concerns options of equity curvestyle,
@@ -1871,7 +1869,7 @@ class ReportToolGUI(QtGui.QMainWindow):
                 equity_plot.update_curve_style(equity_curve, **ec_args)
                 overview_plot.update_curve_style(overview_curve, **ec_args)
 
-        elif u"maxdd" in sender or u"depth" in sender or u"high" in sender:
+        elif "maxdd" in sender or "depth" in sender or "high" in sender:
 
             """
             Sender concerns scatter plot style. Call appropriate
@@ -1895,7 +1893,7 @@ class ReportToolGUI(QtGui.QMainWindow):
                 scatter_item = self.graph_dict[key]["curve"][scatter_type]
 
                 # create list with keys corresponding to scatter to update
-                keys_config = [key_config for key_config in config.keys()\
+                keys_config = [key_config for key_config in config.keys()
                                if scatter_type in key_config]
 
                 scatter_args["dd_size"] = config["dd_size"]
@@ -1906,7 +1904,7 @@ class ReportToolGUI(QtGui.QMainWindow):
 
                 equity_plot.update_scatter_style(scatter_item, **scatter_args)
 
-        elif sender == u"dd_size":
+        elif sender == "dd_size":
 
             # Sender concerns symbol size.Need to update all scatter
 
@@ -1928,7 +1926,7 @@ class ReportToolGUI(QtGui.QMainWindow):
                     state_dd = states_dd[scatter_type]
 
                     # create list with keys corresponding to scatter to update
-                    keys_config = [key_config for key_config in config.keys()\
+                    keys_config = [key_config for key_config in config.keys()
                                    if scatter_type in key_config]
 
                     scatter_args["dd_size"] = config["dd_size"]
@@ -2101,12 +2099,12 @@ class ReportToolGUI(QtGui.QMainWindow):
 
                     equity_plot.update_curve(equity_curve,
                                              curves_dict[key]["equity_curve"],
-                                             xaxis_dict.keys(),
+                                             list(xaxis_dict.keys()),
                                              **ec_args)    # update equity curve
 
                     overview_plot.update_curve(overview_curve,
                                                curves_dict[key]["equity_curve"],
-                                               xaxis_dict.keys(),
+                                               list(xaxis_dict.keys()),
                                                **ec_args)    # update overview curve
 
                 else:
@@ -2148,7 +2146,7 @@ class ReportToolGUI(QtGui.QMainWindow):
                                                    **scatter_args)
 
             # When new data are plotted set vline_pos are the middle
-            vline_pos   = int(len(transactions.keys())/2)
+            vline_pos   = len(transactions)//2
 
             # simulate a mouse click near the new pos
             vline_coord = equity_plot.plotItem\
@@ -2164,7 +2162,7 @@ class ReportToolGUI(QtGui.QMainWindow):
             try:
                 self.update_trade_details(**trade_args)
 
-            except Exception, e:
+            except Exception as e:
                 msg = "An error occured, see log file"
                 self.statusBar().showMessage(msg)
                 self.logger_debug.log(logging.ERROR, traceback.format_exc())
@@ -2207,7 +2205,7 @@ class ReportToolGUI(QtGui.QMainWindow):
             for deal_id in object_send.keys():    # iterate over deal
 
                 comment     = object_send[deal_id]    # get comment
-                comment_str = unicode(comment[0])
+                comment_str = str(comment[0])
                 comment[0]  = comment_str
 
                 for key in self.graph_dict.keys():    # update graph
@@ -2239,7 +2237,7 @@ class ReportToolGUI(QtGui.QMainWindow):
             """
 
             comment     = object_send
-            comment_str = unicode(comment[0])
+            comment_str = str(comment[0])
             comment[0]  = comment_str
 
             # set comment found and state of checkbox
@@ -2439,7 +2437,7 @@ class ReportToolGUI(QtGui.QMainWindow):
                 else:
                     continue
 
-        if dict_to_search.keys() == []:    # no trades found
+        if not dict_to_search:    # no trades found
 
             # update vertical line pos for each plot
             for key in self.graph_dict.keys():
@@ -2455,7 +2453,7 @@ class ReportToolGUI(QtGui.QMainWindow):
         else:
 
             # create a list all trade number available
-            list_count_pos = [i + 1 for i in range(len(dict_to_search.keys()))]
+            list_count_pos = [i + 1 for i in range(len(dict_to_search))]
 
 
         """
@@ -2498,8 +2496,9 @@ class ReportToolGUI(QtGui.QMainWindow):
         to search a comment for this trade
         """
 
-        self.deal_id_clicked = dict_to_search.keys()[closest_x-1]
-        self.comments_queue.put(unicode(self.deal_id_clicked))
+        # FIXME: dict .keys() order was not deterministic prior to 3.6. Reviewing is needed
+        self.deal_id_clicked = list(dict_to_search.keys())[closest_x-1]
+        self.comments_queue.put(str(self.deal_id_clicked))
 
         # set deal_id row as active row in table
         self.widget_pos.setCurrentCell(closest_x -1, 0)
@@ -2514,7 +2513,7 @@ class ReportToolGUI(QtGui.QMainWindow):
         try:
             self.dock_pos_details.change_content(**dock_args)    # update labels
 
-        except Exception, e:
+        except Exception as e:
             msg = "An error occured, see log file"
             self.statusBar().showMessage(msg)
             self.logger_debug.log(logging.ERROR, traceback.format_exc())
@@ -2530,7 +2529,7 @@ class ReportToolGUI(QtGui.QMainWindow):
 
         dict_to_save = {}
 
-        comment_to_write = unicode(self.text_edit_comment.toPlainText())
+        comment_to_write = str(self.text_edit_comment.toPlainText())
         show_on_graph    = self.checkbox_showongraph.checkState()
 
         """
@@ -2585,7 +2584,7 @@ class ReportToolGUI(QtGui.QMainWindow):
         try:
             self.update_results({}, **fill_args)
 
-        except Exception, e:
+        except Exception as e:
             msg = "An error occured, see log file"
             self.statusBar().showMessage(msg)
             self.logger_debug.log(logging.ERROR, traceback.format_exc())
@@ -2632,7 +2631,7 @@ class ReportToolGUI(QtGui.QMainWindow):
             self.export_data.save_txt()
             self.statusBar().showMessage("Data successfully exported")
 
-        except Exception, e:
+        except Exception as e:
             msg = "An error occured, see log file"
             self.statusBar().showMessage(msg)
             self.logger_debug.log(logging.ERROR, traceback.format_exc())
@@ -2664,7 +2663,7 @@ class ReportToolGUI(QtGui.QMainWindow):
         filter_sig.connect(self.update_filter)
 
         # create window according to markets in transactions
-        previous_filter = [self.filtered_dict[key]["market_name"]\
+        previous_filter = [self.filtered_dict[key]["market_name"]
                            for key in self.filtered_dict.keys()]    # list of market names
 
         filter_diag.build_window(self.local_transactions, previous_filter)
@@ -2773,7 +2772,7 @@ class ReportToolGUI(QtGui.QMainWindow):
         try:
             self.update_results({}, **fill_args)
 
-        except Exception, e:
+        except Exception as e:
             msg = "An error occured, see log file"
             self.statusBar().showMessage(msg)
             self.logger_debug.log(logging.ERROR, traceback.format_exc())
@@ -2850,7 +2849,7 @@ class ReportToolGUI(QtGui.QMainWindow):
         try:
             self.update_results({}, **fill_args)
 
-        except Exception, e:
+        except Exception as e:
             msg = "An error occured, see log file"
             self.statusBar().showMessage(msg)
             self.logger_debug.log(logging.ERROR, traceback.format_exc())
@@ -2989,7 +2988,7 @@ class ReportToolGUI(QtGui.QMainWindow):
                 try:
                     self.update_trade_details(**trade_args)
 
-                except Exception, e:
+                except Exception as e:
                     msg = "An error occured, see log file"
                     self.statusBar().showMessage(msg)
                     self.logger_debug.log(logging.ERROR, traceback.format_exc())
@@ -3038,7 +3037,7 @@ class ReportToolGUI(QtGui.QMainWindow):
                 try:
                     self.update_trade_details(**trade_args)
 
-                except Exception, e:
+                except Exception as e:
                     msg = "An error occured, see log file"
                     self.statusBar().showMessage(msg)
                     self.logger_debug.log(logging.ERROR, traceback.format_exc())
@@ -3111,7 +3110,7 @@ class ReportToolGUI(QtGui.QMainWindow):
                 try:
                     self.update_trade_details(**trade_args)
 
-                except Exception, e:
+                except Exception as e:
                     msg = "An error occured, see log file"
                     self.statusBar().showMessage(msg)
                     self.logger_debug.log(logging.ERROR, traceback.format_exc())

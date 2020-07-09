@@ -1,6 +1,4 @@
-#!/usr/bin/env python
-#-*- coding:utf-8 -*-
-
+from typing import Text, List, Dict
 
 from PyQt4 import QtCore
 from PyQt4 import QtGui
@@ -146,7 +144,7 @@ class TransactionThread(QtCore.QThread):
 
             deal_ref = transaction["reference"]
 
-            if deal_ref not in transactions_dict.keys():
+            if deal_ref not in transactions_dict:
                 transactions_dict.setdefault(deal_ref, [{}])    # build dict
                 transactions_dict[deal_ref][0] = transaction
 
@@ -155,6 +153,7 @@ class TransactionThread(QtCore.QThread):
 
         result_dict = OrderedDict()
 
+        # FIXME: dict .keys() order was not deterministic prior to 3.6. Reviewing is needed
         # iterate over each deal_ref from older to newer
         for deal_ref in reversed(transactions_dict.keys()):
             total_pnl    = 0
@@ -340,7 +339,7 @@ class TransactionThread(QtCore.QThread):
                 """
 
                 if agregate != 2:
-                    deal_ref_nb = deal_ref + "_" + unicode(count)
+                    deal_ref_nb = deal_ref + "_" + str(count)
                     result_dict.setdefault(deal_ref_nb, {})
 
                     for count, header in enumerate(dict_transaction_headers):    # fill dict
@@ -482,7 +481,7 @@ class UpdateCommentsThread(QtCore.QThread):
 
                 object_in_queue = self.comments_queue.get()    # get item in queue
 
-                if type(object_in_queue) == unicode:    # means it a deal_id
+                if isinstance(object_in_queue, Text):    # means it a deal_id
 
                     """
                     when thread reveives a string it means the user
@@ -499,7 +498,7 @@ class UpdateCommentsThread(QtCore.QThread):
                         self.comment_found.emit(["", 0])    # emit empty string
 
                 # means new data plotted, show all comments found
-                elif type(object_in_queue) == list:
+                elif isinstance(object_in_queue, List):
 
                     """
                     When thread reveives a list it means result has
@@ -528,15 +527,16 @@ class UpdateCommentsThread(QtCore.QThread):
                     self.comment_found.emit(dict_to_send)
 
                 # means a new comment has to be saved
-                elif type(object_in_queue) == dict:
+                elif isinstance(object_in_queue, Dict):
 
                     """
                     When thread received a dict, user is
                     editing a comment or creating a new one
                     """
 
+                    # FIXME: dict .keys() order was not deterministic prior to 3.6. Reviewing is needed
                     # get deal_id and comment
-                    deal_id_to_save = str(object_in_queue.keys()[0])
+                    deal_id_to_save = str(list(object_in_queue.keys())[0])
                     comment_to_save = object_in_queue[deal_id_to_save]
 
                     usr_comments[deal_id_to_save] = comment_to_save    # build dict to save

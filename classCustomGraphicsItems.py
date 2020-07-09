@@ -1,6 +1,3 @@
-# !/usr/bin/env python
-# -*- coding:utf-8 -*-
-
 """ This module holds classes to custom pyqtgraph base graphics items"""
 
 from PyQt4 import QtCore
@@ -61,7 +58,7 @@ class DateAxis(pg.AxisItem):
         pg.AxisItem.__init__(self, *args, **kwargs)
 
         self.x_values  = np.asarray(xdict.keys())
-        self.x_strings = xdict.values()
+        self.x_strings = list(xdict.values())
 
 
     def update_axis(self, xdict, *args, **kwargs):
@@ -73,7 +70,7 @@ class DateAxis(pg.AxisItem):
 
         self.xdict     = xdict
         self.x_values  = np.asarray(self.xdict.keys())
-        self.x_strings = self.xdict.values()
+        self.x_strings = list(self.xdict.values())
 
         try:
             show_dates = kwargs["show_dates"]    # means equity_plot called function

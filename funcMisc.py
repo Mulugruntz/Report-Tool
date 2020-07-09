@@ -1,6 +1,3 @@
-# !/usr/bin/env python
-# -*- coding:utf-8 -*-
-
 """Module for holding simple functions"""
 
 from PyQt4 import QtCore
@@ -60,11 +57,9 @@ def format_market_name(market_name, *args, **kwargs):
 
     try:
         match = re.match('^(.*)converted', market_name)    # looks for conversion infos
-        new_name = match.group(1)    # name without conversion infos
+        return match.group(1)    # name without conversion infos
     except AttributeError:
-        new_name = market_name
-
-    return(unicode(new_name))
+        return market_name
 
 
 def read_ig_config(*args, **kwargs):
@@ -194,7 +189,7 @@ def read_config(*args, **kwargs):
                     "profit_color": "#32CD32",
                     "flat_color":"#000000",
                     "loss_color":"#E62309",
-                    "currency_symbol": u"\u20ac",
+                    "currency_symbol": "\u20ac",
                     "what_to_print": "All window",
                     "result_in": "Points",
                     "last_usr": "",
@@ -305,13 +300,11 @@ def create_dates_list(state_dates, dates_string, key, start_capital):
 
     # keys are idx of trade and values are date string
     if state_dates == 2:
-        xaxis_dict = dict(zip(range(len(dates_string)),
-                                        dates_string))
+        xaxis_dict = dict(enumerate(dates_string))
 
     # keys and values are idx of trades
     else:
-        xaxis_dict = dict(zip(range(len(dates_string)),
-                             range(len(dates_string))))
+        xaxis_dict = {i: i for i in range(len(dates_string))}
 
     if key == "Growth" and start_capital == 0.0:
         xaxis_dict = {}    # don"t set string if no data

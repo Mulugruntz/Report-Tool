@@ -91,3 +91,6 @@
 ####version 2.2####
 - Increase performance (decrease between v1.5 and 2.0 was due to an error in signal management),
 - Add possibilty to take screenshot using a configurable shortcut.
+
+####version 2.2####
+- Changed to Python 3.8

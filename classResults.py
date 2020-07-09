@@ -1,6 +1,3 @@
-# !/usr/bin/env python
-# -*- coding:utf-8 -*-
-
 import numpy as np
 
 from collections import OrderedDict
@@ -115,15 +112,15 @@ class TradesResults(dict):
 
         # build list with fees pnl
         fee_list = [float(transactions[trade]["pnl"])
-                    for trade in transactions.keys()\
+                    for trade in transactions.keys()
                     if transactions[trade]["type"]=="CHART"]
 
         total_fee = round(sum(fee_list), 2)
 
         # calculate total pnl to determine start capital
-        if len(transactions.keys()) != 0:
-            total_pnl  = sum([float(transactions[deal_id]["pnl"])
-                              for deal_id in transactions.keys()])
+        if transactions:
+            total_pnl  = sum(float(transactions[deal_id]["pnl"])
+                              for deal_id in transactions.keys())
 
             # pnl minus funds transfert
             if include == 2:
@@ -697,7 +694,7 @@ class TradesResults(dict):
 
         for index, scatter in enumerate(scatter_type):
 
-            if len(transactions.keys()) == 0:   # returns empty curves if no data
+            if not transactions:   # returns empty curves if no data
                 scatter_data = {"equity_curve": np.array([]),
                                 "maxdd": (np.array([]), np.array([])),
                                 "depth": (np.array([]), np.array([])),

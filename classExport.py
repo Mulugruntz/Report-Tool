@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-#-*- coding:utf-8 -*-
-
 import codecs
 import os
 import re
@@ -47,7 +44,7 @@ class ExportToExcel(object):
 
                 """
                 as some values are formatted to be displayed in a QLabel
-                (with html syntax) exctract only interesting part of text
+                (with html syntax) extract only interesting part of text
                 """
 
                 data = re.search(r'>(.*?)<', value).group(1)
@@ -56,8 +53,8 @@ class ExportToExcel(object):
             except Exception as e:
                 continue
 
-        # convert list to np.array to easil transpose it
-        arr_summary  = np.array([summary_infos,values], dtype=np.unicode)
+        # convert list to np.array to easily transpose it
+        arr_summary  = np.array([list(summary_infos),values], dtype=np.str)
         self.list_summary = np.transpose(arr_summary).tolist()
 
         self.list_trans = []
@@ -72,7 +69,7 @@ class ExportToExcel(object):
             list_row = []    # list with all row cells
             for col in range(nb_col):
                 item = widget_pos.item(row, col)
-                list_row.append(unicode(item.text()))
+                list_row.append(str(item.text()))
 
             self.list_trans.append(list_row)
 
@@ -124,7 +121,7 @@ class ExportToExcel(object):
                      " | interest " + str(include) + "included"\
                      " | positions " + str(agregate) +"agregated"+\
                      " | capital inital = " + str(start_capital) +\
-                     unicode(currency_symbol) + str(str_capital)
+                     str(currency_symbol) + str(str_capital)
 
         # constructs a header with date range
         elif header_type == "Transactions":

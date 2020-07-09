@@ -1,7 +1,3 @@
-#!/usr/bin/env python
-#-*- coding:utf-8 -*-
-
-
 """Module to create custom QDialog"""
 
 from PyQt4 import QtCore
@@ -197,7 +193,7 @@ class ConnectWindow(QtGui.QDialog):
         if idx_usr == -1:
 
             # sort alphabetically users
-            saved_users  = saved_accounts.keys()
+            saved_users  = list(saved_accounts.keys())
             saved_users.append(str(usr))
             sorted_users = sorted(saved_users)
             idx_new_usr  = sorted_users.index(str(usr))
@@ -259,7 +255,7 @@ class ConnectWindow(QtGui.QDialog):
         if self.sender().objectName() == "user_choice":
 
             # new username not saved yet
-            if usr not in saved_accounts.keys():
+            if usr not in saved_accounts:
 
                 # clear pwd, api key and proxies widgets
                 self.line_edit_pwd.setText("")
@@ -335,7 +331,7 @@ class ConnectWindow(QtGui.QDialog):
         funcMisc.write_config(config)
 
         # delete empty key (created when file is empty)
-        if "" in saved_accounts.keys():
+        if "" in saved_accounts:
             saved_accounts.pop("", None)
 
 
@@ -1284,7 +1280,7 @@ class FilterWindow(QtGui.QDialog):
                                 QtCore.Qt.AlignRight)
 
         # build a list with only trades
-        trade_list = [result_dict[trade] for trade in result_dict.keys()\
+        trade_list = [result_dict[trade] for trade in list(result_dict.keys())\
                       if result_dict[trade]["type"]=="ORDRE"\
                       or result_dict[trade]["type"]=="DEAL"]
 
@@ -1306,7 +1302,7 @@ class FilterWindow(QtGui.QDialog):
             ascci_name = market_name.encode("ascii", "ignore")
             label_market = QtGui.QLabel(QtCore.QString.fromUtf8(market_name))
 
-            if ascci_name not in self.dict_filter_checkbox.keys():
+            if ascci_name not in self.dict_filter_checkbox:
 
                 # creates a checkbox and complete dict
                 market_checkbox = QtGui.QCheckBox()
