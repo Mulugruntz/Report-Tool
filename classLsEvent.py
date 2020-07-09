@@ -1,7 +1,6 @@
 from PyQt5 import QtCore
 
 
-
 class LsEvent(QtCore.QObject):
 
     """
@@ -12,18 +11,15 @@ class LsEvent(QtCore.QObject):
     The signal emit an object, so it can emit any type (float, list..)
     """
 
-    acc_signal    = QtCore.pyqtSignal(object)    # signal for account update
-    pos_signal    = QtCore.pyqtSignal(object)    # signal for position update
-    price_signal  = QtCore.pyqtSignal(object)    # signal for price update
-    status_signal = QtCore.pyqtSignal(object)    # signal to probe status
-
+    acc_signal = QtCore.pyqtSignal(object)  # signal for account update
+    pos_signal = QtCore.pyqtSignal(object)  # signal for position update
+    price_signal = QtCore.pyqtSignal(object)  # signal for price update
+    status_signal = QtCore.pyqtSignal(object)  # signal to probe status
 
     def __init__(self):
-
         super(LsEvent, self).__init__()
 
-
-    def on_state(self,state):
+    def on_state(self, state):
 
         """
         Print the LS connection state
@@ -32,7 +28,6 @@ class LsEvent(QtCore.QObject):
         """
 
         self.status_signal.emit(state)
-
 
     def acc_update_event(self, item, myUpdateField):
 
@@ -44,7 +39,6 @@ class LsEvent(QtCore.QObject):
         """
 
         self.acc_signal.emit(myUpdateField)
-
 
     def pos_update_event(self, item, myUpdateField):
 

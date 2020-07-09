@@ -1,5 +1,3 @@
-
-
 import re
 import os
 import datetime
@@ -31,10 +29,10 @@ import igls
 
 from PyQt5 import QtGui, QtWidgets
 
+
 class ReportToolGUI(QtWidgets.QMainWindow):
 
     """Main class for ReportTool"""
-
 
     def __init__(self, title):
 
@@ -42,17 +40,17 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
         super(ReportToolGUI, self).__init__()
 
-        icons_path  = os.getcwd() + "/icons"
+        icons_path = os.getcwd() + "/icons"
 
         config = funcMisc.read_config()
 
         # load size and state of window
         state = config["gui_state"]
 
-        size  = config["gui_size"]
-        size  = QtCore.QSize(size[0], size[1])
+        size = config["gui_size"]
+        size = QtCore.QSize(size[0], size[1])
 
-        pos       = config["gui_pos"]
+        pos = config["gui_pos"]
         pos_point = QtCore.QPoint(pos[0], pos[1])
 
         self.create_menus()
@@ -62,12 +60,12 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         self.create_dock_details()
         self.create_central_widget()
 
-        self.set_gui_enabled(False)    # disable interactions
+        self.set_gui_enabled(False)  # disable interactions
         self.setMouseTracking(True)
 
         self.setWindowTitle(title)
         self.statusBar().showMessage("Not connected")
-        self.setWindowIcon(QtGui.QIcon(icons_path+"/main.png"))
+        self.setWindowIcon(QtGui.QIcon(icons_path + "/main.png"))
 
         self.restoreState(state)
         self.resize(size)
@@ -77,13 +75,12 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
         # init loggers
         self.logger_debug = logging.getLogger("ReportTool_debug.IGAPI")
-        self.logger_info  = logging.getLogger("ReportTool_info.IGAPI")
+        self.logger_info = logging.getLogger("ReportTool_info.IGAPI")
 
         auto_connect = config["auto_connect"]
 
         if auto_connect == 2:
             self.connect_to_api(True)
-
 
     def create_menus(self):
 
@@ -98,52 +95,43 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         icons_path = os.getcwd() + "/icons/"
 
         # create icons
-        icon_disconnect = QtGui.QIcon(icons_path+"disconnect.png")
-        icon_connect    = QtGui.QIcon(icons_path+"connect.png")
-        icon_infos      = QtGui.QIcon(icons_path+"info.png")
-        icon_options    = QtGui.QIcon(icons_path+"options.png")
-        icon_switch     = QtGui.QIcon(icons_path+"switch.png")
-        icon_refresh    = QtGui.QPixmap(icons_path+"refresh.png")
-        icon_screenshot = QtGui.QPixmap(icons_path+"photo16.png")
-        icon_export     = QtGui.QPixmap(icons_path+"export.png")
+        icon_disconnect = QtGui.QIcon(icons_path + "disconnect.png")
+        icon_connect = QtGui.QIcon(icons_path + "connect.png")
+        icon_infos = QtGui.QIcon(icons_path + "info.png")
+        icon_options = QtGui.QIcon(icons_path + "options.png")
+        icon_switch = QtGui.QIcon(icons_path + "switch.png")
+        icon_refresh = QtGui.QPixmap(icons_path + "refresh.png")
+        icon_screenshot = QtGui.QPixmap(icons_path + "photo16.png")
+        icon_export = QtGui.QPixmap(icons_path + "export.png")
 
         # create menus
-        self.menu_switch  = QtWidgets.QMenu("Switch account")
+        self.menu_switch = QtWidgets.QMenu("Switch account")
         self.menu_connect = self.menuBar().addMenu("Connect")
         self.menu_options = self.menuBar().addMenu("&Options")
-        self.menu_about   = self.menuBar().addMenu("&About")
+        self.menu_about = self.menuBar().addMenu("&About")
 
         # create actions
-        self.act_connect = QtWidgets.QAction(icon_connect,
-                                         "Connect",
-                                         self)
+        self.act_connect = QtWidgets.QAction(icon_connect, "Connect", self)
         self.act_connect.setStatusTip("Connect to API")
         self.act_connect.triggered.connect(self.connect_to_api)
 
-        self.act_disconnect = QtWidgets.QAction(icon_disconnect,
-                                            "Disconnect",
-                                            self)
+        self.act_disconnect = QtWidgets.QAction(icon_disconnect, "Disconnect", self)
         self.act_disconnect.setStatusTip("Disconnect from API")
         self.act_disconnect.triggered.connect(self.disconnect_from_api)
         self.act_disconnect.setEnabled(False)
 
-        self.act_about = QtWidgets.QAction(icon_infos,
-                                       "About",
-                                       self)
+        self.act_about = QtWidgets.QAction(icon_infos, "About", self)
         self.act_about.triggered.connect(self.show_about)
         self.act_about.setEnabled(False)
         self.act_about.setCheckable(False)
 
-        self.act_options = QtWidgets.QAction(icon_options,
-                                         "Options",
-                                         self)
+        self.act_options = QtWidgets.QAction(icon_options, "Options", self)
         self.act_options.triggered.connect(self.show_options)
         self.act_options.setEnabled(False)
         self.act_options.setCheckable(False)
 
         #  action to be replaced by user accounts
-        dummy_act = QtWidgets.QAction("Not connected",
-                                   self)
+        dummy_act = QtWidgets.QAction("Not connected", self)
         dummy_act.setEnabled(False)
         dummy_act.setCheckable(False)
 
@@ -161,34 +149,28 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
         # create buttons to update results and take screenshot
         self.btn_screenshot = classCustomWidgets.CustomLabel("lbl_screen")
-        self.btn_refresh    = classCustomWidgets.CustomLabel("lbl_refresh")
-        self.btn_export     = classCustomWidgets.CustomLabel("lbl_export")
+        self.btn_refresh = classCustomWidgets.CustomLabel("lbl_refresh")
+        self.btn_export = classCustomWidgets.CustomLabel("lbl_export")
 
         widget_corner = QtWidgets.QWidget()
         layout_corner = QtWidgets.QHBoxLayout()
 
         # configure refresh button
-        self.btn_refresh.set_default_style("transparent",
-                                           "#D7D9DB",
-                                           "#5F6061")
+        self.btn_refresh.set_default_style("transparent", "#D7D9DB", "#5F6061")
 
         self.btn_refresh.setFixedSize(18, 18)
         self.btn_refresh.setPixmap(icon_refresh)
         self.btn_refresh.setStatusTip("Refresh transactions")
 
         # configure screenshot button
-        self.btn_screenshot.set_default_style("transparent",
-                                              "#D7D9DB",
-                                              "#5F6061")
+        self.btn_screenshot.set_default_style("transparent", "#D7D9DB", "#5F6061")
 
         self.btn_screenshot.setFixedSize(18, 18)
         self.btn_screenshot.setPixmap(icon_screenshot)
         self.btn_screenshot.setStatusTip("Take a screenshot")
 
         # configure export button
-        self.btn_export.set_default_style("transparent",
-                                          "#D7D9DB",
-                                          "#5F6061")
+        self.btn_export.set_default_style("transparent", "#D7D9DB", "#5F6061")
 
         self.btn_export.setFixedSize(18, 18)
         self.btn_export.setPixmap(icon_export)
@@ -208,13 +190,12 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
         # create and configure a button to take screeenshot
         disconnected_color = QtGui.QColor("#F51616")
-        icon_status        = funcMisc.create_status_icons(disconnected_color)
-        self.lbl_status    = QtWidgets.QLabel()
+        icon_status = funcMisc.create_status_icons(disconnected_color)
+        self.lbl_status = QtWidgets.QLabel()
 
         self.lbl_status.setFixedSize(18, 18)
         self.lbl_status.setPixmap(icon_status)
         self.statusBar().addPermanentWidget(self.lbl_status)
-
 
     def create_central_widget(self):
 
@@ -229,9 +210,17 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         """
 
         # create lists of columns headers for QTableWidget
-        transaction_headers = ["Date ", "Market", "Direction",
-                               "Open Size","Open", "Close",
-                               "Points", "Points/lot", "Profit/Loss"]
+        transaction_headers = [
+            "Date ",
+            "Market",
+            "Direction",
+            "Open Size",
+            "Open",
+            "Close",
+            "Points",
+            "Points/lot",
+            "Profit/Loss",
+        ]
 
         config = funcMisc.read_config()
 
@@ -252,51 +241,51 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         pg.setConfigOption("background", (242, 242, 237))
         pg.setConfigOptions(antialias=True)
 
-        points_args = funcMisc.create_graph_args("Points over the period",
-                                                 "# of trades",
-                                                 "Points")
+        points_args = funcMisc.create_graph_args(
+            "Points over the period", "# of trades", "Points"
+        )
 
-        capital_args = funcMisc.create_graph_args("Capital over the period",
-                                                  "# of trades",
-                                                  "Capital"+currency_symbol)
+        capital_args = funcMisc.create_graph_args(
+            "Capital over the period", "# of trades", "Capital" + currency_symbol
+        )
 
-        growth_args = funcMisc.create_graph_args("Capital growth over the period",
-                                                 "# of trades",
-                                                 "Capital growth (%)")
+        growth_args = funcMisc.create_graph_args(
+            "Capital growth over the period", "# of trades", "Capital growth (%)"
+        )
 
-        points_graph = EquityChart(**points_args)    # point graph
+        points_graph = EquityChart(**points_args)  # point graph
 
-        currency_graph = EquityChart(**capital_args)    # currency graph
+        currency_graph = EquityChart(**capital_args)  # currency graph
 
-        growth_graph   = EquityChart(**growth_args)    # growth graph
+        growth_graph = EquityChart(**growth_args)  # growth graph
 
-        self.graph_dict = OrderedDict([("Points", {}),
-                                       ("Capital", {}),
-                                       ("Growth", {})
-                                       ])
+        self.graph_dict = OrderedDict([("Points", {}), ("Capital", {}), ("Growth", {})])
 
         # following lists whill be used to easily create central widget
-        graph_list   = [points_graph, currency_graph, growth_graph]
+        graph_list = [points_graph, currency_graph, growth_graph]
 
         # keys for nested dict. order matters to keep max dd visible
         scatter_list = ["high", "depth", "maxdd"]
-        title_list   = ["Points", "Capital", "Growth"]
+        title_list = ["Points", "Capital", "Growth"]
 
         # get configuration of curves and scatter
         ec_color = config["ec_color"]
-        ec_size  = config["ec_size"]
+        ec_size = config["ec_size"]
         ec_style = config["ec_style"]
 
-        scatter_color = [config["maxdd_color"],
-                         config["depth_color"],
-                         config["high_color"]]
+        scatter_color = [
+            config["maxdd_color"],
+            config["depth_color"],
+            config["high_color"],
+        ]
 
-        scatter_style = [config["maxdd_style"],
-                         config["depth_style"],
-                         config["high_style"]]
+        scatter_style = [
+            config["maxdd_style"],
+            config["depth_style"],
+            config["high_style"],
+        ]
 
         scatter_size = config["dd_size"]
-
 
         # init and configure tab widget
         self.widget_tab = QtWidgets.QTabWidget()
@@ -304,37 +293,30 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         self.widget_tab.setMovable(True)
         self.widget_tab.addTab(self.widget_pos, "Transactions")
 
-        zero_pen = pg.mkPen(color=(95, 95, 95),
-                            width=1,
-                            style=QtCore.Qt.SolidLine)
+        zero_pen = pg.mkPen(color=(95, 95, 95), width=1, style=QtCore.Qt.SolidLine)
 
         for count, equity_plot in enumerate(graph_list):
             # create a simplified plotWidget
-            overview_plot = EquityChart(title=None,
-                                        x_label=None,
-                                        y_label=None,
-                                        )
+            overview_plot = EquityChart(title=None, x_label=None, y_label=None,)
 
             tab_text = title_list[count]
 
-            self.graph_dict[tab_text]["equity_plot"]   = equity_plot
+            self.graph_dict[tab_text]["equity_plot"] = equity_plot
             self.graph_dict[tab_text]["overview_plot"] = overview_plot
-            self.graph_dict[tab_text]["curve"]         = OrderedDict()
+            self.graph_dict[tab_text]["curve"] = OrderedDict()
 
             # splitter between the two plot widgets
             splitter = QtWidgets.QSplitter()
             splitter.setOrientation(QtCore.Qt.Vertical)
-            splitter.setStyleSheet("QSplitter:handle:vertical{height: 6px;\
-                                                    background-color: white}")
+            splitter.setStyleSheet(
+                "QSplitter:handle:vertical{height: 6px;\
+                                                    background-color: white}"
+            )
 
             # create curves
-            equity_curve   = equity_plot.plot_curve(ec_color,
-                                                    ec_size,
-                                                    ec_style)
-            overview_curve = overview_plot.plot_curve(ec_color,
-                                                      ec_size,
-                                                      ec_style)
-            region = overview_plot.linear_region    # region for bottom graph
+            equity_curve = equity_plot.plot_curve(ec_color, ec_size, ec_style)
+            overview_curve = overview_plot.plot_curve(ec_color, ec_size, ec_style)
+            region = overview_plot.linear_region  # region for bottom graph
 
             equity_plot.addItem(equity_curve)
             overview_plot.addItem(overview_curve)
@@ -350,14 +332,14 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             plot only contains an equity curve with same style
             """
 
-            self.graph_dict[tab_text]["curve"]["equity_curve"]   = equity_curve
+            self.graph_dict[tab_text]["curve"]["equity_curve"] = equity_curve
             self.graph_dict[tab_text]["curve"]["overview_curve"] = overview_curve
 
             # init curves for dd, max dd and depth
             for idx, scatter_type in enumerate(scatter_list):
-                scatter_plot = equity_plot.plot_scatter(scatter_color[idx],
-                                                        scatter_style[idx],
-                                                        scatter_size)
+                scatter_plot = equity_plot.plot_scatter(
+                    scatter_color[idx], scatter_style[idx], scatter_size
+                )
                 equity_plot.addItem(scatter_plot)
                 self.graph_dict[tab_text]["curve"][scatter_type] = scatter_plot
 
@@ -378,12 +360,11 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
             # set plot sizes bottom graph height is 1/5 of the top one
             height = equity_plot.geometry().height()
-            splitter.setSizes([height, height/5])
+            splitter.setSizes([height, height / 5])
 
             self.widget_tab.addTab(splitter, str(tab_text))
 
-        self.setCentralWidget(self.widget_tab) # set widget as central widget
-
+        self.setCentralWidget(self.widget_tab)  # set widget as central widget
 
     def create_dock_options(self):
 
@@ -398,36 +379,36 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         -->custom clickable label to set a filter
         """
 
-        config = funcMisc.read_config()    # load config file
+        config = funcMisc.read_config()  # load config file
 
-        icons_path  = os.getcwd() + "/icons/"
+        icons_path = os.getcwd() + "/icons/"
         icon_filter = QtGui.QPixmap(icons_path + "filter.png")
 
-        capital         = config["start_capital"]
+        capital = config["start_capital"]
         currency_symbol = config["currency_symbol"]
-        auto_calculate  = config["auto_calculate"]
-        result_in       = config["result_in"]
-        include         = config["include"]
-        agregate        = config["agregate"]
+        auto_calculate = config["auto_calculate"]
+        result_in = config["result_in"]
+        include = config["include"]
+        agregate = config["agregate"]
 
         # init widgets and layout for dates
         dock_options = QtWidgets.QDockWidget("Report options")
-        widget_main  = QtWidgets.QWidget()
-        layout_dock  = QtWidgets.QVBoxLayout()
-        widget_date  = QtWidgets.QGroupBox("Period of analyze")
-        layout_date  = QtWidgets.QGridLayout()
+        widget_main = QtWidgets.QWidget()
+        layout_dock = QtWidgets.QVBoxLayout()
+        widget_date = QtWidgets.QGroupBox("Period of analyze")
+        layout_date = QtWidgets.QGridLayout()
 
         LABEL_START_DATE = QtWidgets.QLabel("From: ")
-        LABEL_END_DATE   = QtWidgets.QLabel("To: ")
-        self.start_date  = QtWidgets.QDateEdit()
-        self.end_date    = QtWidgets.QDateEdit()
+        LABEL_END_DATE = QtWidgets.QLabel("To: ")
+        self.start_date = QtWidgets.QDateEdit()
+        self.end_date = QtWidgets.QDateEdit()
 
         today = datetime.datetime.now().strftime("%d/%m/%Y")
 
         # configure date widgets
         self.start_date.setMaximumWidth(100)
-        self.start_date.setCalendarPopup(True)    # enable widget calendar popup
-        self.start_date.setDisplayFormat("dd/MM/yyyy")    # set date format
+        self.start_date.setCalendarPopup(True)  # enable widget calendar popup
+        self.start_date.setDisplayFormat("dd/MM/yyyy")  # set date format
         self.start_date.setDate(QtCore.QDate.fromString(today, "dd/MM/yyyy"))
         self.start_date.setMaximumDate(QtCore.QDate.fromString(today, "dd/MM/yyyy"))
 
@@ -447,26 +428,26 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         widget_options = QtWidgets.QGroupBox("Summary options")
         layout_options = QtWidgets.QGridLayout()
 
-        LABEL_CAPITAL  = QtWidgets.QLabel("Initial capital: ")
-        LABEL_AUTO     = QtWidgets.QLabel("Auto-calculate: ")
-        LABEL_OPTIONS  = QtWidgets.QLabel("Show results in: ")
-        LABEL_INCLUDE  = QtWidgets.QLabel("Include interests/fees: ")
+        LABEL_CAPITAL = QtWidgets.QLabel("Initial capital: ")
+        LABEL_AUTO = QtWidgets.QLabel("Auto-calculate: ")
+        LABEL_OPTIONS = QtWidgets.QLabel("Show results in: ")
+        LABEL_INCLUDE = QtWidgets.QLabel("Include interests/fees: ")
         LABEL_AGREGATE = QtWidgets.QLabel("Agregate positions: ")
-        LABEL_FILTER   = QtWidgets.QLabel("Set a filter: ")
+        LABEL_FILTER = QtWidgets.QLabel("Set a filter: ")
 
         self.line_edit_capital = classCustomWidgets.CustomLineEdit()
-        self.btn_filter        = classCustomWidgets.CustomLabel("btn_filter")
-        self.combobox_options  = QtWidgets.QComboBox()
-        self.checkbox_auto     = QtWidgets.QCheckBox()
-        self.checkbox_include  = QtWidgets.QCheckBox()
+        self.btn_filter = classCustomWidgets.CustomLabel("btn_filter")
+        self.combobox_options = QtWidgets.QComboBox()
+        self.checkbox_auto = QtWidgets.QCheckBox()
+        self.checkbox_include = QtWidgets.QCheckBox()
         self.checkbox_agregate = QtWidgets.QCheckBox()
 
-        list_options    = ["Points","Points/lot", currency_symbol, "%"]
-        option_idx      = list_options.index(result_in)
+        list_options = ["Points", "Points/lot", currency_symbol, "%"]
+        option_idx = list_options.index(result_in)
 
         # confiure widgets
         self.line_edit_capital.blockSignals(True)
-        self.line_edit_capital.setText(str(capital)+currency_symbol)
+        self.line_edit_capital.setText(str(capital) + currency_symbol)
         self.line_edit_capital.blockSignals(False)
         self.line_edit_capital.setFixedWidth(120)
 
@@ -485,7 +466,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
         self.options_mapper = QtCore.QSignalMapper()
 
-         # set object name to identify checkbox
+        # set object name to identify checkbox
         self.checkbox_auto.setObjectName("auto_calculate")
         self.checkbox_include.setObjectName("include")
         self.checkbox_agregate.setObjectName("agregate")
@@ -504,30 +485,23 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         self.options_mapper.mapped[str].connect(self.update_options)
 
         self.btn_filter.setPixmap(icon_filter)
-        self.btn_filter.set_default_style("transparent",
-                                          "transparent",
-                                          "transparent")
+        self.btn_filter.set_default_style("transparent", "transparent", "transparent")
 
         # add widgets on layout
         layout_options.addWidget(LABEL_OPTIONS, 0, 0, QtCore.Qt.AlignLeft)
-        layout_options.addWidget(self.combobox_options, 0, 1,
-                                 QtCore.Qt.AlignLeft)
+        layout_options.addWidget(self.combobox_options, 0, 1, QtCore.Qt.AlignLeft)
 
         layout_options.addWidget(LABEL_CAPITAL, 1, 0, QtCore.Qt.AlignLeft)
-        layout_options.addWidget(self.line_edit_capital,1, 1,
-                                 QtCore.Qt.AlignLeft)
+        layout_options.addWidget(self.line_edit_capital, 1, 1, QtCore.Qt.AlignLeft)
 
         layout_options.addWidget(LABEL_AUTO, 2, 0, QtCore.Qt.AlignLeft)
-        layout_options.addWidget(self.checkbox_auto, 2, 1,
-                                 QtCore.Qt.AlignLeft)
+        layout_options.addWidget(self.checkbox_auto, 2, 1, QtCore.Qt.AlignLeft)
 
         layout_options.addWidget(LABEL_INCLUDE, 3, 0, QtCore.Qt.AlignLeft)
-        layout_options.addWidget(self.checkbox_include, 3, 1,
-                                 QtCore.Qt.AlignLeft)
+        layout_options.addWidget(self.checkbox_include, 3, 1, QtCore.Qt.AlignLeft)
 
         layout_options.addWidget(LABEL_AGREGATE, 4, 0, QtCore.Qt.AlignLeft)
-        layout_options.addWidget(self.checkbox_agregate, 4, 1,
-                                 QtCore.Qt.AlignLeft)
+        layout_options.addWidget(self.checkbox_agregate, 4, 1, QtCore.Qt.AlignLeft)
 
         layout_options.addWidget(LABEL_FILTER, 5, 0, QtCore.Qt.AlignLeft)
         layout_options.addWidget(self.btn_filter, 5, 1, QtCore.Qt.AlignLeft)
@@ -553,11 +527,12 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         # configure dock widget
         dock_options.setObjectName("Report options")
         dock_options.setWidget(widget_main)
-        dock_options.setFeatures(QtWidgets.QDockWidget.DockWidgetFloatable
-                                 |QtWidgets.QDockWidget.DockWidgetMovable)
+        dock_options.setFeatures(
+            QtWidgets.QDockWidget.DockWidgetFloatable
+            | QtWidgets.QDockWidget.DockWidgetMovable
+        )
 
         self.addDockWidget(QtCore.Qt.LeftDockWidgetArea, dock_options)
-
 
     def create_dock_summary(self):
 
@@ -567,28 +542,41 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         config = funcMisc.read_config()
 
         currency_symbol = config["currency_symbol"]
-        result_in       = config["result_in"]
-        include         = config["include"]
-        agregate        = config["agregate"]
-        icons_path      = os.getcwd() + "/icons"
+        result_in = config["result_in"]
+        include = config["include"]
+        agregate = config["agregate"]
+        icons_path = os.getcwd() + "/icons"
 
         dock_summary = QtWidgets.QDockWidget("Summary")
 
         # creates a list of what is calculated to
         # easily create corresponding labels
-        summary_headers = ["Points won", "Trades won",
-                           "Points lost", "Trades lost",
-                           "Total points", "Trades flat",
-                            "", "",    # for h_line see loop
-                           "Total trades", "Avg trade",
-                           "Profit Factor", "Avg win",
-                           "Capital growth", "Avg loss",
-                           "Max drawdown", "Avg drawdown",
-                           "Consec. wins", "Consec. losses",
-                            "", "",    # for h_line see loop
-                           "Interests", "Fees",
-                           "Cash in/out", "Transfers",
-                           ]
+        summary_headers = [
+            "Points won",
+            "Trades won",
+            "Points lost",
+            "Trades lost",
+            "Total points",
+            "Trades flat",
+            "",
+            "",  # for h_line see loop
+            "Total trades",
+            "Avg trade",
+            "Profit Factor",
+            "Avg win",
+            "Capital growth",
+            "Avg loss",
+            "Max drawdown",
+            "Avg drawdown",
+            "Consec. wins",
+            "Consec. losses",
+            "",
+            "",  # for h_line see loop
+            "Interests",
+            "Fees",
+            "Cash in/out",
+            "Transfers",
+        ]
 
         widget_summary = QtWidgets.QWidget()
         layout_summary = QtWidgets.QGridLayout()
@@ -602,22 +590,24 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         self.dict_summary_labels = {}
         k = 0
         for count, header in enumerate(summary_headers):
-            if header == "":    # add horizontal line
+            if header == "":  # add horizontal line
                 h_line = QtWidgets.QFrame()
                 h_line.setFrameShape(QtWidgets.QFrame.HLine)
                 h_line.setStyleSheet("color:rgb(173,173,173);")
-                layout_summary.addWidget(h_line, int(count/2), 0, 1, 2)
+                layout_summary.addWidget(h_line, int(count / 2), 0, 1, 2)
 
             else:
-                label = QtWidgets.QLabel(header+": ")
+                label = QtWidgets.QLabel(header + ": ")
                 self.dict_summary_labels[header] = label
 
-                if count%2 ==0:
-                    layout_summary.addWidget(label, int(count/2), 0 , 1, 1,
-                                             QtCore.Qt.AlignLeft)
+                if count % 2 == 0:
+                    layout_summary.addWidget(
+                        label, int(count / 2), 0, 1, 1, QtCore.Qt.AlignLeft
+                    )
                 else:
-                    layout_summary.addWidget(label, int(count/2), 1 , 1, 1,
-                                             QtCore.Qt.AlignLeft)
+                    layout_summary.addWidget(
+                        label, int(count / 2), 1, 1, 1, QtCore.Qt.AlignLeft
+                    )
                 k += 1
 
         widget_summary.setLayout(layout_summary)
@@ -625,8 +615,10 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         # configure dock widget
         dock_summary.setObjectName("Summary")
         dock_summary.setWidget(widget_summary)
-        dock_summary.setFeatures(QtWidgets.QDockWidget.DockWidgetFloatable
-                                 |QtWidgets.QDockWidget.DockWidgetMovable)
+        dock_summary.setFeatures(
+            QtWidgets.QDockWidget.DockWidgetFloatable
+            | QtWidgets.QDockWidget.DockWidgetMovable
+        )
 
         self.addDockWidget(QtCore.Qt.LeftDockWidgetArea, dock_summary)
 
@@ -640,11 +632,11 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         config = funcMisc.read_config()
 
         # init widgets
-        dock_account   = QtWidgets.QDockWidget("Account Informations")
+        dock_account = QtWidgets.QDockWidget("Account Informations")
         widget_account = QtWidgets.QWidget()
         layout_account = QtWidgets.QGridLayout()
 
-        currency_symbol = config["currency_symbol"]    # temp currency symbol
+        currency_symbol = config["currency_symbol"]  # temp currency symbol
 
         # init a dict to store QLabels
         self.dict_account_labels = OrderedDict()
@@ -655,14 +647,14 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         """
 
         list_account_labels = [
-                               "Account ID: ",
-                               "Account type: ",
-                               "Account name: ",
-                               "",
-                               "Cash available: ",
-                               "Account balance: ",
-                               "Profit/loss: "
-                               ]
+            "Account ID: ",
+            "Account type: ",
+            "Account name: ",
+            "",
+            "Cash available: ",
+            "Account balance: ",
+            "Profit/loss: ",
+        ]
 
         """
         place labels on layout. An horizontal line
@@ -679,20 +671,24 @@ class ReportToolGUI(QtWidgets.QMainWindow):
                 layout_account.addWidget(h_line, count, 0, 1, 2)
 
             else:
-                lbl_static   = QtWidgets.QLabel(static_text)
+                lbl_static = QtWidgets.QLabel(static_text)
                 lbl_variable = QtWidgets.QLabel()
                 lbl_static.setText(static_text)
 
-                if count > 3:    # labels displaying cash infos
-                    lbl_variable.setText("xxxx"+currency_symbol)
+                if count > 3:  # labels displaying cash infos
+                    lbl_variable.setText("xxxx" + currency_symbol)
 
                 else:
                     lbl_variable.setText("xxxx")
 
-                layout_account.addWidget(lbl_static, count, 0, 1, 1,)
-                                         #QtCore.Qt.AlignLeft)
-                layout_account.addWidget(lbl_variable, count, 1, 1, 1,)
-                                        #QtCore.Qt.AlignRight)
+                layout_account.addWidget(
+                    lbl_static, count, 0, 1, 1,
+                )
+                # QtCore.Qt.AlignLeft)
+                layout_account.addWidget(
+                    lbl_variable, count, 1, 1, 1,
+                )
+                # QtCore.Qt.AlignRight)
 
                 # store labels in dict
                 self.dict_account_labels[static_text] = lbl_variable
@@ -704,7 +700,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         dock_account.setObjectName("dock_account")
         self.addDockWidget(QtCore.Qt.LeftDockWidgetArea, dock_account)
 
-
     def create_dock_details(self):
 
         """
@@ -714,7 +709,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         Others widgets are for display purpose only
         """
 
-        config = funcMisc.read_config()    # load config file
+        config = funcMisc.read_config()  # load config file
         state_details = config["what_to_show"]["state_details"]
 
         """
@@ -722,32 +717,36 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         corresponding to keys in transactions dict as values
         """
 
-        pos_details_headers = OrderedDict([(" ", "market_name"),
-                                           ("h_line", ""),
-                                           ("Date", "date"),
-                                           ("Trade", 1),
-                                           ("Direction", "direction"),
-                                           ("Size", "open_size"),
-                                           ("Open", "open_level"),
-                                           ("Close", "final_level"),
-                                           ("Profit", "points,points_lot,pnl"),
-                                           ("h_line_2", "")])
+        pos_details_headers = OrderedDict(
+            [
+                (" ", "market_name"),
+                ("h_line", ""),
+                ("Date", "date"),
+                ("Trade", 1),
+                ("Direction", "direction"),
+                ("Size", "open_size"),
+                ("Open", "open_level"),
+                ("Close", "final_level"),
+                ("Profit", "points,points_lot,pnl"),
+                ("h_line_2", ""),
+            ]
+        )
         # init dock
-        self.dock_pos_details = classCustomWidgets.CustomDockWidget(self,
-                                                                    pos_details_headers)
+        self.dock_pos_details = classCustomWidgets.CustomDockWidget(
+            self, pos_details_headers
+        )
 
-        self.text_edit_comment    = self.dock_pos_details.text_edit_comment
+        self.text_edit_comment = self.dock_pos_details.text_edit_comment
         self.checkbox_showongraph = self.dock_pos_details.checkbox_showongraph
 
         self.text_edit_comment.textChanged.connect(self.write_comments)
         self.checkbox_showongraph.stateChanged.connect(self.write_comments)
 
         # show or not dock
-        if state_details ==2:
+        if state_details == 2:
             self.dock_pos_details.show()
         else:
             self.dock_pos_details.hide()
-
 
     def connect_to_api(self, auto_connect=True, *args, **kwargs):
 
@@ -784,58 +783,57 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         """
 
         list_account_labels = [
-                               "Account ID: ",
-                               "Account type: ",
-                               "Account name: ",
-                               "Cash available: ",
-                               "Account balance: ",
-                               "Profit/loss: ",
-                               ]
+            "Account ID: ",
+            "Account type: ",
+            "Account name: ",
+            "Cash available: ",
+            "Account balance: ",
+            "Profit/loss: ",
+        ]
 
         credentials = funcMisc.read_credentials()
-        config      = funcMisc.read_config()
-        ig_urls     = funcMisc.read_ig_config()
+        config = funcMisc.read_config()
+        ig_urls = funcMisc.read_ig_config()
 
         # auto connect do not show connect window
         if auto_connect == True:
 
             last_usr = config["last_usr"]
             acc_type = credentials[last_usr]["type"]
-            pwd      = credentials[last_usr]["pwd"]
-            api_key  = credentials[last_usr]["api_key"]
-            proxies  = credentials[last_usr]["proxies"]
+            pwd = credentials[last_usr]["pwd"]
+            api_key = credentials[last_usr]["api_key"]
+            proxies = credentials[last_usr]["proxies"]
 
             if acc_type == "Live":
-                base_url   = ig_urls["base_url"]["live"]
+                base_url = ig_urls["base_url"]["live"]
             elif acc_type == "Demo":
-                base_url   = ig_urls["base_url"]["demo"]
+                base_url = ig_urls["base_url"]["demo"]
 
             connect_dict = {}
 
-            payload = json.dumps({"identifier": last_usr ,
-                                  "password": pwd
-                                 })
+            payload = json.dumps({"identifier": last_usr, "password": pwd})
 
-            headers = {"Content-Type": "application/json; charset=utf-8",
-                       "Accept": "application/json; charset=utf-8",
-                       "X-IG-API-KEY": api_key
-                       }
+            headers = {
+                "Content-Type": "application/json; charset=utf-8",
+                "Accept": "application/json; charset=utf-8",
+                "X-IG-API-KEY": api_key,
+            }
 
             # build dict to connect to api
             connect_dict["base_url"] = base_url
-            connect_dict["payload"]  = payload
-            connect_dict["headers"]  = headers
-            connect_dict["proxies"]  = proxies
+            connect_dict["payload"] = payload
+            connect_dict["headers"] = headers
+            connect_dict["proxies"] = proxies
 
         # called by connect menu, show connect window
         elif self.sender().text() == "Connect":
-            self.set_gui_enabled(False)    # disable interaction
+            self.set_gui_enabled(False)  # disable interaction
 
             if self.dock_pos_details.isFloating() == False:
                 pass
 
             elif self.dock_pos_details.isHidden() == False:
-                    self.dock_pos_details.hide()
+                self.dock_pos_details.hide()
 
             connect_diag = classDialogBox.ConnectWindow(self)
             connect_dict = connect_diag._get_connect_dict()
@@ -847,7 +845,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         self.statusBar().showMessage(msg)
         self.logger_info.log(logging.INFO, msg)
 
-        self.session  = classRestCom.IGAPI(connect_dict)
+        self.session = classRestCom.IGAPI(connect_dict)
         connect_reply = self.session.create_session()
 
         # request failed show error msg
@@ -893,27 +891,27 @@ class ReportToolGUI(QtWidgets.QMainWindow):
                 self.connect_to_ls(ls_endpoint)
 
                 # create threads to perform requests
-                self.transaction_queue  = queue.Queue()
-                self.transaction_thread = TransactionThread(self.session,
-                                                            self.transaction_queue,
-                                                            self.update_results)
+                self.transaction_queue = queue.Queue()
+                self.transaction_thread = TransactionThread(
+                    self.session, self.transaction_queue, self.update_results
+                )
 
                 # thread for comments
-                self.comments_queue  = queue.Queue()
-                self.comments_thread = UpdateCommentsThread(self.comments_queue,
-                                                            self.update_comments)
+                self.comments_queue = queue.Queue()
+                self.comments_thread = UpdateCommentsThread(
+                    self.comments_queue, self.update_comments
+                )
 
                 self.comments_thread.start()
                 self.transaction_thread.start()
 
                 # init dict that will hold results received
                 self.local_transactions = OrderedDict()
-                self.filtered_dict     = OrderedDict()
-                self.export_data       = classExport.ExportToExcel()
+                self.filtered_dict = OrderedDict()
+                self.export_data = classExport.ExportToExcel()
 
-                self.set_gui_enabled(True)    # enable interactions
+                self.set_gui_enabled(True)  # enable interactions
                 self.update_options(None)
-
 
     def connect_to_ls(self, ls_endpoint, *args, **kwargs):
 
@@ -925,9 +923,8 @@ class ReportToolGUI(QtWidgets.QMainWindow):
                                classRestCom.IGAPI
         """
 
-
-        self.ls_client = igls.LsClient(ls_endpoint+"/lightstreamer/")
-        req_args       = self.session._get_req_args()
+        self.ls_client = igls.LsClient(ls_endpoint + "/lightstreamer/")
+        req_args = self.session._get_req_args()
 
         # get name of current account
         for action in self.menu_switch.actions():
@@ -943,31 +940,33 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
             # get account id
             if action_name == acc_name:
-                acc_id  = self.user_accounts[key]["Account ID: "]
+                acc_id = self.user_accounts[key]["Account ID: "]
                 break
             else:
                 continue
 
-        cst   = req_args["headers"]["CST"]
+        cst = req_args["headers"]["CST"]
         token = req_args["headers"]["X-SECURITY-TOKEN"]
 
-        self.ls_client.create_session(username=acc_id,
-                                      password= "CST-"+ cst +"|XST-"+ token,
-                                      adapter_set = "")
+        self.ls_client.create_session(
+            username=acc_id, password="CST-" + cst + "|XST-" + token, adapter_set=""
+        )
 
         # create a new subscription to account balance
-        self.balance_table = igls.Table(self.ls_client,
-                                        mode =igls.MODE_MERGE,
-                                        item_ids="ACCOUNT:"+ acc_id,
-                                        schema="AVAILABLE_CASH DEPOSIT PNL",
-                                       )
+        self.balance_table = igls.Table(
+            self.ls_client,
+            mode=igls.MODE_MERGE,
+            item_ids="ACCOUNT:" + acc_id,
+            schema="AVAILABLE_CASH DEPOSIT PNL",
+        )
 
         # create a new subscription to positons
-        self.pos_table = igls.Table(self.ls_client,
-                                    mode=igls.MODE_DISTINCT,
-                                    item_ids="TRADE:" + acc_id,
-                                    schema="CONFIRMS"
-                                    )
+        self.pos_table = igls.Table(
+            self.ls_client,
+            mode=igls.MODE_DISTINCT,
+            item_ids="TRADE:" + acc_id,
+            schema="CONFIRMS",
+        )
 
         # configure account event
         self.acc_update_sig = classLsEvent.LsEvent()
@@ -981,7 +980,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
         # configure options changed signal
         self.diag_options = classDialogBox.OptionsWindow(self)
-        options_sig       = self.diag_options.options_signal
+        options_sig = self.diag_options.options_signal
         options_sig.connect(self.update_options)
 
         # configure status event
@@ -991,9 +990,8 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
         # update status infos
         connected_color = QtGui.QColor("#23A627")
-        status_icon     = funcMisc.create_status_icons(connected_color)
+        status_icon = funcMisc.create_status_icons(connected_color)
         self.lbl_status.setPixmap(status_icon)
-
 
     def switch_account(self):
 
@@ -1001,7 +999,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
         config = funcMisc.read_config()
 
-        self.set_gui_enabled(False)    # disable interactions
+        self.set_gui_enabled(False)  # disable interactions
 
         # disconnect from lightstreamer
         self.ls_client.delete(self.balance_table)
@@ -1010,15 +1008,15 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
         # update status icons
         disconnected_color = QtGui.QColor("#F51616")
-        status_icon        = funcMisc.create_status_icons(disconnected_color)
+        status_icon = funcMisc.create_status_icons(disconnected_color)
         self.lbl_status.setPixmap(status_icon)
 
         # get the name of the account to connect to
         acc_name = self.menu_switch.sender().text()
-        acc_name = acc_name.replace("&", "")    # remove ampersand Qt5 bug ??
+        acc_name = acc_name.replace("&", "")  # remove ampersand Qt5 bug ??
 
         # display and log a msg
-        msg = "Switching to account %s..." %acc_name
+        msg = "Switching to account %s..." % acc_name
         self.logger_info.log(logging.INFO, msg)
         self.statusBar().showMessage(msg)
 
@@ -1026,7 +1024,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             action_name = action.text().replace("&", "")
 
             if action_name != acc_name:
-                action.setChecked(False)    # uncheck other accounts
+                action.setChecked(False)  # uncheck other accounts
             else:
                 action.setChecked(True)
 
@@ -1035,13 +1033,12 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             name = self.user_accounts[key]["Account name: "]
 
             if acc_name == name:
-                acc_id  = self.user_accounts[key]["Account ID: "]    # get account id
+                acc_id = self.user_accounts[key]["Account ID: "]  # get account id
                 break
             else:
                 continue
 
-        switch_body = json.dumps({"accountId" : acc_id,
-                                  "defaultAccount" : ""})
+        switch_body = json.dumps({"accountId": acc_id, "defaultAccount": ""})
 
         switch_reply = self.session.switch_account(acc_id, acc_name)
 
@@ -1067,11 +1064,11 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             self.connect_to_ls(ls_endpoint)
 
             # log msg
-            msg = "Connected to %s" %acc_name
+            msg = "Connected to %s" % acc_name
             self.statusBar().showMessage(msg)
             self.logger_info.log(logging.INFO, msg)
 
-            self.set_gui_enabled(True)    # enable interactions
+            self.set_gui_enabled(True)  # enable interactions
 
             self.update_options(None)
 
@@ -1088,11 +1085,11 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         By default the preferred account is checked.
         """
 
-        self.menu_switch.clear()    # clear previous menu
+        self.menu_switch.clear()  # clear previous menu
 
         # for each account add a new action
         for count, account in enumerate(self.user_accounts):
-            acc_name  = self.user_accounts[count]["Account name: "]
+            acc_name = self.user_accounts[count]["Account name: "]
             preferred = self.user_accounts[count]["preferred"]
 
             if preferred == True:
@@ -1100,15 +1097,13 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             else:
                 checked = False
 
-            new_account = QtWidgets.QAction(acc_name,
-                                        self)
+            new_account = QtWidgets.QAction(acc_name, self)
             new_account.setCheckable(True)
             new_account.setChecked(checked)
             new_account.setStatusTip(f"Switch to {acc_name}")
             new_account.triggered.connect(self.switch_account)
 
             self.menu_switch.addAction(new_account)
-
 
     def update_dock_account(self, account_info):
 
@@ -1121,21 +1116,20 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         """
 
         list_account_labels = [
-                               "Account ID: ",
-                               "Account name: ",
-                               "Account type: ",
-                               "Cash available: ",
-                               "Account balance: ",
-                               "Profit/loss: ",
-                               ]
+            "Account ID: ",
+            "Account name: ",
+            "Account type: ",
+            "Cash available: ",
+            "Account balance: ",
+            "Profit/loss: ",
+        ]
 
         # update text of labels
         for count, label in enumerate(list_account_labels):
             lbl_to_update = self.dict_account_labels[label]
-            acc_info      = account_info[label]
+            acc_info = account_info[label]
 
             lbl_to_update.setText(acc_info)
-
 
     def update_options(self, sender):
 
@@ -1147,67 +1141,71 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         :param sender: string sent by function caller
         """
 
-        config = funcMisc.read_config()    # read config file
+        config = funcMisc.read_config()  # read config file
 
         list_account_labels = [
-                               "Account ID: ",
-                               "Account name: ",
-                               "Account type: ",
-                               "Cash available: ",
-                               "Account balance: ",
-                               "Profit/loss: ",
-                               ]
+            "Account ID: ",
+            "Account name: ",
+            "Account type: ",
+            "Cash available: ",
+            "Account balance: ",
+            "Profit/loss: ",
+        ]
 
         # get options set
         auto_calculate = self.checkbox_auto.checkState()
-        result_in      = str(self.combobox_options.currentText().toUtf8())
-        include        = self.checkbox_include.checkState()
-        agregate       = self.checkbox_agregate.checkState()
+        result_in = str(self.combobox_options.currentText().toUtf8())
+        include = self.checkbox_include.checkState()
+        agregate = self.checkbox_agregate.checkState()
 
         currency_symbol = config["currency_symbol"]
-        start_capital   = config["start_capital"]
-        state_infos     = str(config["what_to_show"]["state_infos"])
-        state_details   = str(config["what_to_show"]["state_details"])
+        start_capital = config["start_capital"]
+        state_infos = str(config["what_to_show"]["state_infos"])
+        state_details = str(config["what_to_show"]["state_details"])
 
         # update dict config
         config["auto_calculate"] = auto_calculate
-        config["result_in"]      = result_in
-        config["include"]        = include
-        config["agregate"]       = agregate
+        config["result_in"] = result_in
+        config["include"] = include
+        config["agregate"] = agregate
 
         funcMisc.write_config(config)
 
         config = funcMisc.read_config()
 
         # get infos about dates
-        start_date     = self.start_date.date()
+        start_date = self.start_date.date()
         start_date_str = start_date.toString("dd-MM-yyyy")
 
-        end_date       = self.end_date.date()
-        end_date_str   = end_date.toString("dd-MM-yyyy")
+        end_date = self.end_date.date()
+        end_date_str = end_date.toString("dd-MM-yyyy")
 
-        date_range     = "/"+ start_date_str + "/" + end_date_str
+        date_range = "/" + start_date_str + "/" + end_date_str
 
         # quick and dirty way to update graph title and labels
         if end_date == start_date:
             graph_title = " on " + start_date.toString("dd/MM/yy")
         else:
-            graph_title = " from " + start_date.toString("dd/MM/yy") + \
-                          " to " + end_date.toString("dd/MM/yy")
+            graph_title = (
+                " from "
+                + start_date.toString("dd/MM/yy")
+                + " to "
+                + end_date.toString("dd/MM/yy")
+            )
 
         if result_in == "Points/lot":
-            title   = ">Points/lot" + str(graph_title) + "<"
+            title = ">Points/lot" + str(graph_title) + "<"
             y_label = ">Points/lot<"
         else:
-            title   = ">Points" + str(graph_title) + "<"
+            title = ">Points" + str(graph_title) + "<"
             y_label = ">Points<"
 
         plot_widget = self.graph_dict["Points"]["equity_plot"]
 
-        old_title   = str(plot_widget.plotItem.titleLabel.text)
+        old_title = str(plot_widget.plotItem.titleLabel.text)
         old_y_label = str(plot_widget.plotItem.getAxis("left").labelText)
 
-        new_title   = re.sub(">(.*?)<", title, old_title)
+        new_title = re.sub(">(.*?)<", title, old_title)
         new_y_label = re.sub(">(.*?)<", y_label, old_y_label)
 
         plot_widget.plotItem.setTitle(new_title)
@@ -1217,19 +1215,19 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         if state_infos == "Always":
 
             for count, key in enumerate(self.dict_account_labels.keys()):
-                label    = self.dict_account_labels[key]
-                old_text = label.text()    # retrieve account infos
+                label = self.dict_account_labels[key]
+                old_text = label.text()  # retrieve account infos
 
                 if key == "Account type: ":
                     connect_dict = self.session._get_connect_dict()
-                    base_url     = connect_dict["base_url"]
+                    base_url = connect_dict["base_url"]
 
-                    if "demo" in base_url:    # test url to show apropriate prefix
+                    if "demo" in base_url:  # test url to show apropriate prefix
                         label.setText("Demo-xxxx")
                     else:
                         label.setText("Live-xxxx")
 
-                elif currency_symbol in old_text:    # label contains currency infos
+                elif currency_symbol in old_text:  # label contains currency infos
                     label.setText("xxxx" + currency_symbol)
 
                 else:
@@ -1256,7 +1254,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
                 else:
                     continue
 
-
         """
         Depending on sender send a new request to IG. If user changes
         the "units" of summary or changes options viaoptions window a
@@ -1264,22 +1261,25 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         checkboxes or if sender is another function, send an new request
         """
 
-        if sender == "agregate"\
-        or sender == "auto_calculate"\
-        or sender == "include" or sender is None:
+        if (
+            sender == "agregate"
+            or sender == "auto_calculate"
+            or sender == "include"
+            or sender is None
+        ):
             self.update_transactions()
 
         else:
             if config["all"] == 0:
-                fill_args = {"modified_trans" : self.filtered_dict}    #use filtered dict
+                fill_args = {"modified_trans": self.filtered_dict}  # use filtered dict
             else:
-                fill_args = {"modified_trans" : self.local_transactions}
+                fill_args = {"modified_trans": self.local_transactions}
 
             fill_args["screenshot"] = False
-            fill_args["sender"]     = sender
+            fill_args["sender"] = sender
 
             try:
-                self.update_results({}, **fill_args)    # update infos with local dict
+                self.update_results({}, **fill_args)  # update infos with local dict
 
             except Exception:
                 msg = "An error occured, see log file"
@@ -1291,7 +1291,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         else:
             self.line_edit_capital.setEnabled(True)
 
-
     def update_capital(self):
 
         """
@@ -1299,14 +1298,14 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         Set a empty string if it's not a float
         """
 
-        config          = funcMisc.read_config()
+        config = funcMisc.read_config()
 
-        currency_symbol = config['currency_symbol']
+        currency_symbol = config["currency_symbol"]
 
         # test capital entered by user
-        capital  = self.line_edit_capital.text()
-        re_float = r'[+-]? *(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?'
-        match    = re.match(re_float, capital)
+        capital = self.line_edit_capital.text()
+        re_float = r"[+-]? *(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?"
+        match = re.match(re_float, capital)
 
         # capital is float
         if match is not None:
@@ -1318,16 +1317,15 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             else:
                 self.line_edit_capital.setCursorPosition(len(float_capital))
 
-            config['start_capital'] = str(float_capital)
+            config["start_capital"] = str(float_capital)
 
         # capital is not float set zero
         else:
-            self.line_edit_capital.setText('0')
+            self.line_edit_capital.setText("0")
             self.line_edit_capital.setCursorPosition(0)
-            config['start_capital'] = str(0)
+            config["start_capital"] = str(0)
 
         funcMisc.write_config(config)
-
 
     def update_account(self, myUpdateField):
 
@@ -1341,38 +1339,55 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         # unpack items sends by LS server
         balance, deposit, profit_loss = myUpdateField
 
-        balance     = str(balance)
-        deposit     = str(deposit)
+        balance = str(balance)
+        deposit = str(deposit)
         profit_loss = str(profit_loss)
 
-        config    = funcMisc.read_config()
-        label_pnl = self.dict_account_labels['Profit/loss: ']
+        config = funcMisc.read_config()
+        label_pnl = self.dict_account_labels["Profit/loss: "]
 
-        currency_symbol = config['currency_symbol']
-        state_infos     = str(config['what_to_show']['state_infos'])
+        currency_symbol = config["currency_symbol"]
+        state_infos = str(config["what_to_show"]["state_infos"])
 
-        profit_color = config['profit_color']
-        flat_color   = config['flat_color']
-        loss_color   = config['loss_color']
+        profit_color = config["profit_color"]
+        flat_color = config["flat_color"]
+        loss_color = config["loss_color"]
 
         # user does not want to show profit/loss
-        if state_infos == 'Always':
+        if state_infos == "Always":
             return
 
         else:
             # set color according to config
             if float(profit_loss) < 0:
-                label_pnl.setText("<font color="+loss_color+">"+\
-                                  profit_loss+currency_symbol+"</font>")
+                label_pnl.setText(
+                    "<font color="
+                    + loss_color
+                    + ">"
+                    + profit_loss
+                    + currency_symbol
+                    + "</font>"
+                )
 
             elif float(profit_loss) > 0:
-                label_pnl.setText("<font color="+profit_color+">"+\
-                                  profit_loss+currency_symbol+"</font>")
+                label_pnl.setText(
+                    "<font color="
+                    + profit_color
+                    + ">"
+                    + profit_loss
+                    + currency_symbol
+                    + "</font>"
+                )
 
             elif float(profit_loss) == 0.00:
-                label_pnl.setText("<font color="+flat_color+">"+\
-                                  profit_loss+currency_symbol+"</font>")
-
+                label_pnl.setText(
+                    "<font color="
+                    + flat_color
+                    + ">"
+                    + profit_loss
+                    + currency_symbol
+                    + "</font>"
+                )
 
     def update_positions(self, myUpdateField):
 
@@ -1386,16 +1401,15 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         try:
             if myUpdateField[0] is not None:
 
-                pos_report  = json.loads(myUpdateField[0])
+                pos_report = json.loads(myUpdateField[0])
                 deal_status = pos_report["dealStatus"]
-                reason      = pos_report["reason"]
+                reason = pos_report["reason"]
 
                 # if position is fully or partially closed
                 try:
                     pos_status = pos_report["affectedDeals"][0]["status"]
 
-                    if pos_status == "FULLY_CLOSED"\
-                    or pos_status == "PARTIALLY_CLOSED":
+                    if pos_status == "FULLY_CLOSED" or pos_status == "PARTIALLY_CLOSED":
                         self.update_transactions()
 
                         # get user accounts to get cash available and update dock account
@@ -1421,7 +1435,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
                             else:
                                 continue
 
-                    elif deal_status == "REJECTED":    #deal rejected
+                    elif deal_status == "REJECTED":  # deal rejected
                         msg = deal_status + " " + reason
                         self.statusBar().showMessage(msg)
                         self.logger_debug.log(logging.ERROR, msg)
@@ -1436,7 +1450,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             self.statusBar().showMessage(msg)
             self.logger_debug.log(logging.ERROR, traceback.format_exc())
 
-
     def update_status(self, state):
 
         """
@@ -1445,7 +1458,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         :param state: string
         """
 
-        if state ==  "connected Lightstreamer session":
+        if state == "connected Lightstreamer session":
             connected_color = QtGui.QColor("#23A627")
             status_icon = funcMisc.create_status_icons(connected_color)
             self.lbl_status.setPixmap(status_icon)
@@ -1454,7 +1467,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             disconnected_color = QtGui.QColor("#F51616")
             status_icon = funcMisc.create_status_icons(disconnected_color)
             self.lbl_status.setPixmap(status_icon)
-
 
     def update_transactions(self):
 
@@ -1468,12 +1480,12 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
         result_in = self.combobox_options.currentText()
 
-        start_date     = self.start_date.date()
+        start_date = self.start_date.date()
         start_date_str = str(start_date.toString("dd-MM-yyyy"))
 
-        end_date       = self.end_date.date()
-        end_date_str   = str(end_date.toString("dd-MM-yyyy"))
-        date_range     = "/"+ start_date_str + "/" + end_date_str
+        end_date = self.end_date.date()
+        end_date_str = str(end_date.toString("dd-MM-yyyy"))
+        date_range = "/" + start_date_str + "/" + end_date_str
 
         self.end_date.setMinimumDate(start_date)
 
@@ -1481,12 +1493,18 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         if end_date == start_date:
             graph_title = " on " + start_date.toString("dd/MM/yy")
         else:
-            graph_title = " from " + start_date.toString("dd/MM/yy") + \
-                          " to " + end_date.toString("dd/MM/yy")
+            graph_title = (
+                " from "
+                + start_date.toString("dd/MM/yy")
+                + " to "
+                + end_date.toString("dd/MM/yy")
+            )
 
-        title_list = ["",
-                      ">Capital" + str(graph_title) + "<",
-                      ">Capital growth" + str(graph_title) + "<"]
+        title_list = [
+            "",
+            ">Capital" + str(graph_title) + "<",
+            ">Capital growth" + str(graph_title) + "<",
+        ]
 
         if result_in == "Points/lot":
             title_list[0] = ">Points/lot" + str(graph_title) + "<"
@@ -1497,12 +1515,12 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             plot_widget = self.graph_dict[key]["equity_plot"]
 
             old_title = str(plot_widget.plotItem.titleLabel.text)
-            new_title = re.sub(">(.*?)<",  title_list[count], old_title)
+            new_title = re.sub(">(.*?)<", title_list[count], old_title)
 
             plot_widget.plotItem.setTitle(new_title)
 
-        self.filtered_dict = OrderedDict()    # reset filtered dict
-        config["all"] = 2    # reset filter
+        self.filtered_dict = OrderedDict()  # reset filtered dict
+        config["all"] = 2  # reset filter
 
         funcMisc.write_config(config)
 
@@ -1510,7 +1528,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
         self.transaction_queue.put(date_range)
         self.transaction_thread.start()
-
 
     def update_results(self, transactions, *args, **kwargs):
 
@@ -1543,19 +1560,28 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
         self.statusBar().showMessage("Updating transactions...")
 
-        pos_transaction_headers = ["date", "market_name", "direction",
-                                   "open_size", "open_level", "final_level",
-                                   "points", "points_lot", "pnl", "growth"]
+        pos_transaction_headers = [
+            "date",
+            "market_name",
+            "direction",
+            "open_size",
+            "open_level",
+            "final_level",
+            "points",
+            "points_lot",
+            "pnl",
+            "growth",
+        ]
 
-        config = funcMisc.read_config()    # read options
+        config = funcMisc.read_config()  # read options
 
-        start_capital   = float(config["start_capital"])
+        start_capital = float(config["start_capital"])
         currency_symbol = config["currency_symbol"]
-        state_infos     = str(config["what_to_show"]["state_infos"])
-        state_size      = str(config["what_to_show"]["state_size"])
-        states_dd       = config["what_to_show"]    # get what to show
-        state_details   = config["what_to_show"]["state_details"]
-        all_state       = config["all"]    # all markets or filter set
+        state_infos = str(config["what_to_show"]["state_infos"])
+        state_size = str(config["what_to_show"]["state_size"])
+        states_dd = config["what_to_show"]  # get what to show
+        state_details = config["what_to_show"]["state_details"]
+        all_state = config["all"]  # all markets or filter set
 
         ig_config = funcMisc.read_ig_config()
 
@@ -1565,33 +1591,35 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         if transaction type is unknown log it
         """
 
-        kw_order    = ig_config["keyword"]["ORDER"]
-        kw_fees     = ig_config["keyword"]["FEES"]
-        kw_cashin   = ig_config["keyword"]["CASH_IN"]
-        kw_cashout  = ig_config["keyword"]["CASH_OUT"]
+        kw_order = ig_config["keyword"]["ORDER"]
+        kw_fees = ig_config["keyword"]["FEES"]
+        kw_cashin = ig_config["keyword"]["CASH_IN"]
+        kw_cashout = ig_config["keyword"]["CASH_OUT"]
         kw_transfer = ig_config["keyword"]["TRANSFER"]
 
         # Depending of caller use a local transactions or the one sent by thread
         try:
             transactions = kwargs["modified_trans"]
-            screenshot  = kwargs["screenshot"]
-            sender      = kwargs["sender"]
+            screenshot = kwargs["screenshot"]
+            sender = kwargs["sender"]
         except KeyError:
-            self.local_transactions = transactions    # used dict send by thread
+            self.local_transactions = transactions  # used dict send by thread
             screenshot = False
             sender = "thread"
 
-            if transactions == {}:    # manage when no trades done between period
+            if transactions == {}:  # manage when no trades done between period
                 self.statusBar().showMessage("No transactions received")
 
         result_in = self.combobox_options.currentText()
 
         cash_available = self.session._get_cash_available()
 
-        summary_args = {"transactions": transactions,
-                        "start_capital": start_capital,
-                        "cash_available": cash_available,
-                        "screenshot": screenshot}
+        summary_args = {
+            "transactions": transactions,
+            "start_capital": start_capital,
+            "cash_available": cash_available,
+            "screenshot": screenshot,
+        }
 
         summary = classResults.TradesResults()
 
@@ -1610,22 +1638,28 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         self.logger_info.log(logging.INFO, "Done")
 
         start_capital = dict_results["start_capital"]
-        summary_dict  = dict_results["summary"]
-        transactions  = dict_results["transactions"]
-        curves_dict   = dict_results["curves_dict"]
+        summary_dict = dict_results["summary"]
+        transactions = dict_results["transactions"]
+        curves_dict = dict_results["curves_dict"]
 
-        data_to_save = {"transactions": transactions,
-                        "summary": summary_dict,
-                        "start_capital": start_capital,
-                        "current_acc": self.current_acc}
+        data_to_save = {
+            "transactions": transactions,
+            "summary": summary_dict,
+            "start_capital": start_capital,
+            "current_acc": self.current_acc,
+        }
 
         # update data to export
         self.export_data._set_data_to_export(data_to_save)
 
         # hide capital info if user choose to
-        if state_infos == "Always" and result_in != currency_symbol\
-        or state_infos == "Only for screenshot" and screenshot == True\
-        and result_in != currency_symbol:
+        if (
+            state_infos == "Always"
+            and result_in != currency_symbol
+            or state_infos == "Only for screenshot"
+            and screenshot == True
+            and result_in != currency_symbol
+        ):
 
             self.line_edit_capital.blockSignals(True)
 
@@ -1645,7 +1679,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             self.line_edit_capital.blockSignals(True)
 
             # show initial capital
-            self.line_edit_capital.setText(str(start_capital)+currency_symbol)
+            self.line_edit_capital.setText(str(start_capital) + currency_symbol)
 
             # show capital axe on graph
             self.graph_dict["Capital"]["equity_plot"].plotItem.showAxis("left")
@@ -1655,17 +1689,28 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             # show profit on dock pos details
             self.dock_pos_details.show_profit_loss()
 
-        summary_headers = ["Points won", "Trades won",
-                           "Points lost", "Trades lost",
-                           "Total points", "Trades flat",
-                           "Total trades", "Avg trade",
-                           "Profit Factor", "Avg win",
-                           "Capital growth", "Avg loss",
-                           "Max drawdown", "Avg drawdown",
-                           "Consec. wins", "Consec. losses",
-                           "Interests", "Fees",
-                           "Cash in/out", "Transfers",
-                           ]    # same list as the one used to create dock
+        summary_headers = [
+            "Points won",
+            "Trades won",
+            "Points lost",
+            "Trades lost",
+            "Total points",
+            "Trades flat",
+            "Total trades",
+            "Avg trade",
+            "Profit Factor",
+            "Avg win",
+            "Capital growth",
+            "Avg loss",
+            "Max drawdown",
+            "Avg drawdown",
+            "Consec. wins",
+            "Consec. losses",
+            "Interests",
+            "Fees",
+            "Cash in/out",
+            "Transfers",
+        ]  # same list as the one used to create dock
 
         # update summary labels
         for count, key in enumerate(summary_dict.keys()):
@@ -1702,10 +1747,10 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
         # update transactions table
         for i in range(self.widget_pos.rowCount()):
-            self.widget_pos.removeRow(0)    # remove all rows
+            self.widget_pos.removeRow(0)  # remove all rows
 
         deal_id_plotted = []
-        new_row         = 0
+        new_row = 0
 
         # iterate over deal_id from older to newer pos
         for count, deal_id in enumerate(transactions.keys()):
@@ -1715,10 +1760,12 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             if config["include"] != 2 and transaction_type in kw_fees:
                 continue
 
-            elif transaction_type == "CASHIN"\
-            or transaction_type == "TRANSFER"\
-            or transaction_type == "CASHOUT"\
-            or transaction_type == "UNDEFINED":    # account transaction are never showed
+            elif (
+                transaction_type == "CASHIN"
+                or transaction_type == "TRANSFER"
+                or transaction_type == "CASHOUT"
+                or transaction_type == "UNDEFINED"
+            ):  # account transaction are never showed
                 continue
 
             else:
@@ -1749,40 +1796,46 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
                     if header == "pnl":
 
-                        if state_infos == "Always" and result_in != currency_symbol\
-                        or state_infos == "Only for screenshot" and screenshot == True\
-                        and result_in != currency_symbol:
-                            item.setText("--" \
-                                         + currency_symbol)    # hide profit/loss
+                        if (
+                            state_infos == "Always"
+                            and result_in != currency_symbol
+                            or state_infos == "Only for screenshot"
+                            and screenshot == True
+                            and result_in != currency_symbol
+                        ):
+                            item.setText("--" + currency_symbol)  # hide profit/loss
                         else:
-                            item.setText(transactions[deal_id][header] \
-                                         + currency_symbol)    # show profit/loss
+                            item.setText(
+                                transactions[deal_id][header] + currency_symbol
+                            )  # show profit/loss
 
                     elif header == "open_size":
 
-                        if state_size == "Always"\
-                        or state_size == "Only for screenshot" \
-                        and screenshot == True:    # screenshot is being taken
-                            item.setText("-")    # hide lot size
+                        if (
+                            state_size == "Always"
+                            or state_size == "Only for screenshot"
+                            and screenshot == True
+                        ):  # screenshot is being taken
+                            item.setText("-")  # hide lot size
                             self.dock_pos_details.hide_lot_size()
                         else:
-                            item.setText(transactions[deal_id][header])    # show lot_size
+                            item.setText(transactions[deal_id][header])  # show lot_size
 
                     elif header == "growth":
-                        continue    # don"t show growth in table
+                        continue  # don"t show growth in table
 
                     else:
                         item.setText(transactions[deal_id][header])
 
                     profit_color = config["profit_color"]
-                    flat_color   = config["flat_color"]
-                    loss_color   = config["loss_color"]
-                    pnl          = float(transactions[deal_id]["pnl"])
+                    flat_color = config["flat_color"]
+                    loss_color = config["loss_color"]
+                    pnl = float(transactions[deal_id]["pnl"])
 
                     # set line color according to profit/loss
                     if pnl < 0:
                         item.setForeground(QtGui.QColor(loss_color))
-                    elif pnl > 0 :
+                    elif pnl > 0:
                         item.setForeground(QtGui.QColor(profit_color))
                     elif pnl == 0:
                         item.setForeground(QtGui.QColor(flat_color))
@@ -1799,8 +1852,15 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         sender = str(sender)
 
         # list with options that don't require graph update
-        list_sender = ["screenshot", "result_in", "what_to_print", "shortcut",
-                       "profit_color", "loss_color", "flat_color"]
+        list_sender = [
+            "screenshot",
+            "result_in",
+            "what_to_print",
+            "shortcut",
+            "profit_color",
+            "loss_color",
+            "flat_color",
+        ]
 
         today = datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
@@ -1821,17 +1881,19 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             for key in self.graph_dict.keys():
                 equity_plot = self.graph_dict[key]["equity_plot"]
 
-                vline_pos   = len(transactions) // 2    # set a line pos
+                vline_pos = len(transactions) // 2  # set a line pos
 
                 # simulate a mouse click near the new pos
-                vline_coord = equity_plot.plotItem\
-                              .vb.mapViewToScene(QtCore.QPointF(vline_pos, 0)).toPoint()
+                vline_coord = equity_plot.plotItem.vb.mapViewToScene(
+                    QtCore.QPointF(vline_pos, 0)
+                ).toPoint()
 
-                trade_args  = {"plot_widget": equity_plot,
-                               "mouse_pos": vline_coord,
-                               "vline_pos": vline_pos,
-                               "screenshot": screenshot,
-                               }
+                trade_args = {
+                    "plot_widget": equity_plot,
+                    "mouse_pos": vline_coord,
+                    "vline_pos": vline_pos,
+                    "screenshot": screenshot,
+                }
 
                 try:
                     self.update_trade_details(**trade_args)
@@ -1850,16 +1912,18 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
             for key in self.graph_dict.keys():
 
-                ec_args = {"ec_color": config["ec_color"],
-                           "ec_style": config["ec_style"],
-                           "ec_size": config["ec_size"],
-                           "graph": key}    # set curve style with user choice
+                ec_args = {
+                    "ec_color": config["ec_color"],
+                    "ec_style": config["ec_style"],
+                    "ec_size": config["ec_size"],
+                    "graph": key,
+                }  # set curve style with user choice
 
-                equity_plot    = self.graph_dict[key]["equity_plot"]
-                overview_plot  = self.graph_dict[key]["overview_plot"]
+                equity_plot = self.graph_dict[key]["equity_plot"]
+                overview_plot = self.graph_dict[key]["overview_plot"]
 
                 # select curve item
-                equity_curve   = self.graph_dict[key]["curve"]["equity_curve"]
+                equity_curve = self.graph_dict[key]["curve"]["equity_curve"]
                 overview_curve = self.graph_dict[key]["curve"]["overview_curve"]
 
                 equity_plot.update_curve_style(equity_curve, **ec_args)
@@ -1873,7 +1937,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             """
 
             # get scatter name as same as in config dict
-            scatter_type = re.sub(r"_(.*)", "",sender)
+            scatter_type = re.sub(r"_(.*)", "", sender)
 
             # get state of scatter (show it or not)
             state_dd = states_dd[scatter_type]
@@ -1882,18 +1946,21 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
             for key in self.graph_dict.keys():
 
-                equity_plot  = self.graph_dict[key]["equity_plot"]
+                equity_plot = self.graph_dict[key]["equity_plot"]
 
                 # get items to update
                 equity_curve = self.graph_dict[key]["curve"]["equity_curve"]
                 scatter_item = self.graph_dict[key]["curve"][scatter_type]
 
                 # create list with keys corresponding to scatter to update
-                keys_config = [key_config for key_config in config.keys()
-                               if scatter_type in key_config]
+                keys_config = [
+                    key_config
+                    for key_config in config.keys()
+                    if scatter_type in key_config
+                ]
 
                 scatter_args["dd_size"] = config["dd_size"]
-                scatter_args["state"]   = state_dd
+                scatter_args["state"] = state_dd
 
                 for option in keys_config:
                     scatter_args[option] = config[option]
@@ -1907,8 +1974,8 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             for key in self.graph_dict.keys():
 
                 # select curve items
-                equity_plot    = self.graph_dict[key]["equity_plot"]
-                equity_curve   = self.graph_dict[key]["curve"]["equity_curve"]
+                equity_plot = self.graph_dict[key]["equity_plot"]
+                equity_curve = self.graph_dict[key]["curve"]["equity_curve"]
 
                 # loop over each scatter plotted
                 for scatter_type in ["high", "depth", "maxdd"]:
@@ -1922,11 +1989,14 @@ class ReportToolGUI(QtWidgets.QMainWindow):
                     state_dd = states_dd[scatter_type]
 
                     # create list with keys corresponding to scatter to update
-                    keys_config = [key_config for key_config in config.keys()
-                                   if scatter_type in key_config]
+                    keys_config = [
+                        key_config
+                        for key_config in config.keys()
+                        if scatter_type in key_config
+                    ]
 
                     scatter_args["dd_size"] = config["dd_size"]
-                    scatter_args["state"]   = state_dd
+                    scatter_args["state"] = state_dd
 
                     for option in keys_config:
                         scatter_args[option] = config[option]
@@ -1941,11 +2011,13 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             in dockoptions, or when a new request has been sent.
             """
 
-            graph_args = {"config": config,
-                          "transactions": transactions,
-                          "curves_dict": curves_dict,
-                          "start_capital": start_capital,
-                          "screenshot": screenshot}
+            graph_args = {
+                "config": config,
+                "transactions": transactions,
+                "curves_dict": curves_dict,
+                "start_capital": start_capital,
+                "screenshot": screenshot,
+            }
 
             try:
                 self.update_graph(**graph_args)
@@ -1957,7 +2029,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
         today = datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
-        try:    # means func has been called by take_screeenshot
+        try:  # means func has been called by take_screeenshot
             msg = kwargs["msg"]
             self.statusBar().showMessage(msg)
 
@@ -1972,20 +2044,19 @@ class ReportToolGUI(QtWidgets.QMainWindow):
                 self.btn_export.setEnabled(True)
                 self.btn_export.setStatusTip("Export data")
 
-
     def update_graph(self, *args, **kwargs):
 
         """Update equity curves and scatter plot for all graphs."""
 
-        config        = kwargs["config"]
-        transactions  = kwargs["transactions"]
-        curves_dict   = kwargs["curves_dict"]
-        screenshot    = kwargs["screenshot"]
+        config = kwargs["config"]
+        transactions = kwargs["transactions"]
+        curves_dict = kwargs["curves_dict"]
+        screenshot = kwargs["screenshot"]
         start_capital = kwargs["start_capital"]
 
         state_details = config["what_to_show"]["state_details"]
-        state_dates   = config["what_to_show"]["state_dates"]
-        states_dd     = config["what_to_show"]    # get what to show
+        state_dates = config["what_to_show"]["state_dates"]
+        states_dd = config["what_to_show"]  # get what to show
 
         result_in = self.combobox_options.currentText()
         ig_config = funcMisc.read_ig_config()
@@ -1996,10 +2067,10 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         if transaction type is unknown log it
         """
 
-        kw_order    = ig_config["keyword"]["ORDER"]
-        kw_fees     = ig_config["keyword"]["FEES"]
-        kw_cashin   = ig_config["keyword"]["CASH_IN"]
-        kw_cashout  = ig_config["keyword"]["CASH_OUT"]
+        kw_order = ig_config["keyword"]["ORDER"]
+        kw_fees = ig_config["keyword"]["FEES"]
+        kw_cashin = ig_config["keyword"]["CASH_IN"]
+        kw_cashout = ig_config["keyword"]["CASH_OUT"]
         kw_transfer = ig_config["keyword"]["TRANSFER"]
 
         """
@@ -2009,78 +2080,90 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         """
 
         # build a list with all transactions except accounts ones
-        deal_id_plotted = [deal_id for deal_id in transactions.keys()
-                           if transactions[deal_id]["type"]!="CASHIN"
-                           and transactions[deal_id]["type"]!="CASHOUT"
-                           and transactions[deal_id]["type"]!="TRANSFER"]
+        deal_id_plotted = [
+            deal_id
+            for deal_id in transactions.keys()
+            if transactions[deal_id]["type"] != "CASHIN"
+            and transactions[deal_id]["type"] != "CASHOUT"
+            and transactions[deal_id]["type"] != "TRANSFER"
+        ]
 
         # build a list with only trades
-        trades_plotted = [deal_id for  deal_id in transactions.keys()
-                          if transactions[deal_id]["type"] in kw_order]
+        trades_plotted = [
+            deal_id
+            for deal_id in transactions.keys()
+            if transactions[deal_id]["type"] in kw_order
+        ]
 
         # build a list with only dates when a trades occurs
-        dates_plotted = [transactions[deal_id]["date"]
-                         for deal_id in transactions.keys()
-                         if transactions[deal_id]["type"] in kw_order]
+        dates_plotted = [
+            transactions[deal_id]["date"]
+            for deal_id in transactions.keys()
+            if transactions[deal_id]["type"] in kw_order
+        ]
 
         # build a list with all dates except when accounts fund transfer
-        dates_plotted_all = [transactions[deal_id]["date"]
-                             for deal_id in transactions.keys()
-                             if transactions[deal_id]["type"]!="CASHIN"
-                             and transactions[deal_id]["type"]!="CASHOUT"
-                             and transactions[deal_id]["type"]!="TRANSFER"]
+        dates_plotted_all = [
+            transactions[deal_id]["date"]
+            for deal_id in transactions.keys()
+            if transactions[deal_id]["type"] != "CASHIN"
+            and transactions[deal_id]["type"] != "CASHOUT"
+            and transactions[deal_id]["type"] != "TRANSFER"
+        ]
 
-        if len(deal_id_plotted) !=0: deal_id_plotted.insert(0,"")
-        if len(trades_plotted) !=0: trades_plotted.insert(0, "")
-        if len(dates_plotted) !=0: dates_plotted.insert(0, dates_plotted[0])
-        if len(dates_plotted_all) !=0: dates_plotted_all.insert(0, dates_plotted_all[0])
+        if len(deal_id_plotted) != 0:
+            deal_id_plotted.insert(0, "")
+        if len(trades_plotted) != 0:
+            trades_plotted.insert(0, "")
+        if len(dates_plotted) != 0:
+            dates_plotted.insert(0, dates_plotted[0])
+        if len(dates_plotted_all) != 0:
+            dates_plotted_all.insert(0, dates_plotted_all[0])
 
         # update chart
         for i, key in enumerate(self.graph_dict.keys()):
 
             # get the plot to update
-            equity_plot   = self.graph_dict[key]["equity_plot"]
+            equity_plot = self.graph_dict[key]["equity_plot"]
             overview_plot = self.graph_dict[key]["overview_plot"]
 
-            if key == "Points":    # points graph never show interest/dividend
+            if key == "Points":  # points graph never show interest/dividend
 
                 # update list of deal id plotte (attribute of the plot objects)
                 overview_plot._set_deal_id_plotted(trades_plotted)
                 equity_plot._set_deal_id_plotted(trades_plotted)
                 deal_id_list = trades_plotted
-                xaxis_dict   = funcMisc.create_dates_list(state_dates,
-                                                          dates_plotted,
-                                                          key,
-                                                          start_capital)
+                xaxis_dict = funcMisc.create_dates_list(
+                    state_dates, dates_plotted, key, start_capital
+                )
 
             else:
-                if config["include"] == 2:    # plot interest/dividend
+                if config["include"] == 2:  # plot interest/dividend
 
                     # update list of deal id plotted (attribute of the plot objects)
                     overview_plot._set_deal_id_plotted(deal_id_plotted)
                     equity_plot._set_deal_id_plotted(deal_id_plotted)
                     deal_id_list = deal_id_plotted
-                    xaxis_dict   = funcMisc.create_dates_list(state_dates,
-                                                              dates_plotted_all,
-                                                              key,
-                                                              start_capital)
+                    xaxis_dict = funcMisc.create_dates_list(
+                        state_dates, dates_plotted_all, key, start_capital
+                    )
 
                 else:
                     overview_plot._set_deal_id_plotted(trades_plotted)
                     equity_plot._set_deal_id_plotted(trades_plotted)
                     deal_id_list = trades_plotted
-                    xaxis_dict   = funcMisc.create_dates_list(state_dates,
-                                                              dates_plotted,
-                                                              key,
-                                                              start_capital)
+                    xaxis_dict = funcMisc.create_dates_list(
+                        state_dates, dates_plotted, key, start_capital
+                    )
 
             # get the curve to update
             overview_curve = self.graph_dict[key]["curve"]["overview_curve"]
-            equity_curve   = self.graph_dict[key]["curve"]["equity_curve"]
+            equity_curve = self.graph_dict[key]["curve"]["equity_curve"]
 
             # update x axis values/string
-            equity_plot.getAxis("bottom").update_axis(xaxis_dict,
-                                                      show_dates=state_dates)
+            equity_plot.getAxis("bottom").update_axis(
+                xaxis_dict, show_dates=state_dates
+            )
             overview_plot.getAxis("bottom").update_axis(xaxis_dict)
 
             for scatter_type in curves_dict[key].keys():
@@ -2088,20 +2171,26 @@ class ReportToolGUI(QtWidgets.QMainWindow):
                 # Scatter type can be equity_curve dd, maxdd or depth
                 if scatter_type == "equity_curve":
 
-                    ec_args = {"ec_color": config["ec_color"],
-                               "ec_style": config["ec_style"],
-                               "ec_size": config["ec_size"],
-                               "graph": key}    # set curve style with user choice
+                    ec_args = {
+                        "ec_color": config["ec_color"],
+                        "ec_style": config["ec_style"],
+                        "ec_size": config["ec_size"],
+                        "graph": key,
+                    }  # set curve style with user choice
 
-                    equity_plot.update_curve(equity_curve,
-                                             curves_dict[key]["equity_curve"],
-                                             list(xaxis_dict.keys()),
-                                             **ec_args)    # update equity curve
+                    equity_plot.update_curve(
+                        equity_curve,
+                        curves_dict[key]["equity_curve"],
+                        list(xaxis_dict.keys()),
+                        **ec_args,
+                    )  # update equity curve
 
-                    overview_plot.update_curve(overview_curve,
-                                               curves_dict[key]["equity_curve"],
-                                               list(xaxis_dict.keys()),
-                                               **ec_args)    # update overview curve
+                    overview_plot.update_curve(
+                        overview_curve,
+                        curves_dict[key]["equity_curve"],
+                        list(xaxis_dict.keys()),
+                        **ec_args,
+                    )  # update overview curve
 
                 else:
                     scatter_args = {}
@@ -2115,16 +2204,18 @@ class ReportToolGUI(QtWidgets.QMainWindow):
                         # get data to diplay
                         xy_value = curves_dict[key][scatter_type]
                         scatter_args["clear"] = True
-                        equity_plot.update_scatter(scatter_item,
-                                                   np.array([]),
-                                                   np.array([]),
-                                                   **scatter_args)
+                        equity_plot.update_scatter(
+                            scatter_item, np.array([]), np.array([]), **scatter_args
+                        )
 
                     else:
 
                         # create list with keys corresponding to scatter to update
-                        keys_config = [key_config for key_config in config.keys()
-                                       if scatter_type in key_config]
+                        keys_config = [
+                            key_config
+                            for key_config in config.keys()
+                            if scatter_type in key_config
+                        ]
 
                         for option in keys_config:
                             scatter_args[option] = config[option]
@@ -2136,23 +2227,25 @@ class ReportToolGUI(QtWidgets.QMainWindow):
                         # get data to diplay
                         xy_value = curves_dict[key][scatter_type]
 
-                        equity_plot.update_scatter(scatter_item,
-                                                   xy_value[0],
-                                                   xy_value[1],
-                                                   **scatter_args)
+                        equity_plot.update_scatter(
+                            scatter_item, xy_value[0], xy_value[1], **scatter_args
+                        )
 
             # When new data are plotted set vline_pos are the middle
-            vline_pos   = len(transactions)//2
+            vline_pos = len(transactions) // 2
 
             # simulate a mouse click near the new pos
-            vline_coord = equity_plot.plotItem\
-                                     .vb.mapViewToScene(QtCore.QPointF(vline_pos, 0)).toPoint()
+            vline_coord = equity_plot.plotItem.vb.mapViewToScene(
+                QtCore.QPointF(vline_pos, 0)
+            ).toPoint()
 
-            trade_args  = {"plot_widget": equity_plot,
-                           "mouse_pos": vline_coord,
-                           "vline_pos": vline_pos,
-                           "screenshot": screenshot,
-                           "deal_id_plotted": deal_id_list}
+            trade_args = {
+                "plot_widget": equity_plot,
+                "mouse_pos": vline_coord,
+                "vline_pos": vline_pos,
+                "screenshot": screenshot,
+                "deal_id_plotted": deal_id_list,
+            }
 
             # update trade details
             try:
@@ -2175,11 +2268,10 @@ class ReportToolGUI(QtWidgets.QMainWindow):
                 equity_plot.remove_text_item("", all_comments=True)
                 self.comments_queue.put(deal_id_list)
 
-            elif screenshot == False:    # user don't want to show comments
+            elif screenshot == False:  # user don't want to show comments
                 equity_plot.remove_text_item("", all_comments=True)
 
-                self.dock_pos_details.hide()    # hide dock
-
+                self.dock_pos_details.hide()  # hide dock
 
     def update_comments(self, object_send):
 
@@ -2198,21 +2290,18 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             for data plotted (keys are deal_id, values are comments)
             """
 
-            for deal_id in object_send.keys():    # iterate over deal
+            for deal_id in object_send.keys():  # iterate over deal
 
-                comment     = object_send[deal_id]    # get comment
+                comment = object_send[deal_id]  # get comment
                 comment_str = str(comment[0])
-                comment[0]  = comment_str
+                comment[0] = comment_str
 
-                for key in self.graph_dict.keys():    # update graph
-                    equity_plot   = self.graph_dict[key]["equity_plot"]
-                    equity_curve  = self.graph_dict[key]["curve"]["equity_curve"]
+                for key in self.graph_dict.keys():  # update graph
+                    equity_plot = self.graph_dict[key]["equity_plot"]
+                    equity_curve = self.graph_dict[key]["curve"]["equity_curve"]
                     overview_plot = self.graph_dict[key]["overview_plot"]
 
-                    equity_plot.add_text_item(equity_curve,
-                                              comment,
-                                              deal_id,
-                                              key)
+                    equity_plot.add_text_item(equity_curve, comment, deal_id, key)
 
                     """
                     as the comments are shown an equity plot only
@@ -2232,22 +2321,21 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             been sollicited for a particular deal_id.
             """
 
-            comment     = object_send
+            comment = object_send
             comment_str = str(comment[0])
-            comment[0]  = comment_str
+            comment[0] = comment_str
 
             # set comment found and state of checkbox
             self.text_edit_comment.setPlainText(comment[0])
             self.checkbox_showongraph.setCheckState(comment[1])
 
             for key in self.graph_dict.keys():
-                equity_plot    = self.graph_dict[key]["equity_plot"]
-                equity_curve   = self.graph_dict[key]["curve"]["equity_curve"]
-                overview_plot  = self.graph_dict[key]["overview_plot"]
-                equity_plot.add_text_item(equity_curve,
-                                          comment,
-                                          self.deal_id_clicked,
-                                          key)
+                equity_plot = self.graph_dict[key]["equity_plot"]
+                equity_curve = self.graph_dict[key]["curve"]["equity_curve"]
+                overview_plot = self.graph_dict[key]["overview_plot"]
+                equity_plot.add_text_item(
+                    equity_curve, comment, self.deal_id_clicked, key
+                )
 
                 """
                 as the comments are shown an equity plot only
@@ -2259,7 +2347,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
                 comments_items = equity_plot._get_comments_items()
                 overview_plot._set_comments_items(comments_items)
-
 
     def update_overview_graph(self, plot, plot_range):
 
@@ -2273,30 +2360,28 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         :param plot_range: list of list contains range X Y of graph
         """
 
-        active_tab      = self.widget_tab.currentIndex()
-        active_tab_name =str( self.widget_tab.tabText(active_tab)).replace("&", "")
+        active_tab = self.widget_tab.currentIndex()
+        active_tab_name = str(self.widget_tab.tabText(active_tab)).replace("&", "")
 
         # get plot (points, capital or growth) selected
         try:
-            overview_plot  = self.graph_dict[active_tab_name]["overview_plot"]
+            overview_plot = self.graph_dict[active_tab_name]["overview_plot"]
             overview_curve = self.graph_dict[active_tab_name]["curve"]["overview_curve"]
 
-            equity_plot  = self.graph_dict[active_tab_name]["equity_plot"]
+            equity_plot = self.graph_dict[active_tab_name]["equity_plot"]
             equity_curve = self.graph_dict[active_tab_name]["curve"]["equity_curve"]
 
-        except KeyError:    # when Transactions tab is selected
-            overview_plot  = self.graph_dict["Points"]["overview_plot"]
+        except KeyError:  # when Transactions tab is selected
+            overview_plot = self.graph_dict["Points"]["overview_plot"]
             overview_curve = self.graph_dict["Points"]["curve"]["overview_curve"]
 
-            equity_plot    = self.graph_dict["Points"]["equity_plot"]
-            equity_curve   = self.graph_dict["Points"]["curve"]["equity_curve"]
+            equity_plot = self.graph_dict["Points"]["equity_plot"]
+            equity_curve = self.graph_dict["Points"]["curve"]["equity_curve"]
 
-
-        range_to_set = equity_plot.viewRange()    # sent by signal
-        overview_plot.update_region(overview_curve,
-                                    range_to_set,
-                                    **{"graph" : active_tab_name})    # update region
-
+        range_to_set = equity_plot.viewRange()  # sent by signal
+        overview_plot.update_region(
+            overview_curve, range_to_set, **{"graph": active_tab_name}
+        )  # update region
 
     def update_equity_graph(self, region):
 
@@ -2308,23 +2393,22 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         :param region: pyqtgraph.LinearRegionItem
         """
 
-        active_tab      = self.widget_tab.currentIndex()
-        active_tab_name = str( self.widget_tab.tabText(active_tab)).replace("&", "")
+        active_tab = self.widget_tab.currentIndex()
+        active_tab_name = str(self.widget_tab.tabText(active_tab)).replace("&", "")
 
         # get plot (points, capital or growth) selected
         try:
-            equity_plot  = self.graph_dict[active_tab_name]["equity_plot"]
+            equity_plot = self.graph_dict[active_tab_name]["equity_plot"]
             equity_curve = self.graph_dict[active_tab_name]["curve"]["equity_curve"]
 
-        except KeyError as KE:    # When Transactions tab is selected
-            equity_plot  = self.graph_dict["Points"]["equity_plot"]
+        except KeyError as KE:  # When Transactions tab is selected
+            equity_plot = self.graph_dict["Points"]["equity_plot"]
             equity_curve = self.graph_dict["Points"]["curve"]["equity_curve"]
 
-        range_to_set = region.getRegion()    # get region bounds
-        equity_plot.update_range(equity_curve,
-                                 range_to_set,
-                                 **{"graph": active_tab_name})
-
+        range_to_set = region.getRegion()  # get region bounds
+        equity_plot.update_range(
+            equity_curve, range_to_set, **{"graph": active_tab_name}
+        )
 
     def update_trade_details(self, *args, **kwargs):
 
@@ -2346,38 +2430,42 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         corresponding to keys in transactions as values
         """
 
-        pos_details_headers = OrderedDict([(" ", "market_name"),
-                                           ("h_line", ""),
-                                           ("Date", "date"),
-                                           ("Trade", 1),
-                                           ("Direction", "direction"),
-                                           ("Size", "open_size"),
-                                           ("Open", "open_level"),
-                                           ("Close", "final_level"),
-                                           ("Profit", "points,points_lot,pnl"),
-                                           ("h_line_2", "")])
+        pos_details_headers = OrderedDict(
+            [
+                (" ", "market_name"),
+                ("h_line", ""),
+                ("Date", "date"),
+                ("Trade", 1),
+                ("Direction", "direction"),
+                ("Size", "open_size"),
+                ("Open", "open_level"),
+                ("Close", "final_level"),
+                ("Profit", "points,points_lot,pnl"),
+                ("h_line_2", ""),
+            ]
+        )
 
         # get configuration
         profit_color = config["profit_color"]
-        flat_color   = config["flat_color"]
-        loss_color   = config["loss_color"]
+        flat_color = config["flat_color"]
+        loss_color = config["loss_color"]
 
-        include         = config["include"]
-        all_state       = config["all"]    # all markets or filter set
+        include = config["include"]
+        all_state = config["all"]  # all markets or filter set
         currency_symbol = config["currency_symbol"]
-        state_details   = config["what_to_show"]["state_details"]
+        state_details = config["what_to_show"]["state_details"]
 
         plot_widget = kwargs["plot_widget"]
-        mouse_pos   = kwargs["mouse_pos"]
-        screenshot  = kwargs["screenshot"]
+        mouse_pos = kwargs["mouse_pos"]
+        screenshot = kwargs["screenshot"]
 
         # retrieve active plot and get mouse coordinates
-        active_tab      = self.widget_tab.currentIndex()
-        active_tab_name = str( self.widget_tab.tabText(active_tab)).replace("&", "")
-        mouse_x         = mouse_pos.x()
-        mouse_y         = mouse_pos.y()
-        graph_height    = plot_widget.geometry().height()    # height of graph
-        dict_to_search  = OrderedDict()
+        active_tab = self.widget_tab.currentIndex()
+        active_tab_name = str(self.widget_tab.tabText(active_tab)).replace("&", "")
+        mouse_x = mouse_pos.x()
+        mouse_y = mouse_pos.y()
+        graph_height = plot_widget.geometry().height()  # height of graph
+        dict_to_search = OrderedDict()
 
         if state_details != 2:
 
@@ -2395,10 +2483,10 @@ class ReportToolGUI(QtWidgets.QMainWindow):
                 pg_widget.show_vline()
 
         # get correct dictionnary to search
-        if all_state == 2:    # filter off
-            dict_to_search = deepcopy(self.local_transactions)    # use default dict
+        if all_state == 2:  # filter off
+            dict_to_search = deepcopy(self.local_transactions)  # use default dict
         else:
-            dict_to_search = deepcopy(self.filtered_dict)    # use filtered dict
+            dict_to_search = deepcopy(self.filtered_dict)  # use filtered dict
 
         """
         if exclude interest or active graph is points build
@@ -2408,13 +2496,15 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
         if include != 2 or active_tab_name == "Points":
             for key in dict_to_search.keys():
-                if dict_to_search[key]["type"] == "WITH"\
-                or dict_to_search[key]["type"] == "DEPO"\
-                or dict_to_search[key]["type"] == "DIVIDEND"\
-                or dict_to_search[key]["type"] == "CHART"\
-                or dict_to_search[key]["type"] == "CASHIN"\
-                or dict_to_search[key]["type"] == "CASHOUT"\
-                or dict_to_search[key]["type"] == "TRANSFER":
+                if (
+                    dict_to_search[key]["type"] == "WITH"
+                    or dict_to_search[key]["type"] == "DEPO"
+                    or dict_to_search[key]["type"] == "DIVIDEND"
+                    or dict_to_search[key]["type"] == "CHART"
+                    or dict_to_search[key]["type"] == "CASHIN"
+                    or dict_to_search[key]["type"] == "CASHOUT"
+                    or dict_to_search[key]["type"] == "TRANSFER"
+                ):
 
                     dict_to_search.pop(key, None)
 
@@ -2423,17 +2513,19 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
         else:
             for key in dict_to_search.keys():
-                if dict_to_search[key]["type"] == "CASHIN"\
-                or dict_to_search[key]["type"] == "CASHOUT"\
-                or dict_to_search[key]["type"] == "TRANSFER"\
-                or dict_to_search[key]["type"] == "TRANSFER":
+                if (
+                    dict_to_search[key]["type"] == "CASHIN"
+                    or dict_to_search[key]["type"] == "CASHOUT"
+                    or dict_to_search[key]["type"] == "TRANSFER"
+                    or dict_to_search[key]["type"] == "TRANSFER"
+                ):
 
                     dict_to_search.pop(key, None)
 
                 else:
                     continue
 
-        if not dict_to_search:    # no trades found
+        if not dict_to_search:  # no trades found
 
             # update vertical line pos for each plot
             for key in self.graph_dict.keys():
@@ -2451,7 +2543,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             # create a list all trade number available
             list_count_pos = [i + 1 for i in range(len(dict_to_search))]
 
-
         """
         If function is called by keyPressEvent the index of pos
         is directly send, don"t need to map the mouse click
@@ -2463,23 +2554,24 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         except KeyError:
 
             # x value (trade number) under mouse click
-            x_value_clicked = plot_widget.plotItem\
-                                         .vb.mapSceneToView(mouse_pos).x()
+            x_value_clicked = plot_widget.plotItem.vb.mapSceneToView(mouse_pos).x()
 
-        if x_value_clicked < 0.5:    # no trade number equals to 0
-            x_value_clicked = 1    # force trade number to be 1
+        if x_value_clicked < 0.5:  # no trade number equals to 0
+            x_value_clicked = 1  # force trade number to be 1
 
         # no trade number > last trade force trade number to be = the last trade
         elif x_value_clicked > list_count_pos[-1]:
             x_value_clicked = list_count_pos[-1]
 
         # find closest trade number to mouse click
-        closest_x = min(list_count_pos,
-                        key=lambda x:abs(x-round(x_value_clicked, 0)))
+        closest_x = min(
+            list_count_pos, key=lambda x: abs(x - round(x_value_clicked, 0))
+        )
 
         # get mouse click coordinates in px
-        x_coord = plot_widget.plotItem\
-                             .vb.mapViewToScene(QtCore.QPointF(closest_x, 0)).x()
+        x_coord = plot_widget.plotItem.vb.mapViewToScene(
+            QtCore.QPointF(closest_x, 0)
+        ).x()
 
         # update vertical line pos for each plot
         for key in self.graph_dict.keys():
@@ -2493,27 +2585,27 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         """
 
         # FIXME: dict .keys() order was not deterministic prior to 3.6. Reviewing is needed
-        self.deal_id_clicked = list(dict_to_search.keys())[closest_x-1]
+        self.deal_id_clicked = list(dict_to_search.keys())[closest_x - 1]
         self.comments_queue.put(str(self.deal_id_clicked))
 
         # set deal_id row as active row in table
-        self.widget_pos.setCurrentCell(closest_x -1, 0)
+        self.widget_pos.setCurrentCell(closest_x - 1, 0)
 
-        dock_args = {"pos_details_headers": pos_details_headers,
-                     "dict_to_search": dict_to_search,
-                     "deal_id_clicked": self.deal_id_clicked,
-                     "index_clicked": closest_x,
-                     "screenshot": screenshot
-                     }
+        dock_args = {
+            "pos_details_headers": pos_details_headers,
+            "dict_to_search": dict_to_search,
+            "deal_id_clicked": self.deal_id_clicked,
+            "index_clicked": closest_x,
+            "screenshot": screenshot,
+        }
 
         try:
-            self.dock_pos_details.change_content(**dock_args)    # update labels
+            self.dock_pos_details.change_content(**dock_args)  # update labels
 
         except Exception as e:
             msg = "An error occured, see log file"
             self.statusBar().showMessage(msg)
             self.logger_debug.log(logging.ERROR, traceback.format_exc())
-
 
     def write_comments(self, *args, **kwargs):
 
@@ -2526,7 +2618,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         dict_to_save = {}
 
         comment_to_write = str(self.text_edit_comment.toPlainText())
-        show_on_graph    = self.checkbox_showongraph.checkState()
+        show_on_graph = self.checkbox_showongraph.checkState()
 
         """
         comment_to_write is build as a list  with text
@@ -2536,17 +2628,16 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         comment_to_write = [comment_to_write, show_on_graph]
 
         for key in self.graph_dict.keys():
-            equity_plot   = self.graph_dict[key]["equity_plot"]
-            equity_curve  = self.graph_dict[key]["curve"]["equity_curve"]
+            equity_plot = self.graph_dict[key]["equity_plot"]
+            equity_curve = self.graph_dict[key]["curve"]["equity_curve"]
             overview_plot = self.graph_dict[key]["overview_plot"]
 
-            if comment_to_write[0] == "":    # comment is empty
+            if comment_to_write[0] == "":  # comment is empty
                 equity_plot.remove_text_item(self.deal_id_clicked)
             else:
-                equity_plot.add_text_item(equity_curve,
-                                          comment_to_write,
-                                          self.deal_id_clicked,
-                                          key)
+                equity_plot.add_text_item(
+                    equity_curve, comment_to_write, self.deal_id_clicked, key
+                )
 
             """
             as the comments are shown an equity plot only update
@@ -2561,7 +2652,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             dict_to_save[self.deal_id_clicked] = comment_to_write
             self.comments_queue.put(dict_to_save)
 
-
     def update_filter(self, filtered_dict):
 
         """
@@ -2573,9 +2663,11 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
         self.filtered_dict = filtered_dict
 
-        fill_args = {"modified_trans": filtered_dict,
-                     "screenshot": False,
-                     "sender": "update_filter"}
+        fill_args = {
+            "modified_trans": filtered_dict,
+            "screenshot": False,
+            "sender": "update_filter",
+        }
 
         try:
             self.update_results({}, **fill_args)
@@ -2585,7 +2677,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             self.statusBar().showMessage(msg)
             self.logger_debug.log(logging.ERROR, traceback.format_exc())
 
-
     def show_options(self):
 
         """Show options dialog"""
@@ -2594,16 +2685,15 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             pass
 
         elif self.dock_pos_details.isHidden() == False:
-                self.dock_pos_details.hide()
+            self.dock_pos_details.hide()
 
         self.diag_options.exec_()
 
         config = funcMisc.read_config()
-        state_details = config['what_to_show']['state_details']
+        state_details = config["what_to_show"]["state_details"]
 
         if self.dock_pos_details.isHidden() == True and state_details == 2:
-                self.dock_pos_details.show()
-
+            self.dock_pos_details.show()
 
     def show_export(self, *args, **kwargs):
 
@@ -2615,7 +2705,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             pass
 
         elif self.dock_pos_details.isHidden() == False:
-                self.dock_pos_details.hide()
+            self.dock_pos_details.hide()
 
         if not os.path.exists("Export"):
             os.makedirs("Export")
@@ -2635,8 +2725,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         state_details = config["what_to_show"]["state_details"]
 
         if self.dock_pos_details.isHidden() == True and state_details == 2:
-                self.dock_pos_details.show()
-
+            self.dock_pos_details.show()
 
     def show_filter(self):
 
@@ -2649,18 +2738,19 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             pass
 
         elif self.dock_pos_details.isHidden() == False:
-                self.dock_pos_details.hide()
+            self.dock_pos_details.hide()
 
         # init window
         filter_diag = classDialogBox.FilterWindow(self)
-        filter_sig  = filter_diag.filter_signal
+        filter_sig = filter_diag.filter_signal
 
         # connect signal that notify filter has changed
         filter_sig.connect(self.update_filter)
 
         # create window according to markets in transactions
-        previous_filter = [self.filtered_dict[key]["market_name"]
-                           for key in self.filtered_dict.keys()]    # list of market names
+        previous_filter = [
+            self.filtered_dict[key]["market_name"] for key in self.filtered_dict.keys()
+        ]  # list of market names
 
         filter_diag.build_window(self.local_transactions, previous_filter)
 
@@ -2668,8 +2758,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         state_details = config["what_to_show"]["state_details"]
 
         if self.dock_pos_details.isHidden() == True and state_details == 2:
-                self.dock_pos_details.show()
-
+            self.dock_pos_details.show()
 
     def show_about(self):
 
@@ -2679,18 +2768,16 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             pass
 
         elif self.dock_pos_details.isHidden() == False:
-                self.dock_pos_details.hide()
+            self.dock_pos_details.hide()
 
         about_window = classDialogBox.AboutWindow(self)
         about_window.exec_()
 
         config = funcMisc.read_config()
-        state_details = config['what_to_show']['state_details']
-
+        state_details = config["what_to_show"]["state_details"]
 
         if self.dock_pos_details.isHidden() == True and state_details == 2:
-                self.dock_pos_details.show()
-
+            self.dock_pos_details.show()
 
     def take_screenshot(self):
 
@@ -2699,40 +2786,40 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         Called when user clicks on screenshot buttons.
         """
 
-        config = funcMisc.read_config()    # load config file
+        config = funcMisc.read_config()  # load config file
 
-        what_to_print   = config["what_to_print"]
-        state_infos     = str(config["what_to_show"]["state_infos"])
-        state_size      = str(config["what_to_show"]["state_size"])
-        base_dir_out    = config["dir_out"]
+        what_to_print = config["what_to_print"]
+        state_infos = str(config["what_to_show"]["state_infos"])
+        state_size = str(config["what_to_show"]["state_size"])
+        base_dir_out = config["dir_out"]
         currency_symbol = config["currency_symbol"]
 
         if not os.path.exists(base_dir_out):
-            os.makedirs(base_dir_out)    # create dir if not exists
+            os.makedirs(base_dir_out)  # create dir if not exists
 
         today = datetime.datetime.now().strftime("%d-%m-%Y %H:%M:%S")
 
-        dock_widget_list = self.findChildren(QtWidgets.QDockWidget)    # get all qdock
-        active_tab       = self.widget_tab.currentIndex()
-        active_tab_name  =str( self.widget_tab.tabText(active_tab)).replace("&", "")
+        dock_widget_list = self.findChildren(QtWidgets.QDockWidget)  # get all qdock
+        active_tab = self.widget_tab.currentIndex()
+        active_tab_name = str(self.widget_tab.tabText(active_tab)).replace("&", "")
 
-        old_labels = OrderedDict()    # dict to save unchanged labels
+        old_labels = OrderedDict()  # dict to save unchanged labels
 
         connect_dict = self.session._get_connect_dict()
-        base_url     = connect_dict["base_url"]
+        base_url = connect_dict["base_url"]
 
         """
         Update account dock according touser"s choice.
         Sensitive info such asID, capital...can be hidden
         """
 
-        if state_infos == "Never":    # don"t hide infos
+        if state_infos == "Never":  # don"t hide infos
             pass
 
         else:
             for key in self.dict_account_labels.keys():
-                label    = self.dict_account_labels[key]
-                old_text = label.text()    # get unchanged text
+                label = self.dict_account_labels[key]
+                old_text = label.text()  # get unchanged text
                 old_labels[key] = old_text
 
                 if key == "Account type: ":
@@ -2748,7 +2835,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
                 else:
                     label.setText("xxxx")
 
-        all_state = config["all"]    # all markets or filter set
+        all_state = config["all"]  # all markets or filter set
 
         if all_state != 2:
             modified_transactions = self.filtered_dict
@@ -2756,9 +2843,11 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         else:
             modified_transactions = self.local_transactions
 
-        fill_args = {"modified_trans": modified_transactions,
-                     "screenshot": True,
-                     "sender": "screenshot"}
+        fill_args = {
+            "modified_trans": modified_transactions,
+            "screenshot": True,
+            "sender": "screenshot",
+        }
 
         """
         Called update_results notifying function that a screenshot
@@ -2778,44 +2867,42 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
         if what_to_print == "All window":
 
-            pixmap = QtGui.QPixmap().grabWidget(self)    # get pix map of all window
-            pixmap_dict["Summary + "+ active_tab_name + " "] = pixmap
+            pixmap = QtGui.QPixmap().grabWidget(self)  # get pix map of all window
+            pixmap_dict["Summary + " + active_tab_name + " "] = pixmap
 
-            pixmap = QtGui.QPixmap().grabWidget(self.widget_pos,
-                                                self.widget_pos.rect())
+            pixmap = QtGui.QPixmap().grabWidget(self.widget_pos, self.widget_pos.rect())
 
             # the key will be used to construct file name
             pixmap_dict["Transactions "] = pixmap
 
-            for key in self.graph_dict.keys():    # get pixmap of all graphs
+            for key in self.graph_dict.keys():  # get pixmap of all graphs
                 graph = self.graph_dict[key]["equity_plot"]
                 pixmap_graph = QtGui.QPixmap().grabWidget(graph)
 
                 # the key will be used to construct file name
                 pixmap_dict[key + " EC "] = pixmap_graph
 
-        elif what_to_print == "Transactions":    # get pixmap of transactions table
+        elif what_to_print == "Transactions":  # get pixmap of transactions table
 
-            pixmap = QtGui.QPixmap().grabWidget(self.widget_pos,
-                                                self.widget_pos.rect())
+            pixmap = QtGui.QPixmap().grabWidget(self.widget_pos, self.widget_pos.rect())
 
             # the key will be used to construct file name
             pixmap_dict["Transactions "] = pixmap
 
         elif what_to_print == "Graph":
 
-            for key in self.graph_dict.keys():    # take pixmap of all graph
+            for key in self.graph_dict.keys():  # take pixmap of all graph
                 graph = self.graph_dict[key]["equity_plot"]
                 pixmap_graph = QtGui.QPixmap().grabWidget(graph)
 
                 # the key will be used to construct file name
                 pixmap_dict[key + " EC "] = pixmap_graph
 
-        elif what_to_print == "Summary":    # get pixmap of Summary dock
+        elif what_to_print == "Summary":  # get pixmap of Summary dock
 
             # build a list with all name of qdock ans get Summary dock
             dock_widget_names = [dock.objectName() for dock in dock_widget_list]
-            idx_dock_summary  = dock_widget_names.index("Summary")
+            idx_dock_summary = dock_widget_names.index("Summary")
             dock_summary = dock_widget_list[idx_dock_summary]
 
             pixmap = QtGui.QPixmap().grabWidget(dock_summary)
@@ -2832,12 +2919,10 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
         # restore previous results
         if config["all"] == 0:
-            fill_args = {"modified_trans": self.filtered_dict,
-                         "screenshot": False}
+            fill_args = {"modified_trans": self.filtered_dict, "screenshot": False}
 
         else:
-            fill_args = {"modified_trans": self.local_transactions,
-                         "screenshot" : False}
+            fill_args = {"modified_trans": self.local_transactions, "screenshot": False}
 
         fill_args["msg"] = "Screenshot saved"
         fill_args["sender"] = "screenshot"
@@ -2850,14 +2935,13 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             self.statusBar().showMessage(msg)
             self.logger_debug.log(logging.ERROR, traceback.format_exc())
 
-        if state_infos != "Never":    # reset account labels if it have been changed
+        if state_infos != "Never":  # reset account labels if it have been changed
             for key in self.dict_account_labels.keys():
                 label = self.dict_account_labels[key]
                 label.setText(old_labels[key])
 
         msg = "Screenshots saved"
         self.statusBar().showMessage(msg)
-
 
     def set_gui_enabled(self, state):
 
@@ -2885,7 +2969,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         self.widget_tab.setEnabled(state)
         self.statusBar().setEnabled(state)
 
-
     def keyPressEvent(self, event):
 
         """
@@ -2898,7 +2981,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
         config = funcMisc.read_config()
         state_details = config["what_to_show"]["state_details"]
-        shortcut      = config["shortcut"]
+        shortcut = config["shortcut"]
 
         # check if the key pressed correspond to a key sequence
         if event.type() == QtCore.QEvent.KeyPress:
@@ -2909,15 +2992,17 @@ class ReportToolGUI(QtWidgets.QMainWindow):
                 return
 
             # the user have clicked just and only the special keys Ctrl, Shift, Alt, Meta.
-            if(key == QtCore.Qt.Key_Control or
-               key == QtCore.Qt.Key_Shift or
-               key == QtCore.Qt.Key_Alt or
-               key == QtCore.Qt.Key_Meta):
+            if (
+                key == QtCore.Qt.Key_Control
+                or key == QtCore.Qt.Key_Shift
+                or key == QtCore.Qt.Key_Alt
+                or key == QtCore.Qt.Key_Meta
+            ):
                 return
 
             # check for a combination of user clicks
             modifiers = event.modifiers()
-            keyText   = event.text()
+            keyText = event.text()
 
             # if the keyText is empty than it's a special key like F1, F5, ...
             if modifiers & QtCore.Qt.ShiftModifier:
@@ -2930,8 +3015,9 @@ class ReportToolGUI(QtWidgets.QMainWindow):
                 key += QtCore.Qt.META
 
             # if keysequence is the one saved take screenshot
-            human_shortcut = QtGui.QKeySequence(key)\
-                                  .toString(QtGui.QKeySequence.NativeText)
+            human_shortcut = QtGui.QKeySequence(key).toString(
+                QtGui.QKeySequence.NativeText
+            )
 
             # take screenshot
             if human_shortcut == shortcut:
@@ -2941,12 +3027,13 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         # if key is not the shorcut naviguate on graph
         if state_details == 2:
 
-            if event.key() == QtCore.Qt.Key_Right:    # right arrow
+            if event.key() == QtCore.Qt.Key_Right:  # right arrow
 
                 # retrieve active plot widget
-                active_tab      = self.widget_tab.currentIndex()
-                active_tab_name = str(self.widget_tab.tabText(active_tab))\
-                                     .replace("&", "")
+                active_tab = self.widget_tab.currentIndex()
+                active_tab_name = str(self.widget_tab.tabText(active_tab)).replace(
+                    "&", ""
+                )
 
                 # "Transactions" not a graph
                 if active_tab_name == "Transactions":
@@ -2957,29 +3044,35 @@ class ReportToolGUI(QtWidgets.QMainWindow):
                     plot_widget = self.graph_dict[active_tab_name]["equity_plot"]
 
                 try:
-                    vline_pos   = plot_widget.get_vline_pos() + 1    # next pos on the right
-                    point_obj   = QtCore.QPointF(vline_pos, 0)
+                    vline_pos = plot_widget.get_vline_pos() + 1  # next pos on the right
+                    point_obj = QtCore.QPointF(vline_pos, 0)
 
                     # simulate a mouse click near the new pos
-                    vline_coord = plot_widget.plotItem.vb\
-                                             .mapViewToScene(point_obj).toPoint()
+                    vline_coord = plot_widget.plotItem.vb.mapViewToScene(
+                        point_obj
+                    ).toPoint()
 
-                    trade_args  = {"plot_widget": plot_widget,
-                                   "mouse_pos": vline_coord,
-                                   "vline_pos": vline_pos,
-                                   "screenshot": False}
+                    trade_args = {
+                        "plot_widget": plot_widget,
+                        "mouse_pos": vline_coord,
+                        "vline_pos": vline_pos,
+                        "screenshot": False,
+                    }
 
-                except TypeError:    # update_trade_details hasn"t been called yet
-                    point_obj   = QtCore.QPointF(vline_pos, 0)  # FIXME
+                except TypeError:  # update_trade_details hasn"t been called yet
+                    point_obj = QtCore.QPointF(vline_pos, 0)  # FIXME
 
                     # simulate a mouse click (1, 0)
-                    vline_coord = plot_widget.plotItem.vb\
-                                             .mapViewToScene(point_obj).toPoint()
+                    vline_coord = plot_widget.plotItem.vb.mapViewToScene(
+                        point_obj
+                    ).toPoint()
 
-                    trade_args  = {"plot_widget" : plot_widget,
-                                   "mouse_pos" : vline_coord,
-                                   "vline_pos" : 1,    # force new_vline to be at 1
-                                   "screenshot" : False}
+                    trade_args = {
+                        "plot_widget": plot_widget,
+                        "mouse_pos": vline_coord,
+                        "vline_pos": 1,  # force new_vline to be at 1
+                        "screenshot": False,
+                    }
 
                 try:
                     self.update_trade_details(**trade_args)
@@ -2994,9 +3087,10 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             elif event.key() == QtCore.Qt.Key_Left:
 
                 # retrieve active plot widget
-                active_tab      = self.widget_tab.currentIndex()
-                active_tab_name = str(self.widget_tab.tabText(active_tab))\
-                                     .replace("&", "")
+                active_tab = self.widget_tab.currentIndex()
+                active_tab_name = str(self.widget_tab.tabText(active_tab)).replace(
+                    "&", ""
+                )
 
                 # "Transactions" not a graph
                 if active_tab_name == "Transactions":
@@ -3007,28 +3101,34 @@ class ReportToolGUI(QtWidgets.QMainWindow):
                     plot_widget = self.graph_dict[active_tab_name]["equity_plot"]
 
                 try:
-                    vline_pos   = plot_widget.get_vline_pos() - 1    # next pos on the right
-                    point_obj   = QtCore.QPointF(vline_pos, 0)
+                    vline_pos = plot_widget.get_vline_pos() - 1  # next pos on the right
+                    point_obj = QtCore.QPointF(vline_pos, 0)
 
                     # simulate a mouse click near the new pos
-                    vline_coord = plot_widget.plotItem.vb\
-                                             .mapViewToScene(point_obj).toPoint()
+                    vline_coord = plot_widget.plotItem.vb.mapViewToScene(
+                        point_obj
+                    ).toPoint()
 
-                    trade_args  = {"plot_widget": plot_widget,
-                                   "mouse_pos": vline_coord,
-                                   "vline_pos": vline_pos,
-                                   "screenshot": False}
+                    trade_args = {
+                        "plot_widget": plot_widget,
+                        "mouse_pos": vline_coord,
+                        "vline_pos": vline_pos,
+                        "screenshot": False,
+                    }
 
-                except TypeError:    # update_trade_details hasn"t been called yet
-                    point_obj   = QtCore.QPointF(vline_pos, 0)  # FIXME
+                except TypeError:  # update_trade_details hasn"t been called yet
+                    point_obj = QtCore.QPointF(vline_pos, 0)  # FIXME
 
                     # simulate a mouse click (1, 0)
-                    vline_coord = plot_widget.plotItem.vb\
-                                             .mapViewToScene(point_obj).toPoint()
-                    trade_args  = {"plot_widget": plot_widget,
-                                   "mouse_pos": vline_coord,
-                                   "vline_pos": 1,    # force new_vline to be at 1
-                                   "screenshot": False}
+                    vline_coord = plot_widget.plotItem.vb.mapViewToScene(
+                        point_obj
+                    ).toPoint()
+                    trade_args = {
+                        "plot_widget": plot_widget,
+                        "mouse_pos": vline_coord,
+                        "vline_pos": 1,  # force new_vline to be at 1
+                        "screenshot": False,
+                    }
 
                 try:
                     self.update_trade_details(**trade_args)
@@ -3048,7 +3148,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             QtWidgets.QMainWindow.keyPressEvent(self, event)
             event.accept()
 
-
     def mousePressEvent(self, event):
 
         """
@@ -3064,8 +3163,8 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         if event.button() == QtCore.Qt.LeftButton:
 
             # retrieve active plot widget
-            active_tab      = self.widget_tab.currentIndex()
-            active_tab_name = str(self.widget_tab.tabText(active_tab)).replace('&', '')
+            active_tab = self.widget_tab.currentIndex()
+            active_tab_name = str(self.widget_tab.tabText(active_tab)).replace("&", "")
 
             # "Transactions" not a graph
             if active_tab_name == "Transactions":
@@ -3076,7 +3175,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
                 plot_widget = self.graph_dict[active_tab_name]["equity_plot"]
 
             plot_widget_rect = plot_widget.getViewBox().geometry()
-            mouse_pos        = plot_widget.mapFromGlobal(event.globalPos())
+            mouse_pos = plot_widget.mapFromGlobal(event.globalPos())
 
             # mouse not under plot widget
             if plot_widget_rect.contains(mouse_pos) == False:
@@ -3086,21 +3185,21 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
             else:
 
-                if self.dock_pos_details.isHidden() == True\
-                and state_details == 2:
+                if self.dock_pos_details.isHidden() == True and state_details == 2:
                     self.dock_pos_details.show()
 
-                elif self.dock_pos_details.isHidden() == False\
-                and state_details != 2:
+                elif self.dock_pos_details.isHidden() == False and state_details != 2:
                     self.dock_pos_details.hide()
 
                 else:
                     pass
 
                 # update dock_pos_details
-                trade_args = {"plot_widget": plot_widget,
-                              "mouse_pos": mouse_pos,
-                              "screenshot": False}
+                trade_args = {
+                    "plot_widget": plot_widget,
+                    "mouse_pos": mouse_pos,
+                    "screenshot": False,
+                }
 
                 # update trade details
                 try:
@@ -3117,16 +3216,14 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             QtWidgets.QMainWindow.mousePressEvent(self, event)
             event.accept()
 
-
     def resizeEvent(self, event):
 
         """Reimplement resizeEvent to update comment pos"""
 
         for key in self.graph_dict.keys():
-            equity_plot    = self.graph_dict[key]["equity_plot"]
-            equity_curve   = self.graph_dict[key]["curve"]["equity_curve"]
+            equity_plot = self.graph_dict[key]["equity_plot"]
+            equity_curve = self.graph_dict[key]["curve"]["equity_curve"]
             equity_plot.update_text_item(equity_curve)
-
 
     def closeEvent(self, event):
 
@@ -3135,14 +3232,13 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         config = funcMisc.read_config()
 
         # save state ans size of window
-        config["gui_size"]  = (self.size().width(), self.size().height())
+        config["gui_size"] = (self.size().width(), self.size().height())
         config["gui_state"] = self.saveState()
-        config["gui_pos"]   = (self.pos().x(), self.pos().y())
+        config["gui_pos"] = (self.pos().x(), self.pos().y())
 
         funcMisc.write_config(config)
 
         self.close()
-
 
     def disconnect_from_api(self):
 
@@ -3156,8 +3252,13 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
         self.ls_client.destroy()
 
-        del self.balance_table, self.pos_table, self.ls_client,\
-            self.pos_update_sig, self.acc_update_sig
+        del (
+            self.balance_table,
+            self.pos_table,
+            self.ls_client,
+            self.pos_update_sig,
+            self.acc_update_sig,
+        )
 
         msg = "Logging out..."
         self.logger_info.log(logging.INFO, msg)
@@ -3179,11 +3280,10 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             self.statusBar().showMessage(msg)
 
             for i in range(self.widget_pos.rowCount()):
-                self.widget_pos.removeRow(0)    ## remove rows
-
+                self.widget_pos.removeRow(0)  ## remove rows
 
             for key in self.dict_summary_labels.keys():
-                self.dict_summary_labels[key].setText(key + ": ")    ## clear labels
+                self.dict_summary_labels[key].setText(key + ": ")  ## clear labels
 
             # clear all graphs
             for i, key in enumerate(self.graph_dict.keys()):

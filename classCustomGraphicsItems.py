@@ -15,14 +15,13 @@ class CustomLinearRegion(pg.LinearRegionItem):
     the linear region. see base class pg.LinearRegionItem for details
     """
 
-
-    def __init__(self, values=[0,1], orientation=None, brush=None,
-                 movable=True, bounds=None):
+    def __init__(
+        self, values=[0, 1], orientation=None, brush=None, movable=True, bounds=None
+    ):
 
         """See base base for kw arguments"""
 
         pg.LinearRegionItem.__init__(self)
-
 
     def set_pen(self, pen):
 
@@ -31,7 +30,7 @@ class CustomLinearRegion(pg.LinearRegionItem):
         infinite lines bounding the region
         """
 
-        for line in self.lines:    # get the infinite lines
+        for line in self.lines:  # get the infinite lines
             line.setPen(pen)
             hover_color = pen.color()
 
@@ -48,7 +47,6 @@ class DateAxis(pg.AxisItem):
     Ticks String can be either # of trades or dates
     """
 
-
     def __init__(self, xdict, *args, **kwargs):
 
         """
@@ -57,9 +55,8 @@ class DateAxis(pg.AxisItem):
 
         pg.AxisItem.__init__(self, *args, **kwargs)
 
-        self.x_values  = np.asarray(xdict.keys())
+        self.x_values = np.asarray(xdict.keys())
         self.x_strings = list(xdict.values())
-
 
     def update_axis(self, xdict, *args, **kwargs):
 
@@ -68,12 +65,12 @@ class DateAxis(pg.AxisItem):
         :param xdict: dict see funcMisc.create_dates_list
         """
 
-        self.xdict     = xdict
-        self.x_values  = np.asarray(self.xdict.keys())
+        self.xdict = xdict
+        self.x_values = np.asarray(self.xdict.keys())
         self.x_strings = list(self.xdict.values())
 
         try:
-            show_dates = kwargs["show_dates"]    # means equity_plot called function
+            show_dates = kwargs["show_dates"]  # means equity_plot called function
 
             # update x axis label
             if show_dates == 2:
@@ -83,9 +80,8 @@ class DateAxis(pg.AxisItem):
 
             self.setLabel(text=x_label)
 
-        except KeyError:    # means overview_plot called function
-            self.setLabel(text=None)    # never set label
-
+        except KeyError:  # means overview_plot called function
+            self.setLabel(text=None)  # never set label
 
     def tickStrings(self, values, scale, spacing):
 
@@ -103,7 +99,7 @@ class DateAxis(pg.AxisItem):
             if vs in self.x_values:
 
                 # Find the string with x_values closest to vs
-                vstr = self.x_strings[np.abs(self.x_values-vs).argmin()]
+                vstr = self.x_strings[np.abs(self.x_values - vs).argmin()]
 
             else:
                 vstr = ""
@@ -128,7 +124,6 @@ class CustomCurvePoint(pg.CurvePoint):
     see CurveArrow for an applied example
     """
 
-
     def __init__(self, curve, index=0, pos=None, rotate=True):
 
         """See base class for arguments"""
@@ -136,13 +131,14 @@ class CustomCurvePoint(pg.CurvePoint):
         pg.CurvePoint.__init__(self, curve, index=0, pos=None, rotate=True)
         self._angle = 0
 
-
     def event(self, ev):
 
         """Reimplement base method. add 90° to angle"""
 
-        if not isinstance(ev, QtCore.QDynamicPropertyChangeEvent)\
-        or self.curve() is None:
+        if (
+            not isinstance(ev, QtCore.QDynamicPropertyChangeEvent)
+            or self.curve() is None
+        ):
             return False
 
         # return False::::
@@ -161,42 +157,41 @@ class CustomCurvePoint(pg.CurvePoint):
         (x, y) = self.curve().getData()
 
         if index is None:
-            #print ev.propertyName(), self.property("position").toDouble()[0], self.property("position").typeName()
+            # print ev.propertyName(), self.property("position").toDouble()[0], self.property("position").typeName()
             pos = self.property("position")
 
-            if "QVariant" in repr(pos):   ## need to support 2 APIs  :(
+            if "QVariant" in repr(pos):  ## need to support 2 APIs  :(
                 pos = pos.toDouble()[0]
 
-            index = (len(x)-1) * np.clip(pos, 0.0, 1.0)
+            index = (len(x) - 1) * np.clip(pos, 0.0, 1.0)
 
         if index != int(index):  # interpolate floating-point values
             i1 = int(index)
-            i2 = np.clip(i1+1, 0, len(x)-1)
-            s2 = index-i1
-            s1 = 1.0-s2
-            newPos = (x[i1]*s1+x[i2]*s2, y[i1]*s1+y[i2]*s2)
+            i2 = np.clip(i1 + 1, 0, len(x) - 1)
+            s2 = index - i1
+            s1 = 1.0 - s2
+            newPos = (x[i1] * s1 + x[i2] * s2, y[i1] * s1 + y[i2] * s2)
         else:
             index = int(index)
-            i1 = np.clip(index-1, 0, len(x)-1)
-            i2 = np.clip(index+1, 0, len(x)-1)
+            i1 = np.clip(index - 1, 0, len(x) - 1)
+            i2 = np.clip(index + 1, 0, len(x) - 1)
             newPos = (x[index], y[index])
 
-        p1  = self.parentItem().mapToScene(QtCore.QPointF(x[i1], y[i1]))
-        p2  = self.parentItem().mapToScene(QtCore.QPointF(x[i2], y[i2]))
-        ang = np.arctan2(p2.y()-p1.y(), p2.x()-p1.x()) # returns radians
+        p1 = self.parentItem().mapToScene(QtCore.QPointF(x[i1], y[i1]))
+        p2 = self.parentItem().mapToScene(QtCore.QPointF(x[i2], y[i2]))
+        ang = np.arctan2(p2.y() - p1.y(), p2.x() - p1.x())  # returns radians
 
-        self._set_angle(ang)    # set angle
+        self._set_angle(ang)  # set angle
         self.resetTransform()
 
         if self._rotate:
 
             # set angle perpendicular to the curve"s tangent
-            self.rotate((180+ang*180/np.pi)+90)
+            self.rotate((180 + ang * 180 / np.pi) + 90)
 
         QtWidgets.QGraphicsItem.setPos(self, *newPos)
 
         return True
-
 
     def _get_angle(self):
 
@@ -204,12 +199,11 @@ class CustomCurvePoint(pg.CurvePoint):
 
         return self._angle
 
-
     def _set_angle(self, ang):
 
         """Setter method"""
 
-        self._angle = (180+ang*180/np.pi) + 90    # add 90 to angle
+        self._angle = (180 + ang * 180 / np.pi) + 90  # add 90 to angle
 
 
 class CustomCurveArrow(CustomCurvePoint):
@@ -223,7 +217,6 @@ class CustomCurveArrow(CustomCurvePoint):
     Provides properties that can be animated
     """
 
-
     def __init__(self, curve, index=0, pos=None, **opts):
 
         """See base class for arguments"""
@@ -232,16 +225,13 @@ class CustomCurveArrow(CustomCurvePoint):
 
         if opts.get("pxMode", True):
             opts["pxMode"] = False
-            self.setFlags(self.flags()|self.ItemIgnoresTransformations)
+            self.setFlags(self.flags() | self.ItemIgnoresTransformations)
 
         opts["angle"] = 0
         self.arrow = pg.ArrowItem(**opts)
 
         self.arrow.setParentItem(self)
 
-
     def setStyle(self, **opts):
 
         return self.arrow.setStyle(**opts)
-
-

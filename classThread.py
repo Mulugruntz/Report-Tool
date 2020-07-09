@@ -19,8 +19,7 @@ class TransactionThread(QtCore.QThread):
 
     """Create a thread for get the transaction of the given period"""
 
-
-    transaction_received = QtCore.pyqtSignal(object)    # create a finish signal
+    transaction_received = QtCore.pyqtSignal(object)  # create a finish signal
 
     def __init__(self, session, transaction_queue, result_handler, parent=None):
 
@@ -39,8 +38,7 @@ class TransactionThread(QtCore.QThread):
 
         # init loggers
         self.logger_debug = logging.getLogger("ReportTool_debug.IGAPI")
-        self.logger_info  = logging.getLogger("ReportTool_info.IGAPI")
-
+        self.logger_info = logging.getLogger("ReportTool_info.IGAPI")
 
     def run(self):
 
@@ -49,18 +47,18 @@ class TransactionThread(QtCore.QThread):
         If request successfull call trea_data, else emit an error msg
         """
 
-        while not self.transaction_queue.empty() :    # consumes every element in queue
+        while not self.transaction_queue.empty():  # consumes every element in queue
 
-            date_range = self.transaction_queue.get()    # get element in queue
+            date_range = self.transaction_queue.get()  # get element in queue
 
             # extract start date and end date
-            date     = re.findall(r"/(.*?)$", date_range)
-            date_lst =  "/".join(date).replace("/", ",").split(",")
+            date = re.findall(r"/(.*?)$", date_range)
+            date_lst = "/".join(date).replace("/", ",").split(",")
 
             start = date_lst[0]
-            end   = date_lst[-1]
+            end = date_lst[-1]
 
-            msg = "Retrieving transactions from %s to %s..." %(start, end)
+            msg = "Retrieving transactions from %s to %s..." % (start, end)
             self.logger_info.log(logging.INFO, msg)
 
             transactions_result = self.session.get_transactions(date_range)
@@ -72,7 +70,7 @@ class TransactionThread(QtCore.QThread):
 
             else:
                 nb_transactions = len(transactions_result["transactions"])
-                msg = "Received %d transactions" %(nb_transactions)
+                msg = "Received %d transactions" % (nb_transactions)
 
                 self.logger_info.log(logging.INFO, msg)
                 self.logger_info.log(logging.INFO, "Treating data...")
@@ -83,7 +81,6 @@ class TransactionThread(QtCore.QThread):
                     self.logger_debug.log(logging.ERROR, traceback.format_exc())
                     self.transaction_received.emit("An error occured: see log file")
         return
-
 
     def treat_data(self, transactions_result):
 
@@ -107,17 +104,26 @@ class TransactionThread(QtCore.QThread):
         :param transactions_result: dict returns by IG
         """
 
-        dict_transaction_headers = ["type", "date", "market_name","direction",
-                                    "open_size", "open_level", "final_level",
-                                    "points", "points_lot", "pnl"]
+        dict_transaction_headers = [
+            "type",
+            "date",
+            "market_name",
+            "direction",
+            "open_size",
+            "open_level",
+            "final_level",
+            "points",
+            "points_lot",
+            "pnl",
+        ]
 
         # load initial capital and config
-        config         = funcMisc.read_config()
-        start_capital  = float(config["start_capital"])
-        symbol         = config["currency_symbol"]
+        config = funcMisc.read_config()
+        start_capital = float(config["start_capital"])
+        symbol = config["currency_symbol"]
         auto_calculate = config["auto_calculate"]
-        agregate       = config["agregate"]
-        capital        = start_capital
+        agregate = config["agregate"]
+        capital = start_capital
 
         ig_config = funcMisc.read_ig_config()
 
@@ -127,10 +133,10 @@ class TransactionThread(QtCore.QThread):
         if transaction type is unknown log it
         """
 
-        kw_order    = ig_config["keyword"]["ORDER"]
-        kw_fees     = ig_config["keyword"]["FEES"]
-        kw_cashin   = ig_config["keyword"]["CASH_IN"]
-        kw_cashout  = ig_config["keyword"]["CASH_OUT"]
+        kw_order = ig_config["keyword"]["ORDER"]
+        kw_fees = ig_config["keyword"]["FEES"]
+        kw_cashin = ig_config["keyword"]["CASH_IN"]
+        kw_cashout = ig_config["keyword"]["CASH_OUT"]
         kw_transfer = ig_config["keyword"]["TRANSFER"]
 
         """
@@ -144,7 +150,7 @@ class TransactionThread(QtCore.QThread):
             deal_ref = transaction["reference"]
 
             if deal_ref not in transactions_dict:
-                transactions_dict.setdefault(deal_ref, [{}])    # build dict
+                transactions_dict.setdefault(deal_ref, [{}])  # build dict
                 transactions_dict[deal_ref][0] = transaction
 
             else:
@@ -155,27 +161,25 @@ class TransactionThread(QtCore.QThread):
         # FIXME: dict .keys() order was not deterministic prior to 3.6. Reviewing is needed
         # iterate over each deal_ref from older to newer
         for deal_ref in reversed(transactions_dict.keys()):
-            total_pnl    = 0
+            total_pnl = 0
             total_points = 0
-            total_size   = 0
+            total_size = 0
 
             # iterate over each event that concerns deal_ref
             for count, deal_transaction in enumerate(transactions_dict[deal_ref]):
 
                 # get the transaction type (order, fees...)
-                transaction_type = transactions_dict[deal_ref]\
-                                                    [count]["transactionType"]
+                transaction_type = transactions_dict[deal_ref][count]["transactionType"]
 
-                market = transactions_dict[deal_ref][count]\
-                                                    ["instrumentName"]
+                market = transactions_dict[deal_ref][count]["instrumentName"]
 
                 market_name = funcMisc.format_market_name(market)
 
-                if transaction_type in kw_order:    # transaction is an trade
-                    open_level  = transactions_dict[deal_ref][count]["openLevel"]
+                if transaction_type in kw_order:  # transaction is an trade
+                    open_level = transactions_dict[deal_ref][count]["openLevel"]
                     close_level = transactions_dict[deal_ref][count]["closeLevel"]
-                    size        = transactions_dict[deal_ref][count]["size"]
-                    str_pnl     = transactions_dict[deal_ref][count]["profitAndLoss"]
+                    size = transactions_dict[deal_ref][count]["size"]
+                    str_pnl = transactions_dict[deal_ref][count]["profitAndLoss"]
 
                     # as the pnl is an alphanumeric value extract the float part
                     re_float = r"[+-]? *(?:\d+(?:\.|\,\d*)?\.*\d+)(?:[eE][+-]?\d+)?"
@@ -206,25 +210,26 @@ class TransactionThread(QtCore.QThread):
                     it can corrupt a result if the user never do it
                     """
 
-                    pnl_args = {"open_level": open_level,
-                                "close_level": close_level,
-                                "size": size,
-                                "direction": direction,
-                                "market_name": market_name,
-                                }
+                    pnl_args = {
+                        "open_level": open_level,
+                        "close_level": close_level,
+                        "size": size,
+                        "direction": direction,
+                        "market_name": market_name,
+                    }
 
                     points = self.calculate_pnl(**pnl_args)
 
                     # if agregate cumulate size, points, pnl
                     if agregate == 2:
-                        total_points     += points
-                        total_pnl        += float(pnl)
-                        total_size       += float(size)
+                        total_points += points
+                        total_pnl += float(pnl)
+                        total_size += float(size)
 
                     else:
-                        total_points     = points
-                        total_pnl        = float(pnl)
-                        total_size       = float(size)
+                        total_points = points
+                        total_pnl = float(pnl)
+                        total_size = float(size)
 
                 elif transaction_type in kw_fees:
 
@@ -245,15 +250,15 @@ class TransactionThread(QtCore.QThread):
                     else:
                         transaction_type = transaction_type
 
-                    date      = transactions_dict[deal_ref][count]["date"]
-                    str_pnl   = transactions_dict[deal_ref][count]["profitAndLoss"]
-                    re_float  = r"[+-]? *(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?"
+                    date = transactions_dict[deal_ref][count]["date"]
+                    str_pnl = transactions_dict[deal_ref][count]["profitAndLoss"]
+                    re_float = r"[+-]? *(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?"
                     total_pnl = float(re.findall(re_float, str_pnl)[0])
 
-                    direction    = "-"
-                    open_level   = "-"
-                    total_size   = "-"
-                    final_level  = "-"
+                    direction = "-"
+                    open_level = "-"
+                    total_size = "-"
+                    final_level = "-"
                     total_points = "-"
 
                 # elif transaction_type in kw_cashin and\
@@ -299,36 +304,46 @@ class TransactionThread(QtCore.QThread):
                 #         transaction_type = "TRANSFER"    # change transaction type with clearer one
 
                 else:
-                    msg = "%s is undefined type" %transaction_type
+                    msg = "%s is undefined type" % transaction_type
                     self.logger_debug.log(logging.ERROR, msg)
 
                     date = transactions_dict[deal_ref][count]["date"]
 
-                    str_pnl      = "-"
-                    re_float     = "-"
-                    total_pnl    = "-"
-                    direction    = "-"
-                    open_level   = "-"
-                    total_size   = "-"
-                    final_level  = "-"
+                    str_pnl = "-"
+                    re_float = "-"
+                    total_pnl = "-"
+                    direction = "-"
+                    open_level = "-"
+                    total_size = "-"
+                    final_level = "-"
                     total_points = "-"
 
-                    transaction_type = "UNDEFINED"    # change transaction type with clearer one
+                    transaction_type = (
+                        "UNDEFINED"  # change transaction type with clearer one
+                    )
 
                 try:
 
                     try:
-                        points_lot = round((total_points/abs(total_size)), 2)
-                    except ZeroDivisionError :
+                        points_lot = round((total_points / abs(total_size)), 2)
+                    except ZeroDivisionError:
                         points_lot = "-"
 
                 except TypeError:
                     points_lot = "-"
 
-                infos_list = [transaction_type, date, market_name, direction,
-                              str(total_size), open_level, final_level,
-                              str(total_points), str(points_lot), str(total_pnl)]
-
+                infos_list = [
+                    transaction_type,
+                    date,
+                    market_name,
+                    direction,
+                    str(total_size),
+                    open_level,
+                    final_level,
+                    str(total_points),
+                    str(points_lot),
+                    str(total_pnl),
+                ]
 
                 """
                 if not agregate, for each transactions add a index
@@ -341,21 +356,24 @@ class TransactionThread(QtCore.QThread):
                     deal_ref_nb = deal_ref + "_" + str(count)
                     result_dict.setdefault(deal_ref_nb, {})
 
-                    for count, header in enumerate(dict_transaction_headers):    # fill dict
+                    for count, header in enumerate(
+                        dict_transaction_headers
+                    ):  # fill dict
                         result_dict[deal_ref_nb][header] = infos_list[count]
 
                 else:
-                    deal_ref_nb = deal_ref + "_0"    # don"t increment deal ref
+                    deal_ref_nb = deal_ref + "_0"  # don"t increment deal ref
                     result_dict.setdefault(deal_ref_nb, {})
 
-                    for count, header in enumerate(dict_transaction_headers):    # fill dict
+                    for count, header in enumerate(
+                        dict_transaction_headers
+                    ):  # fill dict
                         result_dict[deal_ref_nb][header] = infos_list[count]
 
         msg = "Done"
         self.logger_info.log(logging.INFO, msg)
 
-        self.transaction_received.emit(result_dict)    # emit dict
-
+        self.transaction_received.emit(result_dict)  # emit dict
 
     def calculate_pnl(self, *args, **kwargs):
 
@@ -369,10 +387,10 @@ class TransactionThread(QtCore.QThread):
         :kw param market_name: string, used to get type of market(FOREX, Indices)
         """
 
-        open_level  = kwargs["open_level"]
+        open_level = kwargs["open_level"]
         close_level = kwargs["close_level"]
-        size        = kwargs["size"]
-        direction   = kwargs["direction"]
+        size = kwargs["size"]
+        direction = kwargs["direction"]
         market_name = kwargs["market_name"]
 
         if direction == "BUY":
@@ -382,15 +400,26 @@ class TransactionThread(QtCore.QThread):
 
                 # means cross is with Yen
                 if "jpy" in market_name.lower():
-                    points = round((float(close_level)-float(open_level))
-                                   *abs(float(size)), 5)*100
+                    points = (
+                        round(
+                            (float(close_level) - float(open_level)) * abs(float(size)),
+                            5,
+                        )
+                        * 100
+                    )
                 else:
-                    points = round((float(close_level)-float(open_level))
-                                   *abs(float(size)), 5)*10000
+                    points = (
+                        round(
+                            (float(close_level) - float(open_level)) * abs(float(size)),
+                            5,
+                        )
+                        * 10000
+                    )
 
             else:
-                points = round((float(close_level)-float(open_level))
-                               *abs(float(size)), 2)
+                points = round(
+                    (float(close_level) - float(open_level)) * abs(float(size)), 2
+                )
 
         elif direction == "SELL":
 
@@ -399,16 +428,27 @@ class TransactionThread(QtCore.QThread):
 
                 # means cross is with Yen
                 if "jpy" in market_name.lower():
-                    points = round((float(open_level)-float(close_level))
-                                   *abs(float(size)), 5)*100
+                    points = (
+                        round(
+                            (float(open_level) - float(close_level)) * abs(float(size)),
+                            5,
+                        )
+                        * 100
+                    )
                 else:
-                    points = round((float(open_level)-float(close_level))
-                                   *abs(float(size)), 5)*10000
+                    points = (
+                        round(
+                            (float(open_level) - float(close_level)) * abs(float(size)),
+                            5,
+                        )
+                        * 10000
+                    )
             else:
-                points = round((float(open_level)-float(close_level))
-                               *abs(float(size)), 2)
+                points = round(
+                    (float(open_level) - float(close_level)) * abs(float(size)), 2
+                )
 
-        return(points)
+        return points
 
 
 class UpdateCommentsThread(QtCore.QThread):
@@ -434,7 +474,7 @@ class UpdateCommentsThread(QtCore.QThread):
     in classReportToolGUI to see how thread is managed.
     """
 
-    comment_found = QtCore.pyqtSignal(object)    # signal use to send comment
+    comment_found = QtCore.pyqtSignal(object)  # signal use to send comment
 
     def __init__(self, queue, result_handler, parent=None):
 
@@ -456,31 +496,31 @@ class UpdateCommentsThread(QtCore.QThread):
         """
 
         comment_path = os.getcwd() + "/comments.json"
-        config   = funcMisc.read_config()
+        config = funcMisc.read_config()
         last_usr = config["last_usr"]
 
         while True:
-            while not self.comments_queue.empty():    # run until queue is empty
-                comments = funcMisc.read_comment()    # read saved comments
+            while not self.comments_queue.empty():  # run until queue is empty
+                comments = funcMisc.read_comment()  # read saved comments
 
                 # pop empty user key, when first start or error while loading
                 try:
-                    comments.pop("", None)    #
+                    comments.pop("", None)  #
                 except KeyError:
                     pass
 
                 try:
                     usr_comments = comments[last_usr]
-                    for deal_id in usr_comments.keys():    # delete empty comments
+                    for deal_id in usr_comments.keys():  # delete empty comments
                         if usr_comments[deal_id][0] == "":
                             usr_comments.pop(deal_id, None)
 
                 except KeyError:
-                    usr_comments = {}   # no comment yet for this user
+                    usr_comments = {}  # no comment yet for this user
 
-                object_in_queue = self.comments_queue.get()    # get item in queue
+                object_in_queue = self.comments_queue.get()  # get item in queue
 
-                if isinstance(object_in_queue, Text):    # means it a deal_id
+                if isinstance(object_in_queue, Text):  # means it a deal_id
 
                     """
                     when thread reveives a string it means the user
@@ -491,10 +531,10 @@ class UpdateCommentsThread(QtCore.QThread):
                     # search for comment at this deal_id
                     try:
                         saved_comment = usr_comments[object_in_queue]
-                        self.comment_found.emit(saved_comment)    # emit comment found
+                        self.comment_found.emit(saved_comment)  # emit comment found
 
-                    except KeyError:    # no comment found
-                        self.comment_found.emit(["", 0])    # emit empty string
+                    except KeyError:  # no comment found
+                        self.comment_found.emit(["", 0])  # emit empty string
 
                 # means new data plotted, show all comments found
                 elif isinstance(object_in_queue, List):
@@ -517,7 +557,7 @@ class UpdateCommentsThread(QtCore.QThread):
                             comment_to_send = {deal_id: saved_comment}
                             dict_to_send[deal_id] = saved_comment
 
-                        except KeyError as KE:    # no comment found
+                        except KeyError as KE:  # no comment found
                             # print(KE)
                             # comment_to_send = {deal_id : ['', 0]}
                             # dict_to_send[deal_id] = ['', 0]
@@ -538,7 +578,9 @@ class UpdateCommentsThread(QtCore.QThread):
                     deal_id_to_save = str(list(object_in_queue.keys())[0])
                     comment_to_save = object_in_queue[deal_id_to_save]
 
-                    usr_comments[deal_id_to_save] = comment_to_save    # build dict to save
+                    usr_comments[
+                        deal_id_to_save
+                    ] = comment_to_save  # build dict to save
                     comments[last_usr] = usr_comments
 
                     funcMisc.write_comments(comments)

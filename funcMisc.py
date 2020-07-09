@@ -16,7 +16,7 @@ import logging.config
 
 # init loggers
 logger_debug = logging.getLogger("ReportTool_debug.IGAPI")
-logger_info  = logging.getLogger("ReportTool_info.IGAPI")
+logger_info = logging.getLogger("ReportTool_info.IGAPI")
 
 
 def create_graph_args(title="", x_label="", y_label="", *args, **kwargs):
@@ -31,19 +31,17 @@ def create_graph_args(title="", x_label="", y_label="", *args, **kwargs):
     Return a dict
     """
 
-    title = '<span style="color: rgb(95,95,95) ;'\
-            'font-size : 14pt;">' + title + '</span style>'
+    title = (
+        '<span style="color: rgb(95,95,95) ;'
+        'font-size : 14pt;">' + title + "</span style>"
+    )
 
-    x_label = '<span style = "font-size : 12pt">' + x_label + ' </span style>'
-    y_label = '<span style = "font-size : 12pt">' + y_label + '</span style>'
+    x_label = '<span style = "font-size : 12pt">' + x_label + " </span style>"
+    y_label = '<span style = "font-size : 12pt">' + y_label + "</span style>"
 
-    graph_options = {"title": title,
-                     "labels": {"bottom": x_label,
-                                "left": y_label
-                                }
-                     }
+    graph_options = {"title": title, "labels": {"bottom": x_label, "left": y_label}}
 
-    return(graph_options)
+    return graph_options
 
 
 def format_market_name(market_name, *args, **kwargs):
@@ -57,8 +55,8 @@ def format_market_name(market_name, *args, **kwargs):
     """
 
     try:
-        match = re.match('^(.*)converted', market_name)    # looks for conversion infos
-        return match.group(1)    # name without conversion infos
+        match = re.match("^(.*)converted", market_name)  # looks for conversion infos
+        return match.group(1)  # name without conversion infos
     except AttributeError:
         return market_name
 
@@ -72,8 +70,7 @@ def read_ig_config(*args, **kwargs):
     with open(ig_config_path, "r") as f:
         ig_config = json.load(f)
 
-
-    return(ig_config)
+    return ig_config
 
 
 def read_credentials(*args, **kwargs):
@@ -81,14 +78,11 @@ def read_credentials(*args, **kwargs):
     """Reads credentials files"""
 
     credentials_path = os.getcwd() + "/credentials.json"
-    empty_account = { "pwd" : "",
-                      "api_key" : "",
-                      "type" : "Live",
-                      "proxies" : {"https" : ""}}
+    empty_account = {"pwd": "", "api_key": "", "type": "Live", "proxies": {"https": ""}}
 
     saved_accounts = {}
 
-    with open(credentials_path, 'r') as f:
+    with open(credentials_path, "r") as f:
         try:
             saved_accounts = json.load(f)
 
@@ -99,18 +93,18 @@ def read_credentials(*args, **kwargs):
                 decoded_key = str(base64.b64decode(saved_accounts[key]["api_key"]))
 
                 saved_accounts[key]["api_key"] = decoded_key
-                saved_accounts[key]["pwd"]     = decoded_pwd
+                saved_accounts[key]["pwd"] = decoded_pwd
 
             if saved_accounts == {}:
-                saved_accounts[''] = empty_account
+                saved_accounts[""] = empty_account
 
         # log error and returns empty account
         except Exception as e:
             msg = "No users save"
             logger_debug.log(logging.ERROR, msg)
-            saved_accounts[''] = empty_account
+            saved_accounts[""] = empty_account
 
-    return(saved_accounts)
+    return saved_accounts
 
 
 def write_credentials(credentials):
@@ -131,9 +125,9 @@ def write_credentials(credentials):
             encoded_key = str(base64.b64encode(credentials[key]["api_key"].encode()))
 
             credentials[key]["api_key"] = encoded_key
-            credentials[key]["pwd"]     = encoded_pwd
+            credentials[key]["pwd"] = encoded_pwd
 
-        json.dump(credentials, f, indent = 4)    # write dict (default or not)
+        json.dump(credentials, f, indent=4)  # write dict (default or not)
 
 
 def read_comment(*args, **kwargs):
@@ -152,7 +146,7 @@ def read_comment(*args, **kwargs):
             logger_debug.log(logging.ERROR, msg)
             saved_comments = {}
 
-    return(saved_comments)
+    return saved_comments
 
 
 def write_comments(comments):
@@ -166,7 +160,7 @@ def write_comments(comments):
     comment_path = os.getcwd() + "/comments.json"
 
     with open(comment_path, "w") as f:
-        json.dump(comments, f)    # write dict (default or not)
+        json.dump(comments, f)  # write dict (default or not)
 
 
 def read_config(*args, **kwargs):
@@ -177,45 +171,48 @@ def read_config(*args, **kwargs):
     I may used QSettings instead of custom config file
     """
 
-    default_dict = {"ec_size": 3,
-                    "ec_style": "Solid",
-                    "ec_color": "#000000",
-                    "dd_size": 11,
-                    "maxdd_style": "o",
-                    "maxdd_color": "#ff0000",
-                    "high_style": "o",
-                    "high_color": "#00ff00",
-                    "depth_style": "o",
-                    "depth_color": "#ffaa00",
-                    "profit_color": "#32CD32",
-                    "flat_color":"#000000",
-                    "loss_color":"#E62309",
-                    "currency_symbol": "\u20ac",
-                    "what_to_print": "All window",
-                    "result_in": "Points",
-                    "last_usr": "",
-                    "dir_out": os.getcwd() + "\Screenshots",
-                    "shortcut": "Enter shorcut",
-                    "start_capital": 0,
-                    "auto_calculate": 2,
-                    "what_to_show": {"state_infos": "Only for screenshot",
-                                     "state_size": "Only for screenshot",
-                                     "state_details": 0,
-                                     "state_dates": 0,
-                                     "high": 2,
-                                     "depth": 2,
-                                     "maxdd": 2},
-                    "include": 2,
-                    "all": 2,
-                    "auto_connect": 0,
-                    "agregate": 0,
-                    "gui_state": QtCore.QByteArray(b''),
-                    "gui_size": (800, 600),
-                    "gui_pos": (0, 0),
-                    "dir_export": os.getcwd() + "\Export",
-                    "what_to_export": "All",
-                    "separator": ";"
-                    }
+    default_dict = {
+        "ec_size": 3,
+        "ec_style": "Solid",
+        "ec_color": "#000000",
+        "dd_size": 11,
+        "maxdd_style": "o",
+        "maxdd_color": "#ff0000",
+        "high_style": "o",
+        "high_color": "#00ff00",
+        "depth_style": "o",
+        "depth_color": "#ffaa00",
+        "profit_color": "#32CD32",
+        "flat_color": "#000000",
+        "loss_color": "#E62309",
+        "currency_symbol": "\u20ac",
+        "what_to_print": "All window",
+        "result_in": "Points",
+        "last_usr": "",
+        "dir_out": os.getcwd() + "\Screenshots",
+        "shortcut": "Enter shorcut",
+        "start_capital": 0,
+        "auto_calculate": 2,
+        "what_to_show": {
+            "state_infos": "Only for screenshot",
+            "state_size": "Only for screenshot",
+            "state_details": 0,
+            "state_dates": 0,
+            "high": 2,
+            "depth": 2,
+            "maxdd": 2,
+        },
+        "include": 2,
+        "all": 2,
+        "auto_connect": 0,
+        "agregate": 0,
+        "gui_state": QtCore.QByteArray(b""),
+        "gui_size": (800, 600),
+        "gui_pos": (0, 0),
+        "dir_export": os.getcwd() + "\Export",
+        "what_to_export": "All",
+        "separator": ";",
+    }
 
     config = {}
     config_path = os.getcwd() + "/config.json"
@@ -262,7 +259,9 @@ def read_config(*args, **kwargs):
 
                     config["dir_export"] = dir_export
                 elif key == "gui_state":
-                    config["gui_state"] = QtCore.QByteArray.fromBase64(data_read["gui_state"].encode())
+                    config["gui_state"] = QtCore.QByteArray.fromBase64(
+                        data_read["gui_state"].encode()
+                    )
                 else:
                     config[key] = data_read[key]
 
@@ -274,7 +273,7 @@ def read_config(*args, **kwargs):
                 config[key] = default_dict[key]
             write_config(config)
 
-    return(config)
+    return config
 
 
 def write_config(config):
@@ -287,9 +286,9 @@ def write_config(config):
 
     config_path = os.getcwd() + "/config.json"
     out_config = copy.deepcopy(config)
-    out_config['gui_state'] = str(out_config['gui_state'].toBase64().data())
-    with open(config_path, 'w') as f:
-        json.dump(out_config, f, indent=4)    # write dict (default or not)
+    out_config["gui_state"] = str(out_config["gui_state"].toBase64().data())
+    with open(config_path, "w") as f:
+        json.dump(out_config, f, indent=4)  # write dict (default or not)
 
 
 def create_dates_list(state_dates, dates_string, key, start_capital):
@@ -312,10 +311,9 @@ def create_dates_list(state_dates, dates_string, key, start_capital):
         xaxis_dict = {i: i for i in range(len(dates_string))}
 
     if key == "Growth" and start_capital == 0.0:
-        xaxis_dict = {}    # don"t set string if no data
+        xaxis_dict = {}  # don"t set string if no data
 
-
-    return(xaxis_dict)
+    return xaxis_dict
 
 
 def create_icons():
@@ -327,12 +325,15 @@ def create_icons():
     ScatterPlotItem.py file in the pyqtgraph folder.
     """
 
-    style_list = [QtCore.Qt.SolidLine, QtCore.Qt.DashLine,
-                  QtCore.Qt.DotLine, QtCore.Qt.DashDotLine,
-                  QtCore.Qt.DashDotDotLine]    # list with avalaible QtStyle
+    style_list = [
+        QtCore.Qt.SolidLine,
+        QtCore.Qt.DashLine,
+        QtCore.Qt.DotLine,
+        QtCore.Qt.DashDotLine,
+        QtCore.Qt.DashDotDotLine,
+    ]  # list with avalaible QtStyle
 
-    style_name_list = ["Solid", "Dash", "Dot",
-                       "Dash Dot", "Dash Dot Dot"]
+    style_name_list = ["Solid", "Dash", "Dot", "Dash Dot", "Dash Dot Dot"]
 
     # init dict to hold icons
     ec_icons = {}
@@ -341,25 +342,23 @@ def create_icons():
 
     # create line with available style
     for count, style in enumerate(style_list):
-        pixmap = QtGui.QPixmap(100,14)
+        pixmap = QtGui.QPixmap(100, 14)
         pixmap.fill(QtCore.Qt.transparent)
 
         painter = QtGui.QPainter(pixmap)
-        pen     = QtGui.QPen()
-        name    = style_name_list[count]
-        pen.setColor(color)    # configure pen
+        pen = QtGui.QPen()
+        name = style_name_list[count]
+        pen.setColor(color)  # configure pen
         pen.setWidth(3)
-        pen.setStyle(style)    # set style
+        pen.setStyle(style)  # set style
 
         painter.setPen(pen)
-        painter.drawLine(2, 7, 98, 7)    # draw line
+        painter.drawLine(2, 7, 98, 7)  # draw line
         painter.end()
-        ec_icons[name] = QtGui.QIcon(pixmap)    # add it to dict
-
+        ec_icons[name] = QtGui.QIcon(pixmap)  # add it to dict
 
     # configure default brush for symbol
-    brush = QtGui.QBrush(color,
-                         QtCore.Qt.SolidPattern)
+    brush = QtGui.QBrush(color, QtCore.Qt.SolidPattern)
 
     # configure default pen
     pen = QtGui.QPen()
@@ -368,7 +367,7 @@ def create_icons():
     pen.setStyle(QtCore.Qt.SolidLine)
 
     # create a square symbol
-    pixmap = QtGui.QPixmap(100,14)
+    pixmap = QtGui.QPixmap(100, 14)
     pixmap.fill(QtCore.Qt.transparent)
 
     painter = QtGui.QPainter(pixmap)
@@ -380,24 +379,25 @@ def create_icons():
     dd_pixmap["s"] = QtGui.QIcon(pixmap)
 
     # create a rotated square symbol
-    pixmap = QtGui.QPixmap(100,14)
+    pixmap = QtGui.QPixmap(100, 14)
     pixmap.fill(QtCore.Qt.transparent)
 
     painter = QtGui.QPainter(pixmap)
     painter.setRenderHint(QtGui.QPainter.Antialiasing)
     painter.rotate(45)
-    painter.translate(math.sqrt((14**2)/2)/2,-math.sqrt((14**2)/2)/2)
+    painter.translate(math.sqrt((14 ** 2) / 2) / 2, -math.sqrt((14 ** 2) / 2) / 2)
     painter.setPen(pen)
     painter.setBrush(brush)
-    painter.fillRect(QtCore.QRectF(0, 0, math.sqrt((14**2)/2),
-                                         math.sqrt((14**2)/2)) , brush)
+    painter.fillRect(
+        QtCore.QRectF(0, 0, math.sqrt((14 ** 2) / 2), math.sqrt((14 ** 2) / 2)), brush
+    )
     painter.resetTransform()
     painter.end()
 
     dd_pixmap["d"] = QtGui.QIcon(pixmap)
 
     # create a circle symbol
-    pixmap = QtGui.QPixmap(100,14)
+    pixmap = QtGui.QPixmap(100, 14)
     pixmap.fill(QtCore.Qt.transparent)
 
     painter = QtGui.QPainter(pixmap)
@@ -410,52 +410,52 @@ def create_icons():
     dd_pixmap["o"] = QtGui.QIcon(pixmap)
 
     # create a triangulare symbol
-    pixmap = QtGui.QPixmap(100,14)
+    pixmap = QtGui.QPixmap(100, 14)
     pixmap.fill(QtCore.Qt.transparent)
 
     painter = QtGui.QPainter(pixmap)
     painter.setRenderHint(QtGui.QPainter.Antialiasing)
     painter.setPen(pen)
     painter.setBrush(brush)
-    triangle_points = [QtCore.QPointF(0.5, 0.5),
-                       QtCore.QPointF(13.5, 0.5),
-                       QtCore.QPointF(7, 13.5)]
+    triangle_points = [
+        QtCore.QPointF(0.5, 0.5),
+        QtCore.QPointF(13.5, 0.5),
+        QtCore.QPointF(7, 13.5),
+    ]
     painter.drawPolygon(QtGui.QPolygonF(triangle_points))
     painter.end()
 
     dd_pixmap["t"] = QtGui.QIcon(pixmap)
 
-    pen.setWidth(2)    # change pen width for cross symbols
+    pen.setWidth(2)  # change pen width for cross symbols
 
     # create a cross symbol
-    pixmap = QtGui.QPixmap(100,14)
+    pixmap = QtGui.QPixmap(100, 14)
     pixmap.fill(QtCore.Qt.transparent)
 
     painter = QtGui.QPainter(pixmap)
     painter.setRenderHint(QtGui.QPainter.Antialiasing)
     painter.setPen(pen)
     painter.setBrush(brush)
-    painter.drawLines([QtCore.QLineF(1, 7, 13, 7),
-                       QtCore.QLineF(7, 13, 7, 1)])
+    painter.drawLines([QtCore.QLineF(1, 7, 13, 7), QtCore.QLineF(7, 13, 7, 1)])
     painter.end()
 
     dd_pixmap["+"] = QtGui.QIcon(pixmap)
 
     # create a rotated cross symbol
-    pixmap = QtGui.QPixmap(100,14)
+    pixmap = QtGui.QPixmap(100, 14)
     pixmap.fill(QtCore.Qt.transparent)
 
     painter = QtGui.QPainter(pixmap)
     painter.setRenderHint(QtGui.QPainter.Antialiasing)
     painter.setPen(pen)
     painter.setBrush(brush)
-    painter.drawLines([QtCore.QLineF(2,2, 12,12),
-                       QtCore.QLineF(2, 12, 12, 2)])
+    painter.drawLines([QtCore.QLineF(2, 2, 12, 12), QtCore.QLineF(2, 12, 12, 2)])
     painter.end()
 
     dd_pixmap["x"] = QtGui.QIcon(pixmap)
 
-    return(ec_icons, dd_pixmap)
+    return (ec_icons, dd_pixmap)
 
 
 def create_status_icons(color):
@@ -475,7 +475,7 @@ def create_status_icons(color):
     pen.setStyle(QtCore.Qt.SolidLine)
 
     # create a circle symbol
-    pixmap = QtGui.QPixmap(100,14)
+    pixmap = QtGui.QPixmap(100, 14)
     pixmap.fill(QtCore.Qt.transparent)
 
     painter = QtGui.QPainter(pixmap)
@@ -485,8 +485,6 @@ def create_status_icons(color):
     painter.drawEllipse(QtCore.QRectF(0.5, 0.5, 13, 13))
     painter.end()
 
-    circle =  pixmap
+    circle = pixmap
 
-    return (circle)
-
-
+    return circle

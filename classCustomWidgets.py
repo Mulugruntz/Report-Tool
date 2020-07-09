@@ -16,7 +16,6 @@ class CustomPushButton(QtWidgets.QPushButton):
     Used for plot color in OptionsWindows
     """
 
-
     def __init__(self, object_name):
 
         """
@@ -25,7 +24,6 @@ class CustomPushButton(QtWidgets.QPushButton):
 
         QtWidgets.QPushButton.__init__(self)
         self.setObjectName(object_name)
-
 
     def set_default_style(self, color):
 
@@ -36,12 +34,13 @@ class CustomPushButton(QtWidgets.QPushButton):
         """
 
         self.setFixedWidth(80)
-        self.setStyleSheet("QPushButton#"+self.objectName()+
-                           "{background-color :" + color + ";\n"
-                                                 "border-radius : 4px;\n"
-                                                 "font : 12px;\n"
-                                                 "color : white;\n"
-                                                 "padding : 6px;}\n")
+        self.setStyleSheet(
+            "QPushButton#" + self.objectName() + "{background-color :" + color + ";\n"
+            "border-radius : 4px;\n"
+            "font : 12px;\n"
+            "color : white;\n"
+            "padding : 6px;}\n"
+        )
 
 
 class CustomCloseButton(QtWidgets.QPushButton):
@@ -52,16 +51,14 @@ class CustomCloseButton(QtWidgets.QPushButton):
     to click on it, move the window (easter egg)
     """
 
-    enter_signal = QtCore.pyqtSignal(object, int)    # signal emited when enter event
-
+    enter_signal = QtCore.pyqtSignal(object, int)  # signal emited when enter event
 
     def __init__(self, *args, **kwargs):
 
         QtWidgets.QPushButton.__init__(self, *args, **kwargs)
         self.entry_nb = 0
 
-
-    def enterEvent(self,event):
+    def enterEvent(self, event):
 
         """Reimplement enterEvent and count numbers of events"""
 
@@ -77,13 +74,11 @@ class CustomLineEdit(QtWidgets.QLineEdit):
     as the default event send nothing. See mainwindow class
     """
 
-    finish_signal = QtCore.pyqtSignal(object)    # signal emited when edition is finished
-
+    finish_signal = QtCore.pyqtSignal(object)  # signal emited when edition is finished
 
     def __init__(self, *args, **kwargs):
 
         super(CustomLineEdit, self).__init__(*args, **kwargs)
-
 
     def focusOutEvent(self, event):
 
@@ -92,8 +87,7 @@ class CustomLineEdit(QtWidgets.QLineEdit):
         has called update_options in main window
         """
 
-        self.finish_signal.emit('start_capital')
-
+        self.finish_signal.emit("start_capital")
 
     def keyPressEvent(self, event):
 
@@ -115,8 +109,7 @@ class CustomLabel(QtWidgets.QLabel):
     when user click or hover buttons and to create a click event
     """
 
-    clicked_signal = QtCore.pyqtSignal()    # emit when user clicks on widget
-
+    clicked_signal = QtCore.pyqtSignal()  # emit when user clicks on widget
 
     def __init__(self, object_name):
 
@@ -126,7 +119,6 @@ class CustomLabel(QtWidgets.QLabel):
 
         super(CustomLabel, self).__init__()
         self.setObjectName(object_name)
-
 
     def set_default_style(self, background_color, hover_color, border_color):
 
@@ -138,17 +130,24 @@ class CustomLabel(QtWidgets.QLabel):
         :param border_color: string, describing color for border
         """
 
-        self.setStyleSheet("QLabel#"+self.objectName()+
-                           "{background-color :"+background_color+";\n"
-                                               "border-radius : 1px;\n"
-                                               "padding : 1px;}\n"
-
-                           "QLabel#"+self.objectName()+":hover\
-                           {background-color:"+hover_color+";\n"
-                                              "border-color :"+border_color+";\n"
-                                              "border-style : solid ;\n"
-                                              'border-width : 1px;}')
-
+        self.setStyleSheet(
+            "QLabel#"
+            + self.objectName()
+            + "{background-color :"
+            + background_color
+            + ";\n"
+            "border-radius : 1px;\n"
+            "padding : 1px;}\n"
+            "QLabel#"
+            + self.objectName()
+            + ":hover\
+                           {background-color:"
+            + hover_color
+            + ";\n"
+            "border-color :" + border_color + ";\n"
+            "border-style : solid ;\n"
+            "border-width : 1px;}"
+        )
 
     def mousePressEvent(self, event):
 
@@ -165,8 +164,7 @@ class CustomComboBox(QtWidgets.QComboBox):
     I couldn't find a better way to catch this event
     """
 
-    focus_out_signal = QtCore.pyqtSignal()    # emit when focus out
-
+    focus_out_signal = QtCore.pyqtSignal()  # emit when focus out
 
     def __init__(self, object_name):
 
@@ -177,7 +175,6 @@ class CustomComboBox(QtWidgets.QComboBox):
         super(CustomComboBox, self).__init__()
         self.setObjectName(object_name)
         self.setFocusPolicy(QtCore.Qt.StrongFocus)
-
 
     def focusOutEvent(self, event):
 
@@ -205,7 +202,7 @@ class CustomDockWidget(QtWidgets.QDockWidget):
         :param parent: objet parent of dock, MainWindow
         """
 
-        self._dict_details_labels = {}    #dict label for qlabels
+        self._dict_details_labels = {}  # dict label for qlabels
 
         self.dock_parent = parent
         super(CustomDockWidget, self).__init__(parent=parent)
@@ -213,7 +210,7 @@ class CustomDockWidget(QtWidgets.QDockWidget):
         self.init_dock(pos_details_headers)
 
         self.lot_size = "Size: "
-        self.pnl_str  = "Profit: "
+        self.pnl_str = "Profit: "
 
     def init_dock(self, pos_details_headers):
 
@@ -232,8 +229,8 @@ class CustomDockWidget(QtWidgets.QDockWidget):
         # init widgets and layout
         splitter = QtWidgets.QSplitter()
 
-        widget_pos       = QtWidgets.QWidget()
-        layout_pos       = QtWidgets.QGridLayout()
+        widget_pos = QtWidgets.QWidget()
+        layout_pos = QtWidgets.QGridLayout()
         scroll_pos_infos = QtWidgets.QScrollArea()
 
         # widgets for checkbox and one label
@@ -244,34 +241,33 @@ class CustomDockWidget(QtWidgets.QDockWidget):
         widget_chkbox_graph = QtWidgets.QWidget()
         layout_chkbox_graph = QtWidgets.QHBoxLayout()
 
-
         k = 0
         dict_details_labels = {}
 
         # created and place labels
         for count, header in enumerate(pos_details_headers.keys()):
 
-            if header == "h_line" or header == "h_line_2":    # add horizontal line
+            if header == "h_line" or header == "h_line_2":  # add horizontal line
                 h_line = QtWidgets.QFrame()
                 h_line.setFrameShape(QtWidgets.QFrame.HLine)
                 h_line.setStyleSheet("color:rgb(173,173,173);")
                 layout_pos.addWidget(h_line, int(count), 0, 1, 2)
 
-            elif header == " ":    # label for market name
-                label = QtWidgets.QLabel(header+": ")
-                layout_pos.addWidget(label, int(count), 0 , 1, 2,
-                                     QtCore.Qt.AlignCenter)
+            elif header == " ":  # label for market name
+                label = QtWidgets.QLabel(header + ": ")
+                layout_pos.addWidget(label, int(count), 0, 1, 2, QtCore.Qt.AlignCenter)
                 dict_details_labels[header] = label
 
             else:
-                label = QtWidgets.QLabel(header+": ")
-                layout_pos.addWidget(label, int(count), 0 , 1, 2,
-                                     QtCore.Qt.AlignLeft)
+                label = QtWidgets.QLabel(header + ": ")
+                layout_pos.addWidget(label, int(count), 0, 1, 2, QtCore.Qt.AlignLeft)
                 dict_details_labels[header] = label
                 k += 1
 
-        self.setFeatures(QtWidgets.QDockWidget.DockWidgetFloatable|\
-                         QtWidgets.QDockWidget.DockWidgetMovable)
+        self.setFeatures(
+            QtWidgets.QDockWidget.DockWidgetFloatable
+            | QtWidgets.QDockWidget.DockWidgetMovable
+        )
 
         last_row = len(pos_details_headers)
 
@@ -282,26 +278,27 @@ class CustomDockWidget(QtWidgets.QDockWidget):
         self.text_edit_comment = CustomPlainTextEdit(self)
 
         self.checkbox_showongraph.setCheckState(0)
-        layout_chkbox_graph.addWidget(self.checkbox_showongraph,
-                                      0, QtCore.Qt.AlignLeft)
-        layout_chkbox_graph.addWidget(QtWidgets.QLabel("Show comments on graph"),
-                                      1, QtCore.Qt.AlignLeft)
+        layout_chkbox_graph.addWidget(self.checkbox_showongraph, 0, QtCore.Qt.AlignLeft)
+        layout_chkbox_graph.addWidget(
+            QtWidgets.QLabel("Show comments on graph"), 1, QtCore.Qt.AlignLeft
+        )
 
         widget_chkbox_graph.setLayout(layout_chkbox_graph)
         widget_chkbox_graph.setFixedHeight(50)
 
         layout_comment.addWidget(widget_chkbox_graph, 0, 0, 1, 2)
 
-        layout_comment.addWidget(QtWidgets.QLabel("Comment:"), 1, 0,
-                             QtCore.Qt.AlignTop|QtCore.Qt.AlignLeft)
+        layout_comment.addWidget(
+            QtWidgets.QLabel("Comment:"), 1, 0, QtCore.Qt.AlignTop | QtCore.Qt.AlignLeft
+        )
 
-        layout_comment.addWidget(self.text_edit_comment, 1, 1,
-                             )
+        layout_comment.addWidget(
+            self.text_edit_comment, 1, 1,
+        )
         widget_comment.setLayout(layout_comment)
 
-
         # configure main widgets
-        layout_pos.addWidget(widget_comment, last_row+1, 0, 1, 2)
+        layout_pos.addWidget(widget_comment, last_row + 1, 0, 1, 2)
         widget_pos.setLayout(layout_pos)
 
         scroll_pos_infos.setWidget(widget_pos)
@@ -311,20 +308,18 @@ class CustomDockWidget(QtWidgets.QDockWidget):
         self.topLevelChanged.connect(self.change_title)
         self.setFloating(True)
         # self.resize(310,350) unix size
-        self.resize(280,300)    # windows size
+        self.resize(280, 300)  # windows size
 
         self._set_labels(dict_details_labels)
-
 
     def change_title(self):
 
         """Function to manage dock title when it is floatain or not"""
 
         if self.isFloating() == True:
-            self.setWindowTitle("")    # if dock is floating set not title
+            self.setWindowTitle("")  # if dock is floating set not title
         else:
             self.setWindowTitle("Trade details")
-
 
     def empty_labels(self, pos_details_headers):
 
@@ -344,18 +339,17 @@ class CustomDockWidget(QtWidgets.QDockWidget):
         pos_details_headers.pop("h_line_2", None)
 
         for key in pos_details_headers.keys():
-            label_text = dict_details_labels[key].text()    # get label text
+            label_text = dict_details_labels[key].text()  # get label text
 
-            try:    # get label title
+            try:  # get label title
                 static_text = re.search("(.*?[A-z]): ", label_text).group()
-            except AttributeError as e:    # temp
+            except AttributeError as e:  # temp
                 static_text = ""
 
-            text_to_set = static_text + ""    # fill labels with empty strings
+            text_to_set = static_text + ""  # fill labels with empty strings
             dict_details_labels[key].setText(text_to_set)
 
         self.text_edit_comment.setPlainText("")
-
 
     def change_content(self, *args, **kwargs):
 
@@ -373,21 +367,21 @@ class CustomDockWidget(QtWidgets.QDockWidget):
         """
 
         pos_details_headers = kwargs["pos_details_headers"]
-        dict_to_search      = kwargs["dict_to_search"]
-        deal_id_clicked     = kwargs["deal_id_clicked"]
-        index_clicked       = kwargs["index_clicked"]
-        screenshot          = kwargs["screenshot"]
+        dict_to_search = kwargs["dict_to_search"]
+        deal_id_clicked = kwargs["deal_id_clicked"]
+        index_clicked = kwargs["index_clicked"]
+        screenshot = kwargs["screenshot"]
 
         # get configuration
-        config          = funcMisc.read_config()
-        profit_color    = config["profit_color"]
-        flat_color      = config["flat_color"]
-        loss_color      = config["loss_color"]
-        result_in       = config["result_in"]
+        config = funcMisc.read_config()
+        profit_color = config["profit_color"]
+        flat_color = config["flat_color"]
+        loss_color = config["loss_color"]
+        result_in = config["result_in"]
 
         currency_symbol = config["currency_symbol"]
-        state_infos     = config["what_to_show"]["state_infos"]
-        state_size      = config["what_to_show"]["state_size"]
+        state_infos = config["what_to_show"]["state_infos"]
+        state_size = config["what_to_show"]["state_size"]
 
         dict_details_labels = self._dict_details_labels
 
@@ -396,33 +390,37 @@ class CustomDockWidget(QtWidgets.QDockWidget):
         pos_details_headers.pop("h_line_2", None)
 
         for key in pos_details_headers.keys():
-            label_text = dict_details_labels[key].text()    # get label text
+            label_text = dict_details_labels[key].text()  # get label text
 
-            try:    # get label title
+            try:  # get label title
                 static_text = re.search(r"(.*?[A-z]): ", label_text).group()
-            except AttributeError:    # temp function
-                static_text = ''
+            except AttributeError:  # temp function
+                static_text = ""
 
             try:
                 if key == "Date":
                     date_key = pos_details_headers[key]
                     date_str = dict_to_search[deal_id_clicked][date_key]
-                    date_obj = datetime.datetime.strptime(date_str,"%d/%m/%y")
+                    date_obj = datetime.datetime.strptime(date_str, "%d/%m/%y")
 
                     # set a str date with day of week
-                    data     = date_obj.strftime("%A %d/%m/%y")
+                    data = date_obj.strftime("%A %d/%m/%y")
 
                 elif key == "Trade":
-                    data = "# " + str(index_clicked)    # set number of clicked trade
+                    data = "# " + str(index_clicked)  # set number of clicked trade
 
                 elif key == "Size":
-                    size_key  = pos_details_headers[key]
-                    self.lot_size = dict_to_search[deal_id_clicked][size_key]    # save size
+                    size_key = pos_details_headers[key]
+                    self.lot_size = dict_to_search[deal_id_clicked][
+                        size_key
+                    ]  # save size
 
                     # hide or not lot size
-                    if state_size == "Always"\
-                    or state_size == "Only for screenshot"\
-                    and screenshot == True:
+                    if (
+                        state_size == "Always"
+                        or state_size == "Only for screenshot"
+                        and screenshot == True
+                    ):
                         data = "--"
 
                     else:
@@ -434,14 +432,14 @@ class CustomDockWidget(QtWidgets.QDockWidget):
                     pnl_info = pos_details_headers[key].split(",")
 
                     # create a list with suffix for each pnl infos
-                    pnl_in  = ["pts | ", "pts/lot | ", currency_symbol]
-                    pnl_str = ""    # init empty string
+                    pnl_in = ["pts | ", "pts/lot | ", currency_symbol]
+                    pnl_str = ""  # init empty string
 
                     for idx, info in enumerate(pnl_info):
                         pnl = dict_to_search[deal_id_clicked][info]
 
                         try:
-                            float(pnl)    # temp might be deleted
+                            float(pnl)  # temp might be deleted
 
                             if float(pnl) > 0:
                                 pnl_color = profit_color
@@ -453,23 +451,31 @@ class CustomDockWidget(QtWidgets.QDockWidget):
                                 pnl_color = loss_color
 
                             # hide or not capital little bit hardcoded
-                            if state_infos == "Always"\
-                            and result_in != currency_symbol and idx == 2\
-                            or state_infos == "Only for screenshot"\
-                            and screenshot == True and idx == 2:
+                            if (
+                                state_infos == "Always"
+                                and result_in != currency_symbol
+                                and idx == 2
+                                or state_infos == "Only for screenshot"
+                                and screenshot == True
+                                and idx == 2
+                            ):
                                 pnl = "--"
 
                             else:
                                 pnl = str(pnl)
 
-                            pnl_text = '<span style="color:'+\
-                                        pnl_color + '">' +\
-                                        pnl + pnl_in[idx] +\
-                                        '</span>'
+                            pnl_text = (
+                                '<span style="color:'
+                                + pnl_color
+                                + '">'
+                                + pnl
+                                + pnl_in[idx]
+                                + "</span>"
+                            )
 
-                            pnl_str += pnl_text    #construct a pnl string
+                            pnl_str += pnl_text  # construct a pnl string
 
-                        except ValueError:    #not a float
+                        except ValueError:  # not a float
                             continue
 
                     data = pnl_str
@@ -481,14 +487,13 @@ class CustomDockWidget(QtWidgets.QDockWidget):
                     # get data we want to show
                     data = dict_to_search[deal_id_clicked][key_dict_to_search]
 
-            except KeyError:    # no data
+            except KeyError:  # no data
                 data = "N/A"
 
             text_to_set = static_text + data
             dict_details_labels[key].setText(text_to_set)
 
         self._set_labels(dict_details_labels)
-
 
     def hide_profit_loss(self, currency_symbol):
 
@@ -500,9 +505,9 @@ class CustomDockWidget(QtWidgets.QDockWidget):
         :param currency_symbol: string, describing currency
         """
 
-        dict_details_labels  = self._dict_details_labels    # get labels dict
+        dict_details_labels = self._dict_details_labels  # get labels dict
 
-        pnl_label = dict_details_labels["Profit"]    # get label concerned
+        pnl_label = dict_details_labels["Profit"]  # get label concerned
 
         """
         As i don't want to spend time on understanding regex, it uses a trick:
@@ -510,11 +515,11 @@ class CustomDockWidget(QtWidgets.QDockWidget):
         html tags as the first occurence is the one needed to be hidden
         """
 
-        pnl_str = self.pnl_str[::-1]    # reversed string
-        pnl_hidden = re.sub(r"<(.*?)>", r"<" +  currency_symbol + "-->",
-                     pnl_str, 1 )[::-1]    # find and replace first occurence
-        pnl_label.setText(pnl_hidden)    # set text
-
+        pnl_str = self.pnl_str[::-1]  # reversed string
+        pnl_hidden = re.sub(r"<(.*?)>", r"<" + currency_symbol + "-->", pnl_str, 1)[
+            ::-1
+        ]  # find and replace first occurence
+        pnl_label.setText(pnl_hidden)  # set text
 
     def show_profit_loss(self):
 
@@ -523,10 +528,9 @@ class CustomDockWidget(QtWidgets.QDockWidget):
         screenshot or if user changes options
         """
 
-        dict_details_labels  = self._dict_details_labels    # get labels dict
-        pnl_label = dict_details_labels["Profit"]    # get label concerned
-        pnl_label.setText(self.pnl_str)    # set old string
-
+        dict_details_labels = self._dict_details_labels  # get labels dict
+        pnl_label = dict_details_labels["Profit"]  # get label concerned
+        pnl_label.setText(self.pnl_str)  # set old string
 
     def hide_lot_size(self):
 
@@ -535,10 +539,9 @@ class CustomDockWidget(QtWidgets.QDockWidget):
         "Hide lot size" is set to "Always".
         """
 
-        dict_details_labels  = self._dict_details_labels    # get labels dict
-        size_label = dict_details_labels["Size"]    # get label concerned
-        size_label.setText("Size: --")    # set text
-
+        dict_details_labels = self._dict_details_labels  # get labels dict
+        size_label = dict_details_labels["Size"]  # get label concerned
+        size_label.setText("Size: --")  # set text
 
     def show_lot_size(self):
 
@@ -548,10 +551,9 @@ class CustomDockWidget(QtWidgets.QDockWidget):
         "Never" or "Only for screenshot"
         """
 
-        dict_details_labels  = self._dict_details_labels    # get labels dict
-        size_label = dict_details_labels["Size"]    # get label concerned
-        size_label.setText("Size: " + str(self.lot_size))    # set old string
-
+        dict_details_labels = self._dict_details_labels  # get labels dict
+        size_label = dict_details_labels["Size"]  # get label concerned
+        size_label.setText("Size: " + str(self.lot_size))  # set old string
 
     def keyPressEvent(self, event):
 
@@ -561,20 +563,19 @@ class CustomDockWidget(QtWidgets.QDockWidget):
         without loosing focus on the dock
         """
 
-        if event.key() == QtCore.Qt.Key_Right\
-        or event.key() == QtCore.Qt.Key_Left:    # right or left arrow pressed
-            self.dock_parent.keyPressEvent(event)    # MainWindow keyPressEvent
+        if (
+            event.key() == QtCore.Qt.Key_Right or event.key() == QtCore.Qt.Key_Left
+        ):  # right or left arrow pressed
+            self.dock_parent.keyPressEvent(event)  # MainWindow keyPressEvent
 
         else:
-            super(CustomDockWidget, self).keyPressEvent(event) # normal behavior
-
+            super(CustomDockWidget, self).keyPressEvent(event)  # normal behavior
 
     def _dict_details_labels(self):
 
         """Getter method maybe useless"""
 
-        return(self._dict_details_labels)
-
+        return self._dict_details_labels
 
     def _set_labels(self, new_dict_labels):
 
@@ -595,7 +596,6 @@ class CustomPlainTextEdit(QtWidgets.QPlainTextEdit):
     user can navigate using arrows keys without loosing the focus on widget
     """
 
-
     def __init__(self, parent):
 
         """
@@ -605,16 +605,16 @@ class CustomPlainTextEdit(QtWidgets.QPlainTextEdit):
         super(CustomPlainTextEdit, self).__init__(parent=parent)
         self.plain_text_edit_parent = parent
 
-
     def keyPressEvent(self, event):
 
         """Custom keyPressEvent function"""
 
-        if event.key() == QtCore.Qt.Key_Right\
-        or event.key() == QtCore.Qt.Key_Left:    # right or left arrow pressed
-            self.plain_text_edit_parent.keyPressEvent(event)    # dock keyPressEvent
+        if (
+            event.key() == QtCore.Qt.Key_Right or event.key() == QtCore.Qt.Key_Left
+        ):  # right or left arrow pressed
+            self.plain_text_edit_parent.keyPressEvent(event)  # dock keyPressEvent
         else:
-            QtWidgets.QPlainTextEdit.keyPressEvent(self, event)    # normal behavior
+            QtWidgets.QPlainTextEdit.keyPressEvent(self, event)  # normal behavior
 
 
 class CustomCheckBox(QtWidgets.QCheckBox):
@@ -625,7 +625,6 @@ class CustomCheckBox(QtWidgets.QCheckBox):
     navigate using arrows keys without loosing the focus on widget
     """
 
-
     def __init__(self, parent):
 
         """
@@ -633,18 +632,18 @@ class CustomCheckBox(QtWidgets.QCheckBox):
         """
 
         super(CustomCheckBox, self).__init__(parent=parent)
-        self.checkbox_parent  = parent
-
+        self.checkbox_parent = parent
 
     def keyPressEvent(self, event):
 
         """Custom keyPressEvent function"""
 
-        if event.key() == QtCore.Qt.Key_Right\
-        or event.key() == QtCore.Qt.Key_Left:    # right or left arrow pressed
-            self.checkbox_parent.keyPressEvent(event)    # dock keyPressEvent
+        if (
+            event.key() == QtCore.Qt.Key_Right or event.key() == QtCore.Qt.Key_Left
+        ):  # right or left arrow pressed
+            self.checkbox_parent.keyPressEvent(event)  # dock keyPressEvent
         else:
-            QtWidgets.QCheckBox.keyPressEvent(self, event)    # normal behavior
+            QtWidgets.QCheckBox.keyPressEvent(self, event)  # normal behavior
 
 
 class CustomShortcutLineEdit(QtWidgets.QLineEdit):
@@ -665,7 +664,6 @@ class CustomShortcutLineEdit(QtWidgets.QLineEdit):
         # connect base signal to custom function
         self.textChanged.connect(self.on_text_changed)
 
-
     def set_italic(self, is_italic, *args, **kwargs):
 
         """
@@ -679,13 +677,11 @@ class CustomShortcutLineEdit(QtWidgets.QLineEdit):
         font.setItalic(is_italic)
         self.setFont(font)
 
-
     def focusInEvent(self, event):
 
         """Select all text when widget get focus"""
 
         self.selectAll()
-
 
     def mousePressEvent(self, event):
 
@@ -693,22 +689,19 @@ class CustomShortcutLineEdit(QtWidgets.QLineEdit):
 
         self.selectAll()
 
-
     def on_text_changed(self, event):
 
         """Emit object name and text set"""
 
         self.text_changed.emit(self.objectName(), self.text())
 
-
     def set_keysequence(self, keysequence):
 
         """Set text of key sequence entered"""
 
-        self.keysequence  = keysequence
+        self.keysequence = keysequence
         human_keysequence = self.keysequence.toString(QtGui.QKeySequence.NativeText)
         self.setText(human_keysequence)
-
 
     def keyPressEvent(self, event):
 
@@ -722,15 +715,17 @@ class CustomShortcutLineEdit(QtWidgets.QLineEdit):
                 return
 
             # the user have clicked just and only the special keys Ctrl, Shift, Alt, Meta.
-            if(key == QtCore.Qt.Key_Control or
-               key == QtCore.Qt.Key_Shift or
-               key == QtCore.Qt.Key_Alt or
-               key == QtCore.Qt.Key_Meta):
+            if (
+                key == QtCore.Qt.Key_Control
+                or key == QtCore.Qt.Key_Shift
+                or key == QtCore.Qt.Key_Alt
+                or key == QtCore.Qt.Key_Meta
+            ):
                 return
 
             # check for a combination of user clicks
             modifiers = event.modifiers()
-            keyText   = event.text()
+            keyText = event.text()
 
             # if the keyText is empty than it's a special key like F1, F5, ...
             if modifiers & QtCore.Qt.ShiftModifier:
@@ -743,6 +738,7 @@ class CustomShortcutLineEdit(QtWidgets.QLineEdit):
                 key += QtCore.Qt.META
 
             self.set_keysequence(QtGui.QKeySequence(key))
+
 
 # if __name__ == '__main__':
 #     import sys

@@ -10,23 +10,23 @@ import datetime
 import logging
 import logging.config
 
-from classMainWindow import*
-from classDialogBox import*
+from classMainWindow import *
+from classDialogBox import *
 
 
 if getattr(sys, "frozen", False):
-        os.environ["REQUESTS_CA_BUNDLE"] = os.path.join(os.getcwd(), "cacert.pem")
+    os.environ["REQUESTS_CA_BUNDLE"] = os.path.join(os.getcwd(), "cacert.pem")
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     # lancement de l'app
     app = QtWidgets.QApplication(sys.argv)
-    app.setApplicationName('Report Tool')
+    app.setApplicationName("Report Tool")
 
-    logging.config.fileConfig(os.getcwd()+"/logging.ini")
+    logging.config.fileConfig(os.getcwd() + "/logging.ini")
 
     # app.setStyle(QtWidgets.QStyleFactory.create('Cleanlooks'))
-    gui = ReportToolGUI('Report Tool')
+    gui = ReportToolGUI("Report Tool")
     # gui.show()
 
     sys.exit(app.exec_())

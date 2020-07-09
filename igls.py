@@ -27,27 +27,26 @@ import urllib.request, urllib.parse, urllib.error
 
 import requests
 
-import json,datetime,time,os
+import json, datetime, time, os
 
 import classCustomHandler
 
-day   = time.strftime("%d")
+day = time.strftime("%d")
 month = time.strftime("%m")
-year  = time.strftime("%Y")
+year = time.strftime("%Y")
 
 if not os.path.exists("Logs"):
     os.makedirs("Logs")
 
-LOG = logging.getLogger('lightstreamer')
-hdlr = classCustomHandler.CustomTimedRotatingFileHandler(prefix="log-",
-                                                         when="D",
-                                                         backupCount=7)
+LOG = logging.getLogger("lightstreamer")
+hdlr = classCustomHandler.CustomTimedRotatingFileHandler(
+    prefix="log-", when="D", backupCount=7
+)
 
-formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
+formatter = logging.Formatter("%(asctime)s %(levelname)s %(message)s")
 hdlr.setFormatter(formatter)
 LOG.addHandler(hdlr)
 LOG.setLevel(logging.DEBUG)
-
 
 
 # Minimum time to wait between retry attempts, in seconds. Subsequent
@@ -61,42 +60,42 @@ RETRY_WAIT_MAX_SECS = 30.0
 # Create and activate a new table. The item group specified in the LS_id
 # parameter will be subscribed to and Lightstreamer Server will start sending
 # realtime updates to the client immediately.
-OP_ADD = 'add'
+OP_ADD = "add"
 
 # Creates a new table. The item group specified in the LS_id parameter will be
 # subscribed to but Lightstreamer Server will not start sending realtime
 # updates to the client immediately.
-OP_ADD_SILENT = 'add_silent'
+OP_ADD_SILENT = "add_silent"
 
 # Activate a table previously created with an "add_silent" operation.
 # Lightstreamer Server will start sending realtime updates to the client
 # immediately.
-OP_START = 'start'
+OP_START = "start"
 
 # Deletes the specified table. All the related items will be unsubscribed to
 # and Lightstreamer Server will stop sending realtime updates to the client
 # immediately.
-OP_DELETE = 'delete'
+OP_DELETE = "delete"
 
 # Session management; forcing closure of an existing session.
-OP_DESTROY = 'destroy'
+OP_DESTROY = "destroy"
 
 
 # All the itemEvent coming from the Data Adapter must be sent to the client
 # unchanged.
-MODE_RAW = 'RAW'
+MODE_RAW = "RAW"
 
 # The source provides updates of a persisting state (e.g. stock quote updates).
 # The absence of a field in an itemEvent is interpreted as "unchanged data".
 # Any "holes" must be filled by copying each field with the value in the last
 # itemEvent where the field had a value. Not all the itemEvents from the Data
 # Adapter need to be sent to the client.
-MODE_MERGE = 'MERGE'
+MODE_MERGE = "MERGE"
 
 # The source provides events of the same type (e.g. statistical samplings or
 # news). The itemEvents coming from the Data Adapter must be sent to the client
 # unchanged. Not all the itemEvents need to be sent to the client.
-MODE_DISTINCT = 'DISTINCT'
+MODE_DISTINCT = "DISTINCT"
 
 # The itemEvents are interpreted as commands that indicate how to progressively
 # modify a list. In the schema t are two fields that are required to
@@ -104,43 +103,44 @@ MODE_DISTINCT = 'DISTINCT'
 # identifies a line of the list generated from the Item. The "command" field
 # contains the command associated with the itemEvent, having a value of "ADD",
 # "UPDATE" or "DELETE".
-MODE_COMMAND = 'COMMAND'
+MODE_COMMAND = "COMMAND"
 
 # A session does not yet exist, we're in the process of connecting for the
 # first time. Control messages cannot be sent yet.
-STATE_CONNECTING = 'connecting Lightstreamer session'
+STATE_CONNECTING = "connecting Lightstreamer session"
 
 # Connected and forwarding messages.
-STATE_CONNECTED = 'connected Lightstreamer session'
+STATE_CONNECTED = "connected Lightstreamer session"
 
 # A session exists, we're just in the process of reconnecting. A healthy
 # connection will alternate between RECONNECTING and CONNECTED states as
 # LS_content_length is exceeded.
-STATE_RECONNECTING = 'reconnecting Lightstreamer session'
+STATE_RECONNECTING = "reconnecting Lightstreamer session"
 
 # Could not connect and will not retry because the server indicated a permanent
 # error. After entering this state the thread stops, and session information is
 # cleared. You must call create_session() to restart the session.  This is the
 # default state.
-STATE_DISCONNECTED = 'disconnected from Lightstreamer'
+STATE_DISCONNECTED = "disconnected from Lightstreamer"
 
 # Called when the server indicates its internal message queue overflowed.
-EVENT_OVERFLOW = 'on_overflow'
+EVENT_OVERFLOW = "on_overflow"
 
 # Called when an attempted push message could not be delivered.
-EVENT_PUSH_ERROR = 'on_push_error'
+EVENT_PUSH_ERROR = "on_push_error"
 
 
 CAUSE_MAP = {
-    '31': 'closed by the administrator through a "destroy" request',
-    '32': 'closed by the administrator through JMX',
-    '35': 'Adapter does not allow more than one session for the user',
-    '40': 'A manual rebind to the same session has been performed'
+    "31": 'closed by the administrator through a "destroy" request',
+    "32": "closed by the administrator through JMX",
+    "35": "Adapter does not allow more than one session for the user",
+    "40": "A manual rebind to the same session has been performed",
 }
 
 
 class Error(Exception):
     """Raised when any operation fails for objects in this module."""
+
     def __init__(self, fmt=None, *args):
         if args:
             fmt %= args
@@ -183,15 +183,15 @@ def _decode_field(s, prev=None):
 
         Returns the decoded Unicode string.
     """
-    if s == '$':
-        return ''
-    elif s == '#':
+    if s == "$":
+        return ""
+    elif s == "#":
         return None
-    elif s == '':
+    elif s == "":
         return prev
-    elif s[0] in '$#':
+    elif s[0] in "$#":
         s = s[1:]
-    return s.decode('unicode_escape')
+    return s.decode("unicode_escape")
 
 
 def run_and_log(func, *args, **kwargs):
@@ -201,7 +201,7 @@ def run_and_log(func, *args, **kwargs):
         func(*args, **kwargs)
         return True
     except Exception:
-        LOG.exception('While invoking %r(*%r, **%r)', func, args, kwargs)
+        LOG.exception("While invoking %r(*%r, **%r)", func, args, kwargs)
 
 
 def dispatch(lst, *args, **kwargs):
@@ -215,9 +215,10 @@ def dispatch(lst, *args, **kwargs):
 class WorkQueue(object):
     """Manage a thread and associated queue. The thread executes functions on
     the queue as requested."""
+
     def __init__(self):
         """Create an instance."""
-        self.log = logging.getLogger('WorkQueue')
+        self.log = logging.getLogger("WorkQueue")
         self.queue = queue.Queue()
         self.thread = threading.Thread(target=self._main)
         self.thread.setDaemon(True)
@@ -237,7 +238,7 @@ class WorkQueue(object):
         while True:
             tup = self.queue.get()
             if tup is None:
-                self.log.info('Got shutdown semaphore; exitting.')
+                self.log.info("Got shutdown semaphore; exitting.")
                 return
             func, args, kwargs = tup
             run_and_log(func, *args, **kwargs)
@@ -245,6 +246,7 @@ class WorkQueue(object):
 
 class Event(object):
     """Manage a list of functions."""
+
     def __init__(self):
         """Create an instance."""
         self.listeners = []
@@ -269,7 +271,7 @@ class Event(object):
 def event_property(name, doc):
     """Return a property that evaluates to an Event, which is stored in the
     class instance on first access."""
-    var_name = '_' + name
+    var_name = "_" + name
 
     def fget(self):
         event = getattr(self, var_name, None)
@@ -277,6 +279,7 @@ def event_property(name, doc):
             event = Event()
             setattr(self, var_name, event)
         return event
+
     return property(fget, doc=doc)
 
 
@@ -292,17 +295,33 @@ class Table(object):
 
     The table is registed with the given `LsClient` during construction.
     """
-    on_update = event_property('on_update',
+
+    on_update = event_property(
+        "on_update",
         """Fired when the client receives a new update message (i.e. data).
-        Receives 2 arguments: item_id, and msg.""")
+        Receives 2 arguments: item_id, and msg.""",
+    )
 
-    on_end_of_snapshot = event_property('on_end_of_snapshot',
+    on_end_of_snapshot = event_property(
+        "on_end_of_snapshot",
         """Fired when the server indicates the first set of update messages
-        representing a snapshot have been sent successfully.""")
+        representing a snapshot have been sent successfully.""",
+    )
 
-    def __init__(self, client, item_ids, mode=None, data_adapter=None,
-            buffer_size=None, item_factory=None, max_frequency=None,
-            schema=None, selector=None, silent=False, snapshot=False):
+    def __init__(
+        self,
+        client,
+        item_ids,
+        mode=None,
+        data_adapter=None,
+        buffer_size=None,
+        item_factory=None,
+        max_frequency=None,
+        schema=None,
+        selector=None,
+        silent=False,
+        snapshot=False,
+    ):
         """Create a new table.
 
         `data_adapter`: optional data adapter name.
@@ -327,7 +346,7 @@ class Table(object):
             Defaults to tuple().
         """
         assert mode in (None, MODE_RAW, MODE_MERGE, MODE_DISTINCT, MODE_COMMAND)
-        assert item_ids, 'item_ids required'
+        assert item_ids, "item_ids required"
         self.client = client
         self.item_ids = item_ids
         self.mode = mode or MODE_MERGE
@@ -349,18 +368,17 @@ class Table(object):
 
     def _dispatch_update(self, item_id, item):
         """Called by LsClient to dispatch a table update line."""
-        if item == 'EOS':
+        if item == "EOS":
             self.on_end_of_snapshot.fire()
             return
         last = dict(enumerate(self._last_item_map.get(item_id, [])))
         fields = [_decode_field(s, last.get(i)) for i, s in enumerate(item)]
         self._last_item_map[item_id] = fields
-        #fields.insert(0, self.item_ids)    # insert table ids to know wha it's sent
-        #self.items[item_id] = self.item_factory(fields)
-        #self.on_update.fire(item_id, self.items[item_id])
+        # fields.insert(0, self.item_ids)    # insert table ids to know wha it's sent
+        # self.items[item_id] = self.item_factory(fields)
+        # self.on_update.fire(item_id, self.items[item_id])
         # print(fields)
-        self.on_update.fire(self.item_ids, fields)    #send item_ids to identify it
-
+        self.on_update.fire(self.item_ids, fields)  # send item_ids to identify it
 
 
 class LsClient(object):
@@ -375,15 +393,27 @@ class LsClient(object):
     create_session() and send_control() calls are completed asynchronously on a
     private thread.
     """
-    on_state = event_property('on_state',
-        """Subscribe `func` to connection state changes. Sole argument, `state`
-        is one of the STATE_* constants.""")
-    on_heartbeat = event_property('on_heartbeat',
-         """Subscribe `func` to heartbeats. The function is called with no
-         arguments each time the connection receives any data.""")
 
-    def __init__(self, base_url, work_queue=None, content_length=None,
-            timeout_grace=None, polling_ms=None, proxies = None):
+    on_state = event_property(
+        "on_state",
+        """Subscribe `func` to connection state changes. Sole argument, `state`
+        is one of the STATE_* constants.""",
+    )
+    on_heartbeat = event_property(
+        "on_heartbeat",
+        """Subscribe `func` to heartbeats. The function is called with no
+         arguments each time the connection receives any data.""",
+    )
+
+    def __init__(
+        self,
+        base_url,
+        work_queue=None,
+        content_length=None,
+        timeout_grace=None,
+        polling_ms=None,
+        proxies=None,
+    ):
         """Create an instance using `base_url` as the root of the Lightstreamer
         server. If `timeout_grace` is given, indicates number of seconds grace
         to allow after an expected keepalive fails to arrive before considering
@@ -396,7 +426,7 @@ class LsClient(object):
         self.proxies = proxies
         self._lock = threading.Lock()
         self._control_url = None
-        self.log = logging.getLogger('lightstreamer.LsClient')
+        self.log = logging.getLogger("lightstreamer.LsClient")
         self._table_id = 0
         self._table_map = {}
         self._session = {}
@@ -414,13 +444,13 @@ class LsClient(object):
         if state == STATE_DISCONNECTED:
             self._control_queue.clear()
 
-        self.log.debug('New state: %r', state)
+        self.log.debug("New state: %r", state)
         self.on_state.fire(state)
 
     def _get_request_timeout(self):
         """Examine the current session to figure out how long we should wait
         for any data on the receive connection."""
-        ms = float(self._session.get('KeepaliveMillis', '0')) or 5000
+        ms = float(self._session.get("KeepaliveMillis", "0")) or 5000
         return self._timeout_grace + (ms / 1000)
 
     def _post(self, suffix, data, base_url=None):
@@ -428,9 +458,9 @@ class LsClient(object):
         HTTP exception is thrown, log an error and return the exception."""
         url = urllib.parse.urljoin(base_url or self.base_url, suffix)
         try:
-            return requests.post(url, data=data, verify=False, proxies = self.proxies)
+            return requests.post(url, data=data, verify=False, proxies=self.proxies)
         except urllib.error.HTTPError as e:
-            self.log.error('HTTP %d for %r', e.getcode(), url)
+            self.log.error("HTTP %d for %r", e.getcode(), url)
             return e
 
     def _dispatch_update(self, line):
@@ -439,25 +469,26 @@ class LsClient(object):
         table's associated listener."""
         if not line:
             return
-        bits = line.rstrip('\r\n').split('|')
+        bits = line.rstrip("\r\n").split("|")
 
-        if bits[0].count(',') < 1:
-            self.log.warning('Dropping strange update line: %r', line)
+        if bits[0].count(",") < 1:
+            self.log.warning("Dropping strange update line: %r", line)
             return
 
-        table_info = bits[0].split(',')
+        table_info = bits[0].split(",")
 
         table_id, item_id = int(table_info[0]), int(table_info[1])
         table = self._table_map.get(table_id)
         if not table:
-            self.log.debug('Unknown table %r; dropping row', table_id)
+            self.log.debug("Unknown table %r; dropping row", table_id)
             return
 
-        if table_info[-1] == 'EOS':
-            run_and_log(table._dispatch_update, item_id, 'EOS')
+        if table_info[-1] == "EOS":
+            run_and_log(table._dispatch_update, item_id, "EOS")
         else:
             run_and_log(table._dispatch_update, item_id, bits[1:])
             table_name = table.item_ids
+
     # Constants for _recv_line -> _do_recv communication.
     R_OK, R_RECONNECT, R_END = 0, 1, 2
 
@@ -467,15 +498,15 @@ class LsClient(object):
         raises Terminated to indicate the  doesn't like us any more."""
         self.on_heartbeat.fire()
 
-        if line.startswith('PROBE'):
-            self.log.debug('Received server probe.')
+        if line.startswith("PROBE"):
+            self.log.debug("Received server probe.")
             return self.R_OK
-        elif line.startswith('LOOP'):
-            self.log.debug('Server indicated length exceeded; reconnecting.')
+        elif line.startswith("LOOP"):
+            self.log.debug("Server indicated length exceeded; reconnecting.")
             return self.R_RECONNECT
-        elif line.startswith('END'):
+        elif line.startswith("END"):
             cause = CAUSE_MAP.get(line.split()[-1], line)
-            self.log.info('Session permanently closed; cause: %r', cause)
+            self.log.info("Session permanently closed; cause: %r", cause)
             return self.R_END
         else:
             # Update event.
@@ -486,16 +517,23 @@ class LsClient(object):
     def _do_recv(self):
         """Connect to bind_session.txt and dispatch messages until the server
         tells us to stop or an error occurs."""
-        self.log.debug('Attempting to connect..')
+        self.log.debug("Attempting to connect..")
         self._set_state(STATE_CONNECTING)
-        sessionnum = encode_dict({'LS_session': self._session['SessionId']})
-        req = requests.post(self.control_url+"bind_session.txt", data=sessionnum, stream=True, verify=False, proxies = self.proxies)
+        sessionnum = encode_dict({"LS_session": self._session["SessionId"]})
+        req = requests.post(
+            self.control_url + "bind_session.txt",
+            data=sessionnum,
+            stream=True,
+            verify=False,
+            proxies=self.proxies,
+        )
         line_it = req.iter_lines(chunk_size=1)
         self._parse_and_raise_status(req, line_it)
         self._parse_session_info(line_it)
         self._set_state(STATE_CONNECTED)
-        self.log.debug('Server reported Content-length: %s',
-            req.headers.get('Content-length'))
+        self.log.debug(
+            "Server reported Content-length: %s", req.headers.get("Content-length")
+        )
         for line in line_it:
             status = self._recv_line(line)
             if status == self.R_END:
@@ -504,15 +542,14 @@ class LsClient(object):
                 return True
 
     def _is_transient_error(self, e):
-        if isinstance(e, urllib.error.URLError) \
-                and isinstance(e.reason, socket.error):
+        if isinstance(e, urllib.error.URLError) and isinstance(e.reason, socket.error):
             return True
         return isinstance(e, (socket.error, TransientError))
 
     def _recv_main(self):
         """Receive thread main function. Calls _do_recv() in a loop, optionally
         delaying if a transient error occurs."""
-        self.log.debug('receive thread running.')
+        self.log.debug("receive thread running.")
         fail_count = 0
         running = True
         while running:
@@ -521,13 +558,18 @@ class LsClient(object):
                 fail_count = 0
             except Exception as e:
                 if not self._is_transient_error(e):
-                    self.log.exception('_do_recv failure')
+                    self.log.exception("_do_recv failure")
                     break
-                fail_wait = min(RETRY_WAIT_MAX_SECS,
-                    RETRY_WAIT_SECS * (2 ** fail_count))
+                fail_wait = min(
+                    RETRY_WAIT_MAX_SECS, RETRY_WAIT_SECS * (2 ** fail_count)
+                )
                 fail_count += 1
-                self.log.info('Error: %s: %s (reconnect in %.2fs)',
-                    e.__class__.__name__, e, fail_wait)
+                self.log.info(
+                    "Error: %s: %s (reconnect in %.2fs)",
+                    e.__class__.__name__,
+                    e,
+                    fail_wait,
+                )
                 self._set_state(STATE_CONNECTING)
                 time.sleep(fail_wait)
 
@@ -535,7 +577,7 @@ class LsClient(object):
         self._thread = None
         self._session.clear()
         self._control_url = None
-        self.log.debug('Receive thread exiting')
+        self.log.debug("Receive thread exiting")
 
     def _parse_and_raise_status(self, req, line_it):
         """Parse the status part of a control/session create/bind response.
@@ -543,13 +585,12 @@ class LsClient(object):
         ERROR, raise RequestFailed.
         """
         if req.status_code != 200:
-            raise TransientError('HTTP status %d', req.status_code)
+            raise TransientError("HTTP status %d", req.status_code)
         status = next(line_it)
-        if status.startswith('SYNC ERROR'):
+        if status.startswith("SYNC ERROR"):
             raise SessionExpired()
-        if not status.startswith('OK'):
-            raise TransientError('%s %s: %s' %
-                (status, next(line_it), next(line_it)))
+        if not status.startswith("OK"):
+            raise TransientError("%s %s: %s" % (status, next(line_it), next(line_it)))
 
     def _parse_session_info(self, line_it):
         """Parse the headers from `fp` sent immediately following an OK
@@ -559,16 +600,17 @@ class LsClient(object):
         for line in line_it:
             if line:
                 blanks = 0
-                key, value = line.rstrip().split(':', 1)
+                key, value = line.rstrip().split(":", 1)
                 self._session[key] = value
             else:
                 blanks += 1
                 if blanks == 2:
                     break
 
-        self.control_url = _replace_url_host(self.base_url,
-            self._session.get('ControlAddress'))
-        assert self._session, 'Session parse failure'
+        self.control_url = _replace_url_host(
+            self.base_url, self._session.get("ControlAddress")
+        )
+        assert self._session, "Session parse failure"
 
     def _create_session_impl(self, dct):
 
@@ -576,7 +618,7 @@ class LsClient(object):
         assert self._state == STATE_DISCONNECTED
         self._set_state(STATE_CONNECTING)
         try:
-            req = self._post('create_session.txt', encode_dict(dct))
+            req = self._post("create_session.txt", encode_dict(dct))
             line_it_custom = req.iter_lines(chunk_size=1)
             for line in line_it_custom:
                 if "ControlAddress" in line:
@@ -596,8 +638,15 @@ class LsClient(object):
         self._thread.setDaemon(True)
         self._thread.start()
 
-    def create_session(self, username, adapter_set, password=None,
-            max_bandwidth_kbps=None, content_length=None, keepalive_ms=None):
+    def create_session(
+        self,
+        username,
+        adapter_set,
+        password=None,
+        max_bandwidth_kbps=None,
+        content_length=None,
+        keepalive_ms=None,
+    ):
         """Begin authenticating with Lightstreamer and start the receive
         thread.
 
@@ -613,19 +662,23 @@ class LsClient(object):
             messages when the server otherwise has nothing to say. Server's
             default is used if unspecified.
         """
-        assert self._state == STATE_DISCONNECTED,\
+        assert self._state == STATE_DISCONNECTED, (
             "create_session() called while state %r" % self._state
-        self._work_queue.push(self._create_session_impl, {
-            'LS_user': username,
-#            'LS_adapter_set': adapter_set,
-            'LS_report_info': 'true',
-            'LS_polling': 'true',
-            'LS_polling_millis': self._polling_ms,
-            'LS_password': password,
-            'LS_requested_max_bandwidth': max_bandwidth_kbps,
-            'LS_content_length': content_length,
-            'LS_keepalive_millis': keepalive_ms
-        })
+        )
+        self._work_queue.push(
+            self._create_session_impl,
+            {
+                "LS_user": username,
+                #            'LS_adapter_set': adapter_set,
+                "LS_report_info": "true",
+                "LS_polling": "true",
+                "LS_polling_millis": self._polling_ms,
+                "LS_password": password,
+                "LS_requested_max_bandwidth": max_bandwidth_kbps,
+                "LS_content_length": content_length,
+                "LS_keepalive_millis": keepalive_ms,
+            },
+        )
 
     def join(self):
         """Wait for the receive thread to terminate."""
@@ -634,17 +687,17 @@ class LsClient(object):
 
     def _send_control_impl(self):
         """Worker function for send_control()."""
-        assert self._session['SessionId']
+        assert self._session["SessionId"]
         if not self._control_queue:
             return
 
-        limit = int(self._session.get('RequestLimit', '50000'))
+        limit = int(self._session.get("RequestLimit", "50000"))
         bits = []
         size = 0
         with self._lock:
             while self._control_queue:
                 op = self._control_queue[0]
-                op['LS_session'] = self._session['SessionId']
+                op["LS_session"] = self._session["SessionId"]
                 encoded = encode_dict(op)
                 if (size + len(encoded) + 2) > limit:
                     break
@@ -652,24 +705,27 @@ class LsClient(object):
                 size += len(encoded) + 2
                 self._control_queue.popleft()
 
-        req = self._post('control.txt', data='\r\n'.join(bits),
-            base_url=self.control_url)
+        req = self._post(
+            "control.txt", data="\r\n".join(bits), base_url=self.control_url
+        )
         self._parse_and_raise_status(req, req.iter_lines())
-        self.log.debug('Control message successful.')
+        self.log.debug("Control message successful.")
 
     def _enqueue_table_create(self, table):
-        self._send_control({
-            'LS_table': table.table_id,
-            'LS_op': OP_ADD_SILENT if table.silent else OP_ADD,
-            'LS_data_adapter': table.data_adapter,
-            'LS_id': table.item_ids,
-            'LS_schema': table.schema,
-            'LS_selector': table.selector,
-            'LS_mode': table.mode,
-            'LS_requested_buffer_size': table.buffer_size,
-            'LS_requested_max_frequency': table.max_frequency,
-            'LS_snapshot': table.snapshot and 'true'
-        })
+        self._send_control(
+            {
+                "LS_table": table.table_id,
+                "LS_op": OP_ADD_SILENT if table.silent else OP_ADD,
+                "LS_data_adapter": table.data_adapter,
+                "LS_id": table.item_ids,
+                "LS_schema": table.schema,
+                "LS_selector": table.selector,
+                "LS_mode": table.mode,
+                "LS_requested_buffer_size": table.buffer_size,
+                "LS_requested_max_frequency": table.max_frequency,
+                "LS_snapshot": table.snapshot and "true",
+            }
+        )
 
     def _register(self, table):
         """Register `table` with the session."""
@@ -684,19 +740,13 @@ class LsClient(object):
         """If a table was created with silent=True, instruct the server to
         start delivering updates."""
         with self._lock:
-            self._send_control({
-                'LS_op': OP_START,
-                'LS_table': table.table_id
-            })
+            self._send_control({"LS_op": OP_START, "LS_table": table.table_id})
 
     def delete(self, table):
         """Instruct the server and LsClient to discard the given table."""
         with self._lock:
-            #self._table_map.pop(table_id, None)
-            self._send_control({
-                'LS_op': OP_DELETE,
-                'LS_table': table.table_id
-            })
+            # self._table_map.pop(table_id, None)
+            self._send_control({"LS_op": OP_DELETE, "LS_table": table.table_id})
 
     def _send_control(self, dct):
         self._control_queue.append(dct)
@@ -704,7 +754,4 @@ class LsClient(object):
 
     def destroy(self):
         """Request the server destroy our session."""
-        self._send_control({
-            'LS_op': OP_DESTROY
-        })
-
+        self._send_control({"LS_op": OP_DESTROY})

@@ -18,8 +18,7 @@ except ImportError:
     codecs = None
 
 
-class CustomTimedRotatingFileHandler(logging.handlers.
-                                     TimedRotatingFileHandler):
+class CustomTimedRotatingFileHandler(logging.handlers.TimedRotatingFileHandler):
 
     """
     Custom TimedRotatingFileHandler, as the name of log created
@@ -49,21 +48,18 @@ class CustomTimedRotatingFileHandler(logging.handlers.
         elif when.startswith("W"):
             suffix = "%Y-%m-%d"
         else:
-            raise ValueError("Invalid rollover interval specified: %s"
-                             % self.when)
+            raise ValueError("Invalid rollover interval specified: %s" % self.when)
 
-        self.prefix  = prefix
+        self.prefix = prefix
         self.dir_log = os.getcwd() + "/Logs/"
 
         # dir_log here MUST be with os.sep on the end
         filename = self.dir_log + self.prefix + time.strftime(suffix) + ".log"
-        log_files = glob.glob(self.dir_log+"*.log")
+        log_files = glob.glob(self.dir_log + "*.log")
 
-        logging.handlers\
-               .TimedRotatingFileHandler.__init__(self,
-                                                  filename,
-                                                  when=when,
-                                                  backupCount=backupCount)
+        logging.handlers.TimedRotatingFileHandler.__init__(
+            self, filename, when=when, backupCount=backupCount
+        )
 
         """
         If we doRollover at each start it delete content of
@@ -76,7 +72,6 @@ class CustomTimedRotatingFileHandler(logging.handlers.
                 self.doRollover()
         except Exception:
             pass
-
 
     def getFilesToDelete(self):
 
@@ -93,7 +88,7 @@ class CustomTimedRotatingFileHandler(logging.handlers.
         for fileName in fileNames:
 
             # fileName = os.path.splitext(fileName)[0]
-            ext    = os.path.splitext(fileName)[1]
+            ext = os.path.splitext(fileName)[1]
             extlen = len(ext)
 
             if fileName[:plen] == prefix:
@@ -106,10 +101,9 @@ class CustomTimedRotatingFileHandler(logging.handlers.
         if len(result) < self.backupCount:
             result = []
         else:
-            result = result[:len(result) - self.backupCount]
+            result = result[: len(result) - self.backupCount]
 
         return result
-
 
     def doRollover(self):
 
@@ -124,8 +118,9 @@ class CustomTimedRotatingFileHandler(logging.handlers.
         t = self.rolloverAt - self.interval
         timeTuple = time.localtime(t)
 
-        self.baseFilename = self.dir_log + self.prefix +\
-                            time.strftime(self.suffix) + ".log"
+        self.baseFilename = (
+            self.dir_log + self.prefix + time.strftime(self.suffix) + ".log"
+        )
         if self.encoding:
             self.stream = codecs.open(self.baseFilename, "w", self.encoding)
         else:
