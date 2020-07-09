@@ -1,6 +1,4 @@
 
-from PyQt4 import QtCore
-from PyQt4 import QtGui
 
 import re
 import os
@@ -31,8 +29,9 @@ import classExport
 import funcMisc
 import igls
 
+from PyQt5 import QtGui, QtWidgets
 
-class ReportToolGUI(QtGui.QMainWindow):
+class ReportToolGUI(QtWidgets.QMainWindow):
 
     """Main class for ReportTool"""
 
@@ -48,10 +47,7 @@ class ReportToolGUI(QtGui.QMainWindow):
         config = funcMisc.read_config()
 
         # load size and state of window
-        try:
-            state = QtCore.QByteArray.fromHex(config["gui_state"])
-        except AttributeError:    # no state saved yet
-            state = QtCore.QVariant().toByteArray()
+        state = config["gui_state"]
 
         size  = config["gui_size"]
         size  = QtCore.QSize(size[0], size[1])
@@ -112,46 +108,44 @@ class ReportToolGUI(QtGui.QMainWindow):
         icon_export     = QtGui.QPixmap(icons_path+"export.png")
 
         # create menus
-        self.menu_switch  = QtGui.QMenu("Switch account")
+        self.menu_switch  = QtWidgets.QMenu("Switch account")
         self.menu_connect = self.menuBar().addMenu("Connect")
         self.menu_options = self.menuBar().addMenu("&Options")
         self.menu_about   = self.menuBar().addMenu("&About")
 
         # create actions
-        self.act_connect = QtGui.QAction(icon_connect,
+        self.act_connect = QtWidgets.QAction(icon_connect,
                                          "Connect",
-                                         self,
-                                         statusTip="Connect to API",
-                                         triggered=self.connect_to_api
-                                        )
+                                         self)
+        self.act_connect.setStatusTip("Connect to API")
+        self.act_connect.triggered.connect(self.connect_to_api)
 
-        self.act_disconnect = QtGui.QAction(icon_disconnect,
+        self.act_disconnect = QtWidgets.QAction(icon_disconnect,
                                             "Disconnect",
-                                            self,
-                                            statusTip="Disconnect from API",
-                                            triggered=self.disconnect_from_api,
-                                            enabled=False
-                                            )
+                                            self)
+        self.act_disconnect.setStatusTip("Disconnect from API")
+        self.act_disconnect.triggered.connect(self.disconnect_from_api)
+        self.act_disconnect.setEnabled(False)
 
-        self.act_about = QtGui.QAction(icon_infos,
+        self.act_about = QtWidgets.QAction(icon_infos,
                                        "About",
-                                       self,
-                                       checkable=False,
-                                       enabled=False,
-                                       triggered=self.show_about)
+                                       self)
+        self.act_about.triggered.connect(self.show_about)
+        self.act_about.setEnabled(False)
+        self.act_about.setCheckable(False)
 
-        self.act_options = QtGui.QAction(icon_options,
+        self.act_options = QtWidgets.QAction(icon_options,
                                          "Options",
-                                         self,
-                                         checkable=False,
-                                         enabled=False,
-                                         triggered=self.show_options)
+                                         self)
+        self.act_options.triggered.connect(self.show_options)
+        self.act_options.setEnabled(False)
+        self.act_options.setCheckable(False)
 
         #  action to be replaced by user accounts
-        dummy_act = QtGui.QAction("Not connected",
-                                   self,
-                                   checkable=False,
-                                   enabled=False)
+        dummy_act = QtWidgets.QAction("Not connected",
+                                   self)
+        dummy_act.setEnabled(False)
+        dummy_act.setCheckable(False)
 
         # configure connection menu
         self.menu_connect.addAction(self.act_connect)
@@ -170,8 +164,8 @@ class ReportToolGUI(QtGui.QMainWindow):
         self.btn_refresh    = classCustomWidgets.CustomLabel("lbl_refresh")
         self.btn_export     = classCustomWidgets.CustomLabel("lbl_export")
 
-        widget_corner = QtGui.QWidget()
-        layout_corner = QtGui.QHBoxLayout()
+        widget_corner = QtWidgets.QWidget()
+        layout_corner = QtWidgets.QHBoxLayout()
 
         # configure refresh button
         self.btn_refresh.set_default_style("transparent",
@@ -215,7 +209,7 @@ class ReportToolGUI(QtGui.QMainWindow):
         # create and configure a button to take screeenshot
         disconnected_color = QtGui.QColor("#F51616")
         icon_status        = funcMisc.create_status_icons(disconnected_color)
-        self.lbl_status    = QtGui.QLabel()
+        self.lbl_status    = QtWidgets.QLabel()
 
         self.lbl_status.setFixedSize(18, 18)
         self.lbl_status.setPixmap(icon_status)
@@ -244,15 +238,15 @@ class ReportToolGUI(QtGui.QMainWindow):
         currency_symbol = config["currency_symbol"]
 
         # init and configure transaction QTableWidget
-        self.widget_pos = QtGui.QTableWidget(1, len(transaction_headers))
+        self.widget_pos = QtWidgets.QTableWidget(1, len(transaction_headers))
 
         self.widget_pos.setObjectName("Transactions")
         self.widget_pos.setMinimumHeight(100)
         self.widget_pos.setHorizontalHeaderLabels(transaction_headers)
 
-        self.widget_pos.setSelectionMode(QtGui.QAbstractItemView.SingleSelection)
-        self.widget_pos.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
-        self.widget_pos.setEditTriggers(QtGui.QAbstractItemView.NoEditTriggers)
+        self.widget_pos.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
+        self.widget_pos.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
+        self.widget_pos.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
 
         # create equity graph
         pg.setConfigOption("background", (242, 242, 237))
@@ -305,7 +299,7 @@ class ReportToolGUI(QtGui.QMainWindow):
 
 
         # init and configure tab widget
-        self.widget_tab = QtGui.QTabWidget()
+        self.widget_tab = QtWidgets.QTabWidget()
 
         self.widget_tab.setMovable(True)
         self.widget_tab.addTab(self.widget_pos, "Transactions")
@@ -328,7 +322,7 @@ class ReportToolGUI(QtGui.QMainWindow):
             self.graph_dict[tab_text]["curve"]         = OrderedDict()
 
             # splitter between the two plot widgets
-            splitter = QtGui.QSplitter()
+            splitter = QtWidgets.QSplitter()
             splitter.setOrientation(QtCore.Qt.Vertical)
             splitter.setStyleSheet("QSplitter:handle:vertical{height: 6px;\
                                                     background-color: white}")
@@ -417,16 +411,16 @@ class ReportToolGUI(QtGui.QMainWindow):
         agregate        = config["agregate"]
 
         # init widgets and layout for dates
-        dock_options = QtGui.QDockWidget("Report options")
-        widget_main  = QtGui.QWidget()
-        layout_dock  = QtGui.QVBoxLayout()
-        widget_date  = QtGui.QGroupBox("Period of analyze")
-        layout_date  = QtGui.QGridLayout()
+        dock_options = QtWidgets.QDockWidget("Report options")
+        widget_main  = QtWidgets.QWidget()
+        layout_dock  = QtWidgets.QVBoxLayout()
+        widget_date  = QtWidgets.QGroupBox("Period of analyze")
+        layout_date  = QtWidgets.QGridLayout()
 
-        LABEL_START_DATE = QtGui.QLabel("From: ")
-        LABEL_END_DATE   = QtGui.QLabel("To: ")
-        self.start_date  = QtGui.QDateEdit()
-        self.end_date    = QtGui.QDateEdit()
+        LABEL_START_DATE = QtWidgets.QLabel("From: ")
+        LABEL_END_DATE   = QtWidgets.QLabel("To: ")
+        self.start_date  = QtWidgets.QDateEdit()
+        self.end_date    = QtWidgets.QDateEdit()
 
         today = datetime.datetime.now().strftime("%d/%m/%Y")
 
@@ -450,22 +444,22 @@ class ReportToolGUI(QtGui.QMainWindow):
         layout_date.addWidget(self.end_date, 0, 3, 1, 1)
 
         # init widget for summary options
-        widget_options = QtGui.QGroupBox("Summary options")
-        layout_options = QtGui.QGridLayout()
+        widget_options = QtWidgets.QGroupBox("Summary options")
+        layout_options = QtWidgets.QGridLayout()
 
-        LABEL_CAPITAL  = QtGui.QLabel("Initial capital: ")
-        LABEL_AUTO     = QtGui.QLabel("Auto-calculate: ")
-        LABEL_OPTIONS  = QtGui.QLabel("Show results in: ")
-        LABEL_INCLUDE  = QtGui.QLabel("Include interests/fees: ")
-        LABEL_AGREGATE = QtGui.QLabel("Agregate positions: ")
-        LABEL_FILTER   = QtGui.QLabel("Set a filter: ")
+        LABEL_CAPITAL  = QtWidgets.QLabel("Initial capital: ")
+        LABEL_AUTO     = QtWidgets.QLabel("Auto-calculate: ")
+        LABEL_OPTIONS  = QtWidgets.QLabel("Show results in: ")
+        LABEL_INCLUDE  = QtWidgets.QLabel("Include interests/fees: ")
+        LABEL_AGREGATE = QtWidgets.QLabel("Agregate positions: ")
+        LABEL_FILTER   = QtWidgets.QLabel("Set a filter: ")
 
         self.line_edit_capital = classCustomWidgets.CustomLineEdit()
         self.btn_filter        = classCustomWidgets.CustomLabel("btn_filter")
-        self.combobox_options  = QtGui.QComboBox()
-        self.checkbox_auto     = QtGui.QCheckBox()
-        self.checkbox_include  = QtGui.QCheckBox()
-        self.checkbox_agregate = QtGui.QCheckBox()
+        self.combobox_options  = QtWidgets.QComboBox()
+        self.checkbox_auto     = QtWidgets.QCheckBox()
+        self.checkbox_include  = QtWidgets.QCheckBox()
+        self.checkbox_agregate = QtWidgets.QCheckBox()
 
         list_options    = ["Points","Points/lot", currency_symbol, "%"]
         option_idx      = list_options.index(result_in)
@@ -559,8 +553,8 @@ class ReportToolGUI(QtGui.QMainWindow):
         # configure dock widget
         dock_options.setObjectName("Report options")
         dock_options.setWidget(widget_main)
-        dock_options.setFeatures(QtGui.QDockWidget.DockWidgetFloatable
-                                 |QtGui.QDockWidget.DockWidgetMovable)
+        dock_options.setFeatures(QtWidgets.QDockWidget.DockWidgetFloatable
+                                 |QtWidgets.QDockWidget.DockWidgetMovable)
 
         self.addDockWidget(QtCore.Qt.LeftDockWidgetArea, dock_options)
 
@@ -578,7 +572,7 @@ class ReportToolGUI(QtGui.QMainWindow):
         agregate        = config["agregate"]
         icons_path      = os.getcwd() + "/icons"
 
-        dock_summary = QtGui.QDockWidget("Summary")
+        dock_summary = QtWidgets.QDockWidget("Summary")
 
         # creates a list of what is calculated to
         # easily create corresponding labels
@@ -596,8 +590,8 @@ class ReportToolGUI(QtGui.QMainWindow):
                            "Cash in/out", "Transfers",
                            ]
 
-        widget_summary = QtGui.QWidget()
-        layout_summary = QtGui.QGridLayout()
+        widget_summary = QtWidgets.QWidget()
+        layout_summary = QtWidgets.QGridLayout()
 
         """
         Loop over summary_headers to create and place
@@ -609,13 +603,13 @@ class ReportToolGUI(QtGui.QMainWindow):
         k = 0
         for count, header in enumerate(summary_headers):
             if header == "":    # add horizontal line
-                h_line = QtGui.QFrame()
-                h_line.setFrameShape(QtGui.QFrame.HLine)
+                h_line = QtWidgets.QFrame()
+                h_line.setFrameShape(QtWidgets.QFrame.HLine)
                 h_line.setStyleSheet("color:rgb(173,173,173);")
                 layout_summary.addWidget(h_line, int(count/2), 0, 1, 2)
 
             else:
-                label = QtGui.QLabel(header+": ")
+                label = QtWidgets.QLabel(header+": ")
                 self.dict_summary_labels[header] = label
 
                 if count%2 ==0:
@@ -631,8 +625,8 @@ class ReportToolGUI(QtGui.QMainWindow):
         # configure dock widget
         dock_summary.setObjectName("Summary")
         dock_summary.setWidget(widget_summary)
-        dock_summary.setFeatures(QtGui.QDockWidget.DockWidgetFloatable
-                                 |QtGui.QDockWidget.DockWidgetMovable)
+        dock_summary.setFeatures(QtWidgets.QDockWidget.DockWidgetFloatable
+                                 |QtWidgets.QDockWidget.DockWidgetMovable)
 
         self.addDockWidget(QtCore.Qt.LeftDockWidgetArea, dock_summary)
 
@@ -646,9 +640,9 @@ class ReportToolGUI(QtGui.QMainWindow):
         config = funcMisc.read_config()
 
         # init widgets
-        dock_account   = QtGui.QDockWidget("Account Informations")
-        widget_account = QtGui.QWidget()
-        layout_account = QtGui.QGridLayout()
+        dock_account   = QtWidgets.QDockWidget("Account Informations")
+        widget_account = QtWidgets.QWidget()
+        layout_account = QtWidgets.QGridLayout()
 
         currency_symbol = config["currency_symbol"]    # temp currency symbol
 
@@ -679,14 +673,14 @@ class ReportToolGUI(QtGui.QMainWindow):
 
             # create and place horizontal line
             if count == 3:
-                h_line = QtGui.QFrame()
-                h_line.setFrameShape(QtGui.QFrame.HLine)
+                h_line = QtWidgets.QFrame()
+                h_line.setFrameShape(QtWidgets.QFrame.HLine)
                 h_line.setStyleSheet("color:rgb(173,173,173);")
                 layout_account.addWidget(h_line, count, 0, 1, 2)
 
             else:
-                lbl_static   = QtGui.QLabel(static_text)
-                lbl_variable = QtGui.QLabel()
+                lbl_static   = QtWidgets.QLabel(static_text)
+                lbl_variable = QtWidgets.QLabel()
                 lbl_static.setText(static_text)
 
                 if count > 3:    # labels displaying cash infos
@@ -845,6 +839,8 @@ class ReportToolGUI(QtGui.QMainWindow):
 
             connect_diag = classDialogBox.ConnectWindow(self)
             connect_dict = connect_diag._get_connect_dict()
+            if not connect_dict:
+                return
 
         # display and log a msg
         msg = "Connecting to API..."
@@ -1104,12 +1100,12 @@ class ReportToolGUI(QtGui.QMainWindow):
             else:
                 checked = False
 
-            new_account = QtGui.QAction(acc_name,
-                                        self,
-                                        checkable = True,
-                                        checked = checked,
-                                        statusTip = "Switch to " + acc_name,
-                                        triggered = self.switch_account)
+            new_account = QtWidgets.QAction(acc_name,
+                                        self)
+            new_account.setCheckable(True)
+            new_account.setChecked(checked)
+            new_account.setStatusTip(f"Switch to {acc_name}")
+            new_account.triggered.connect(self.switch_account)
 
             self.menu_switch.addAction(new_account)
 
@@ -1736,7 +1732,7 @@ class ReportToolGUI(QtGui.QMainWindow):
                 """
 
                 # add deal_id item at first column
-                # item = QtGui.QTableWidgetItem()
+                # item = QtWidgets.QTableWidgetItem()
                 # item.setTextAlignment(QtCore.Qt.AlignCenter)
                 # try:
                 #     ig_deal_id = re.search(r"(.*)_", deal_id).groups()[0]
@@ -1748,7 +1744,7 @@ class ReportToolGUI(QtGui.QMainWindow):
 
                 for idx, header in enumerate(pos_transaction_headers):
 
-                    item = QtGui.QTableWidgetItem()
+                    item = QtWidgets.QTableWidgetItem()
                     item.setTextAlignment(QtCore.Qt.AlignCenter)
 
                     if header == "pnl":
@@ -2716,7 +2712,7 @@ class ReportToolGUI(QtGui.QMainWindow):
 
         today = datetime.datetime.now().strftime("%d-%m-%Y %H:%M:%S")
 
-        dock_widget_list = self.findChildren(QtGui.QDockWidget)    # get all qdock
+        dock_widget_list = self.findChildren(QtWidgets.QDockWidget)    # get all qdock
         active_tab       = self.widget_tab.currentIndex()
         active_tab_name  =str( self.widget_tab.tabText(active_tab)).replace("&", "")
 
@@ -2871,7 +2867,7 @@ class ReportToolGUI(QtGui.QMainWindow):
         :param state: boolean
         """
         # get the dock_widgets
-        dock_widget_list = self.findChildren(QtGui.QDockWidget)
+        dock_widget_list = self.findChildren(QtWidgets.QDockWidget)
         for dock in dock_widget_list:
             dock.setEnabled(state)
 
@@ -2909,7 +2905,7 @@ class ReportToolGUI(QtGui.QMainWindow):
             key = event.key()
 
             if key == QtCore.Qt.Key_unknown:
-                warnings.warn("Unknown key from a macro probably")
+                warnings.warn("Unknown key from a macro probably")  # FIXME
                 return
 
             # the user have clicked just and only the special keys Ctrl, Shift, Alt, Meta.
@@ -2974,7 +2970,7 @@ class ReportToolGUI(QtGui.QMainWindow):
                                    "screenshot": False}
 
                 except TypeError:    # update_trade_details hasn"t been called yet
-                    point_obj   = QtCore.QPointF(vline_pos, 0)
+                    point_obj   = QtCore.QPointF(vline_pos, 0)  # FIXME
 
                     # simulate a mouse click (1, 0)
                     vline_coord = plot_widget.plotItem.vb\
@@ -3024,7 +3020,7 @@ class ReportToolGUI(QtGui.QMainWindow):
                                    "screenshot": False}
 
                 except TypeError:    # update_trade_details hasn"t been called yet
-                    point_obj   = QtCore.QPointF(vline_pos, 0)
+                    point_obj   = QtCore.QPointF(vline_pos, 0)  # FIXME
 
                     # simulate a mouse click (1, 0)
                     vline_coord = plot_widget.plotItem.vb\
@@ -3045,11 +3041,11 @@ class ReportToolGUI(QtGui.QMainWindow):
                 event.accept()
 
             else:
-                QtGui.QMainWindow.keyPressEvent(self, event)
+                QtWidgets.QMainWindow.keyPressEvent(self, event)
                 event.accept()
 
         else:
-            QtGui.QMainWindow.keyPressEvent(self, event)
+            QtWidgets.QMainWindow.keyPressEvent(self, event)
             event.accept()
 
 
@@ -3084,7 +3080,7 @@ class ReportToolGUI(QtGui.QMainWindow):
 
             # mouse not under plot widget
             if plot_widget_rect.contains(mouse_pos) == False:
-                QtGui.QMainWindow.mousePressEvent(self, event)
+                QtWidgets.QMainWindow.mousePressEvent(self, event)
                 event.accept()
                 return
 
@@ -3118,7 +3114,7 @@ class ReportToolGUI(QtGui.QMainWindow):
                 event.accept()
 
         else:
-            QtGui.QMainWindow.mousePressEvent(self, event)
+            QtWidgets.QMainWindow.mousePressEvent(self, event)
             event.accept()
 
 
@@ -3140,7 +3136,7 @@ class ReportToolGUI(QtGui.QMainWindow):
 
         # save state ans size of window
         config["gui_size"]  = (self.size().width(), self.size().height())
-        config["gui_state"] = str(self.saveState().toHex())
+        config["gui_state"] = self.saveState()
         config["gui_pos"]   = (self.pos().x(), self.pos().y())
 
         funcMisc.write_config(config)

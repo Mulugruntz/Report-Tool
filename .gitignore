@@ -102,3 +102,6 @@ Thumbs.db
 
 # PyCharm
 .idea/
+
+# Backups
+*.bak

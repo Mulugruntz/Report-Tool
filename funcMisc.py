@@ -1,7 +1,8 @@
 """Module for holding simple functions"""
+import copy
 
-from PyQt4 import QtCore
-from PyQt4 import QtGui
+from PyQt5 import QtCore
+from PyQt5 import QtGui
 
 import re
 import os
@@ -94,8 +95,8 @@ def read_credentials(*args, **kwargs):
             for key in saved_accounts.keys():
 
                 # decode pwd and api key
-                decoded_pwd = base64.b64decode(saved_accounts[key]["pwd"])
-                decoded_key = base64.b64decode(saved_accounts[key]["api_key"])
+                decoded_pwd = str(base64.b64decode(saved_accounts[key]["pwd"]))
+                decoded_key = str(base64.b64decode(saved_accounts[key]["api_key"]))
 
                 saved_accounts[key]["api_key"] = decoded_key
                 saved_accounts[key]["pwd"]     = decoded_pwd
@@ -126,8 +127,8 @@ def write_credentials(credentials):
         for key in credentials.keys():
 
             # encode pwd and api key
-            encoded_pwd = base64.b64encode(credentials[key]["pwd"])
-            encoded_key = base64.b64encode(credentials[key]["api_key"])
+            encoded_pwd = str(base64.b64encode(credentials[key]["pwd"].encode()))
+            encoded_key = str(base64.b64encode(credentials[key]["api_key"].encode()))
 
             credentials[key]["api_key"] = encoded_key
             credentials[key]["pwd"]     = encoded_pwd
@@ -208,7 +209,7 @@ def read_config(*args, **kwargs):
                     "all": 2,
                     "auto_connect": 0,
                     "agregate": 0,
-                    "gui_state": "",
+                    "gui_state": QtCore.QByteArray(b''),
                     "gui_size": (800, 600),
                     "gui_pos": (0, 0),
                     "dir_export": os.getcwd() + "\Export",
@@ -260,6 +261,8 @@ def read_config(*args, **kwargs):
                         dir_export = data_read["dir_export"]
 
                     config["dir_export"] = dir_export
+                elif key == "gui_state":
+                    config["gui_state"] = QtCore.QByteArray.fromBase64(data_read["gui_state"].encode())
                 else:
                     config[key] = data_read[key]
 
@@ -283,8 +286,10 @@ def write_config(config):
     """
 
     config_path = os.getcwd() + "/config.json"
+    out_config = copy.deepcopy(config)
+    out_config['gui_state'] = str(out_config['gui_state'].toBase64().data())
     with open(config_path, 'w') as f:
-        json.dump(config, f, indent=4)    # write dict (default or not)
+        json.dump(out_config, f, indent=4)    # write dict (default or not)
 
 
 def create_dates_list(state_dates, dates_string, key, start_capital):

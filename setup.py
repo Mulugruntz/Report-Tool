@@ -20,7 +20,7 @@ base = None
 # if sys.platform == "win32":
 #       base = "Win32GUI"
 
-includes = ["PyQt4.QtCore", "PyQt4.QtGui", "PyQt4.QtNetwork", "atexit",
+includes = ["PyQt5.QtCore", "PyQt5.QtGui", "PyQt5.QtWidgets", "PyQt5.QtNetwork", "atexit",  # TODO: QtNetwork?
             "re", "os", "sys", "logging", "glob", "json", "base64",
             "pyqtgraph", "numpy", "numpy.lib.format",
             "threading", "Queue", "time", "datetime","collections", "random",

@@ -1,7 +1,7 @@
 """ This module holds classes to custom pyqtgraph base graphics items"""
 
-from PyQt4 import QtCore
-from PyQt4 import QtGui
+from PyQt5 import QtCore
+from PyQt5 import QtWidgets
 
 import pyqtgraph as pg
 import numpy as np
@@ -193,7 +193,7 @@ class CustomCurvePoint(pg.CurvePoint):
             # set angle perpendicular to the curve"s tangent
             self.rotate((180+ang*180/np.pi)+90)
 
-        QtGui.QGraphicsItem.setPos(self, *newPos)
+        QtWidgets.QGraphicsItem.setPos(self, *newPos)
 
         return True
 

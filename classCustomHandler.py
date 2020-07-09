@@ -87,7 +87,7 @@ class CustomTimedRotatingFileHandler(logging.handlers.
         result = []
 
         # get the string before the date
-        prefix = re.match("(\w)*(\-)", baseName).group()
+        prefix = re.match(r"(\w)*(-)", baseName).group()
         plen = len(prefix)
 
         for fileName in fileNames:

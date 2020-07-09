@@ -1,5 +1,6 @@
-from PyQt4 import QtCore
-from PyQt4 import QtGui
+# !/usr/bin/env python3
+
+from PyQt5 import QtWidgets
 
 import os
 import sys
@@ -19,12 +20,12 @@ if getattr(sys, "frozen", False):
 if __name__ == '__main__':
 
     # lancement de l'app
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     app.setApplicationName('Report Tool')
 
     logging.config.fileConfig(os.getcwd()+"/logging.ini")
 
-    # app.setStyle(QtGui.QStyleFactory.create('Cleanlooks'))
+    # app.setStyle(QtWidgets.QStyleFactory.create('Cleanlooks'))
     gui = ReportToolGUI('Report Tool')
     # gui.show()
 

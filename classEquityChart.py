@@ -1,5 +1,5 @@
-from PyQt4 import QtCore
-from PyQt4 import QtGui
+from PyQt5 import QtCore
+from PyQt5 import QtGui
 
 import weakref
 
@@ -224,7 +224,7 @@ class EquityChart(pg.PlotWidget):
                 elif "size" in arg:
                     dd_size = kwargs[arg]
 
-            dd_brush = pg.mkBrush(dd_color)
+            dd_brush = pg.mkBrush(dd_color)  # FIXME
             scatter.setData(x=x_data,
                             y=y_data,
                             symbol=dd_symbol,
@@ -663,9 +663,7 @@ class EquityChart(pg.PlotWidget):
             if state == 0:
                 self.remove_text_item(deal_id)
             else:
-                comments_items[deal_id]["text_item"].setHtml(QtCore
-                                                             .QString
-                                                             .fromUtf8(html_text))
+                comments_items[deal_id]["text_item"].setHtml(html_text)  # TODO: check if encode/decode
 
             self._set_comments_items(comments_items)    # update dict_comment_items
 

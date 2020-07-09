@@ -1,7 +1,7 @@
 """ This module holds classes to custom base QtWidgets"""
 
-from PyQt4 import QtCore
-from PyQt4 import QtGui
+from PyQt5 import QtCore
+from PyQt5 import QtGui, QtWidgets
 
 import re
 import datetime
@@ -9,7 +9,7 @@ import datetime
 import funcMisc
 
 
-class CustomPushButton(QtGui.QPushButton):
+class CustomPushButton(QtWidgets.QPushButton):
 
     """
     Class to create a custom pushbutton.
@@ -23,7 +23,7 @@ class CustomPushButton(QtGui.QPushButton):
         :param object_name: string
         """
 
-        QtGui.QPushButton.__init__(self)
+        QtWidgets.QPushButton.__init__(self)
         self.setObjectName(object_name)
 
 
@@ -44,7 +44,7 @@ class CustomPushButton(QtGui.QPushButton):
                                                  "padding : 6px;}\n")
 
 
-class CustomCloseButton(QtGui.QPushButton):
+class CustomCloseButton(QtWidgets.QPushButton):
 
     """
     Class to create a custom pushbutton. Used only in aboutWindow.
@@ -57,7 +57,7 @@ class CustomCloseButton(QtGui.QPushButton):
 
     def __init__(self, *args, **kwargs):
 
-        QtGui.QPushButton.__init__(self, *args, **kwargs)
+        QtWidgets.QPushButton.__init__(self, *args, **kwargs)
         self.entry_nb = 0
 
 
@@ -69,7 +69,7 @@ class CustomCloseButton(QtGui.QPushButton):
         self.enter_signal.emit(event, self.entry_nb)
 
 
-class CustomLineEdit(QtGui.QLineEdit):
+class CustomLineEdit(QtWidgets.QLineEdit):
 
     """
     Class to reimplement focusOutEvent and keyPressEvent
@@ -82,7 +82,7 @@ class CustomLineEdit(QtGui.QLineEdit):
 
     def __init__(self, *args, **kwargs):
 
-        QtGui.QLineEdit.__init__(self, *args, **kwargs)
+        super(CustomLineEdit, self).__init__(*args, **kwargs)
 
 
     def focusOutEvent(self, event):
@@ -105,10 +105,10 @@ class CustomLineEdit(QtGui.QLineEdit):
         if event.key() == QtCore.Qt.Key_Return:
             self.finish_signal.emit("start_capital")
         else:
-            QtGui.QLineEdit.keyPressEvent(self, event)
+            QtWidgets.QLineEdit.keyPressEvent(self, event)
 
 
-class CustomLabel(QtGui.QLabel):
+class CustomLabel(QtWidgets.QLabel):
 
     """
     Class to create a custom QLabel. It's done to manage style
@@ -124,7 +124,7 @@ class CustomLabel(QtGui.QLabel):
         :param object_name: string
         """
 
-        QtGui.QLabel.__init__(self)
+        super(CustomLabel, self).__init__()
         self.setObjectName(object_name)
 
 
@@ -158,7 +158,7 @@ class CustomLabel(QtGui.QLabel):
         event.accept()
 
 
-class CustomComboBox(QtGui.QComboBox):
+class CustomComboBox(QtWidgets.QComboBox):
 
     """
     Class to reimplement focusOutEvent and send appropriate signal.
@@ -174,7 +174,7 @@ class CustomComboBox(QtGui.QComboBox):
         :param object_name: string
         """
 
-        QtGui.QComboBox.__init__(self)
+        super(CustomComboBox, self).__init__()
         self.setObjectName(object_name)
         self.setFocusPolicy(QtCore.Qt.StrongFocus)
 
@@ -187,7 +187,7 @@ class CustomComboBox(QtGui.QComboBox):
         event.accept()
 
 
-class CustomDockWidget(QtGui.QDockWidget):
+class CustomDockWidget(QtWidgets.QDockWidget):
 
     """
     Class to create a floating dock used
@@ -208,7 +208,7 @@ class CustomDockWidget(QtGui.QDockWidget):
         self._dict_details_labels = {}    #dict label for qlabels
 
         self.dock_parent = parent
-        QtGui.QDockWidget.__init__(self, parent)
+        super(CustomDockWidget, self).__init__(parent=parent)
         self.setObjectName("dock_details")
         self.init_dock(pos_details_headers)
 
@@ -230,19 +230,19 @@ class CustomDockWidget(QtGui.QDockWidget):
         config = funcMisc.read_config()
 
         # init widgets and layout
-        splitter = QtGui.QSplitter()
+        splitter = QtWidgets.QSplitter()
 
-        widget_pos       = QtGui.QWidget()
-        layout_pos       = QtGui.QGridLayout()
-        scroll_pos_infos = QtGui.QScrollArea()
+        widget_pos       = QtWidgets.QWidget()
+        layout_pos       = QtWidgets.QGridLayout()
+        scroll_pos_infos = QtWidgets.QScrollArea()
 
         # widgets for checkbox and one label
-        widget_comment = QtGui.QWidget()
-        layout_comment = QtGui.QGridLayout()
+        widget_comment = QtWidgets.QWidget()
+        layout_comment = QtWidgets.QGridLayout()
 
         # widgets for text edit and one label
-        widget_chkbox_graph = QtGui.QWidget()
-        layout_chkbox_graph = QtGui.QHBoxLayout()
+        widget_chkbox_graph = QtWidgets.QWidget()
+        layout_chkbox_graph = QtWidgets.QHBoxLayout()
 
 
         k = 0
@@ -252,26 +252,26 @@ class CustomDockWidget(QtGui.QDockWidget):
         for count, header in enumerate(pos_details_headers.keys()):
 
             if header == "h_line" or header == "h_line_2":    # add horizontal line
-                h_line = QtGui.QFrame()
-                h_line.setFrameShape(QtGui.QFrame.HLine)
+                h_line = QtWidgets.QFrame()
+                h_line.setFrameShape(QtWidgets.QFrame.HLine)
                 h_line.setStyleSheet("color:rgb(173,173,173);")
                 layout_pos.addWidget(h_line, int(count), 0, 1, 2)
 
             elif header == " ":    # label for market name
-                label = QtGui.QLabel(header+": ")
+                label = QtWidgets.QLabel(header+": ")
                 layout_pos.addWidget(label, int(count), 0 , 1, 2,
                                      QtCore.Qt.AlignCenter)
                 dict_details_labels[header] = label
 
             else:
-                label = QtGui.QLabel(header+": ")
+                label = QtWidgets.QLabel(header+": ")
                 layout_pos.addWidget(label, int(count), 0 , 1, 2,
                                      QtCore.Qt.AlignLeft)
                 dict_details_labels[header] = label
                 k += 1
 
-        self.setFeatures(QtGui.QDockWidget.DockWidgetFloatable|\
-                         QtGui.QDockWidget.DockWidgetMovable)
+        self.setFeatures(QtWidgets.QDockWidget.DockWidgetFloatable|\
+                         QtWidgets.QDockWidget.DockWidgetMovable)
 
         last_row = len(pos_details_headers)
 
@@ -284,7 +284,7 @@ class CustomDockWidget(QtGui.QDockWidget):
         self.checkbox_showongraph.setCheckState(0)
         layout_chkbox_graph.addWidget(self.checkbox_showongraph,
                                       0, QtCore.Qt.AlignLeft)
-        layout_chkbox_graph.addWidget(QtGui.QLabel("Show comments on graph"),
+        layout_chkbox_graph.addWidget(QtWidgets.QLabel("Show comments on graph"),
                                       1, QtCore.Qt.AlignLeft)
 
         widget_chkbox_graph.setLayout(layout_chkbox_graph)
@@ -292,7 +292,7 @@ class CustomDockWidget(QtGui.QDockWidget):
 
         layout_comment.addWidget(widget_chkbox_graph, 0, 0, 1, 2)
 
-        layout_comment.addWidget(QtGui.QLabel("Comment:"), 1, 0,
+        layout_comment.addWidget(QtWidgets.QLabel("Comment:"), 1, 0,
                              QtCore.Qt.AlignTop|QtCore.Qt.AlignLeft)
 
         layout_comment.addWidget(self.text_edit_comment, 1, 1,
@@ -566,7 +566,7 @@ class CustomDockWidget(QtGui.QDockWidget):
             self.dock_parent.keyPressEvent(event)    # MainWindow keyPressEvent
 
         else:
-            QtGui.QDockWidget.keyPressEvent(self, event)    # normal behavior
+            super(CustomDockWidget, self).keyPressEvent(event) # normal behavior
 
 
     def _dict_details_labels(self):
@@ -587,7 +587,7 @@ class CustomDockWidget(QtGui.QDockWidget):
         self._dict_details_labels = new_dict_labels
 
 
-class CustomPlainTextEdit(QtGui.QPlainTextEdit):
+class CustomPlainTextEdit(QtWidgets.QPlainTextEdit):
 
     """
     Custom QPlainTextEdit to reimplement KeysPressEvent. If
@@ -602,7 +602,7 @@ class CustomPlainTextEdit(QtGui.QPlainTextEdit):
         :param parent: obj, parent of widget, CustomDockWidget
         """
 
-        QtGui.QPlainTextEdit.__init__(self, parent=parent)
+        super(CustomPlainTextEdit, self).__init__(parent=parent)
         self.plain_text_edit_parent = parent
 
 
@@ -614,10 +614,10 @@ class CustomPlainTextEdit(QtGui.QPlainTextEdit):
         or event.key() == QtCore.Qt.Key_Left:    # right or left arrow pressed
             self.plain_text_edit_parent.keyPressEvent(event)    # dock keyPressEvent
         else:
-            QtGui.QPlainTextEdit.keyPressEvent(self, event)    # normal behavior
+            QtWidgets.QPlainTextEdit.keyPressEvent(self, event)    # normal behavior
 
 
-class CustomCheckBox(QtGui.QCheckBox):
+class CustomCheckBox(QtWidgets.QCheckBox):
 
     """
     Custom  Checkbox to reimplement keyPressEvent. If left/right
@@ -632,7 +632,7 @@ class CustomCheckBox(QtGui.QCheckBox):
         :param parent: obj, parent of widget, CustomDockWidget
         """
 
-        QtGui.QCheckBox.__init__(self, parent=parent)
+        super(CustomCheckBox, self).__init__(parent=parent)
         self.checkbox_parent  = parent
 
 
@@ -644,21 +644,21 @@ class CustomCheckBox(QtGui.QCheckBox):
         or event.key() == QtCore.Qt.Key_Left:    # right or left arrow pressed
             self.checkbox_parent.keyPressEvent(event)    # dock keyPressEvent
         else:
-            QtGui.QCheckBox.keyPressEvent(self, event)    # normal behavior
+            QtWidgets.QCheckBox.keyPressEvent(self, event)    # normal behavior
 
 
-class CustomShortcutLineEdit(QtGui.QLineEdit):
+class CustomShortcutLineEdit(QtWidgets.QLineEdit):
 
     """
     Same as CustomLineEdit excepts that keyPressEvent is also
-    reimplementedto capture Qt KeySequence and creates key shortcuts
+    reimplemented to capture Qt KeySequence and creates key shortcuts
     """
 
     text_changed = QtCore.pyqtSignal(object, object)
 
     def __init__(self, object_name, *args, **kwargs):
 
-        QtGui.QLineEdit.__init__(self)
+        super(CustomShortcutLineEdit, self).__init__()
         self.setObjectName(object_name)
         self.setAlignment(QtCore.Qt.AlignCenter)
 
@@ -718,7 +718,7 @@ class CustomShortcutLineEdit(QtGui.QLineEdit):
             key = event.key()
 
             if key == QtCore.Qt.Key_unknown:
-                warnings.warn("Unknown key from a macro probably")
+                warnings.warn("Unknown key from a macro probably")  # TODO: check
                 return
 
             # the user have clicked just and only the special keys Ctrl, Shift, Alt, Meta.

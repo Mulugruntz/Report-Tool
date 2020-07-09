@@ -1,7 +1,6 @@
 from typing import Text, List, Dict
 
-from PyQt4 import QtCore
-from PyQt4 import QtGui
+from PyQt5 import QtCore
 
 import re
 import os

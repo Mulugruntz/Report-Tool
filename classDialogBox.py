@@ -1,7 +1,7 @@
 """Module to create custom QDialog"""
 
-from PyQt4 import QtCore
-from PyQt4 import QtGui
+from PyQt5 import QtCore
+from PyQt5 import QtGui, QtWidgets
 
 import os
 
@@ -14,13 +14,13 @@ import funcMisc
 import classCustomWidgets
 
 
-class ConnectWindow(QtGui.QDialog):
+class ConnectWindow(QtWidgets.QDialog):
 
     """Create a simple dialog to add/delete and configure user"s account"""
 
     def __init__(self, parent):
 
-        QtGui.QDialog.__init__(self, parent=parent)
+        super(ConnectWindow, self).__init__(parent=parent)
         self._connect_dict = {}
 
         icons_path = os.getcwd() + "/icons"
@@ -29,30 +29,30 @@ class ConnectWindow(QtGui.QDialog):
         self.setModal(True)
         self.setWindowTitle("Login Informations")
 
-        layout_login = QtGui.QGridLayout()
+        layout_login = QtWidgets.QGridLayout()
 
         # create input widgets
         self.combobox_usr  = classCustomWidgets.CustomComboBox("user_choice")
-        self.combobox_type = QtGui.QComboBox()
+        self.combobox_type = QtWidgets.QComboBox()
 
-        self.line_edit_proxies = QtGui.QLineEdit()
-        self.line_edit_pwd     = QtGui.QLineEdit()
-        self.line_edit_key     = QtGui.QLineEdit()
+        self.line_edit_proxies = QtWidgets.QLineEdit()
+        self.line_edit_pwd     = QtWidgets.QLineEdit()
+        self.line_edit_key     = QtWidgets.QLineEdit()
 
-        self.chkbox_autoconnect = QtGui.QCheckBox()
-        self.chkbox_remember    = QtGui.QCheckBox()
+        self.chkbox_autoconnect = QtWidgets.QCheckBox()
+        self.chkbox_remember    = QtWidgets.QCheckBox()
 
         self.btn_trash   = classCustomWidgets.CustomLabel("trash")
-        self.btn_connect = QtGui.QPushButton("Connect")
+        self.btn_connect = QtWidgets.QPushButton("Connect")
 
         # configure widgets
         self.combobox_type.addItems(["Live", "Demo"])
         self.chkbox_remember.setChecked(True)
         self.combobox_usr.setEditable(True)
-        self.combobox_usr.setInsertPolicy(QtGui.
+        self.combobox_usr.setInsertPolicy(QtWidgets.
                                           QComboBox.InsertAlphabetically)
 
-        self.line_edit_pwd.setEchoMode(QtGui.QLineEdit.Password)
+        self.line_edit_pwd.setEchoMode(QtWidgets.QLineEdit.Password)
 
         self.btn_trash.set_default_style("transparent",
                                          "transparent",
@@ -60,19 +60,19 @@ class ConnectWindow(QtGui.QDialog):
         self.btn_trash.setPixmap(QtGui.QPixmap(icons_path+"/trash.png"))
 
         list_widgets_login = [
-                              QtGui.QLabel("Username: "),
+                              QtWidgets.QLabel("Username: "),
                               self.combobox_usr,
-                              QtGui.QLabel("Password: "),
+                              QtWidgets.QLabel("Password: "),
                               self.line_edit_pwd,
-                              QtGui.QLabel("API key: "),
+                              QtWidgets.QLabel("API key: "),
                               self.line_edit_key,
-                              QtGui.QLabel("Proxies: "),
+                              QtWidgets.QLabel("Proxies: "),
                               self.line_edit_proxies,
-                              QtGui.QLabel("Account Type: "),
+                              QtWidgets.QLabel("Account Type: "),
                               self.combobox_type,
-                              QtGui.QLabel("Auto connect on start up: "),
+                              QtWidgets.QLabel("Auto connect on start up: "),
                               self.chkbox_autoconnect,
-                              QtGui.QLabel("Remember credentials: "),
+                              QtWidgets.QLabel("Remember credentials: "),
                               self.chkbox_remember
                              ]
 
@@ -100,7 +100,7 @@ class ConnectWindow(QtGui.QDialog):
 
         # place trash "button" and connect button
         layout_login.addWidget(self.btn_trash, 1, 2, 1, 1)
-        layout_login.addWidget(self.btn_connect, count+1, 0, 1, 3)
+        layout_login.addWidget(self.btn_connect, count+1, 0, 1, 3)  # TODO: check
 
         # configure QDialog
         self.setLayout(layout_login)
@@ -367,7 +367,7 @@ class ConnectWindow(QtGui.QDialog):
 
         """Getter method"""
 
-        return(self._connect_dict)
+        return self._connect_dict
 
 
     def _set_connect_dict(self, *args, **kwargs):
@@ -412,7 +412,7 @@ class ConnectWindow(QtGui.QDialog):
         self.close()
 
 
-class OptionsWindow(QtGui.QDialog):
+class OptionsWindow(QtWidgets.QDialog):
 
     """
     Class to buid an options windows. Users can
@@ -425,7 +425,7 @@ class OptionsWindow(QtGui.QDialog):
 
         icons_path = os.getcwd() + "/icons"
 
-        QtGui.QDialog.__init__(self, parent)
+        super(OptionsWindow, self).__init__(parent=parent)
         self.setWindowIcon(QtGui.QIcon(icons_path+"/main.png"))
         self.setWindowTitle("Options")
         self.setModal(True)
@@ -437,10 +437,10 @@ class OptionsWindow(QtGui.QDialog):
         widget_dd_options           = self.create_dd_options(dd_icons)
         widget_transactions_options = self.create_transactions_options()
 
-        btn_close = QtGui.QPushButton("Ok")
+        btn_close = QtWidgets.QPushButton("Ok")
 
         # configure main widget
-        layout_main = QtGui.QGridLayout()
+        layout_main = QtWidgets.QGridLayout()
         layout_main.addWidget(widget_equity_curves, 0, 0)
         layout_main.addWidget(widget_dd_options, 0, 1, 2, 1)
         layout_main.addWidget(widget_screenshot, 2, 0, 1, 2)
@@ -464,18 +464,18 @@ class OptionsWindow(QtGui.QDialog):
         config = funcMisc.read_config()
 
         # init widgets
-        layout_screenshot = QtGui.QGridLayout()
-        widget_screenshot = QtGui.QGroupBox("Screenshot options")
+        layout_screenshot = QtWidgets.QGridLayout()
+        widget_screenshot = QtWidgets.QGroupBox("Screenshot options")
 
-        self.combobox_what_to_print = QtGui.QComboBox()
-        self.combobox_infos         = QtGui.QComboBox()
-        self.combobox_size          = QtGui.QComboBox()
+        self.combobox_what_to_print = QtWidgets.QComboBox()
+        self.combobox_infos         = QtWidgets.QComboBox()
+        self.combobox_size          = QtWidgets.QComboBox()
         self.line_edit_shortcut = classCustomWidgets.CustomShortcutLineEdit("shortcut")
 
-        self.btn_file = QtGui.QPushButton()
+        self.btn_file = QtWidgets.QPushButton()
 
         # get standart icon for open files
-        file_ico = self.style().standardIcon(QtGui.QStyle.SP_DirOpenIcon)
+        file_ico = self.style().standardIcon(QtWidgets.QStyle.SP_DirOpenIcon)
 
         # get config
         what_to_print = config["what_to_print"]
@@ -532,23 +532,23 @@ class OptionsWindow(QtGui.QDialog):
         self.btn_file.clicked.connect(self.set_screenshot_path)
 
         # place widgets
-        layout_screenshot.addWidget(QtGui.QLabel("Shortcut:"), 0, 0)
+        layout_screenshot.addWidget(QtWidgets.QLabel("Shortcut:"), 0, 0)
         layout_screenshot.addWidget(self.line_edit_shortcut, 0, 1, 1, 2,
                                     QtCore.Qt.AlignCenter)
 
-        layout_screenshot.addWidget(QtGui.QLabel("Print:"), 1, 0)
+        layout_screenshot.addWidget(QtWidgets.QLabel("Print:"), 1, 0)
         layout_screenshot.addWidget(self.combobox_what_to_print, 1, 1, 1, 2,
                                     QtCore.Qt.AlignCenter)
 
-        layout_screenshot.addWidget(QtGui.QLabel("Hide sensitive infos: "), 2, 0)
+        layout_screenshot.addWidget(QtWidgets.QLabel("Hide sensitive infos: "), 2, 0)
         layout_screenshot.addWidget(self.combobox_infos, 2, 1, 1, 2,
                                     QtCore.Qt.AlignCenter)
 
-        layout_screenshot.addWidget(QtGui.QLabel("Hide lot size: "), 3, 0)
+        layout_screenshot.addWidget(QtWidgets.QLabel("Hide lot size: "), 3, 0)
         layout_screenshot.addWidget(self.combobox_size, 3, 1, 1, 2,
                                     QtCore.Qt.AlignCenter)
 
-        layout_screenshot.addWidget(QtGui.QLabel("Save to :"), 5, 0)
+        layout_screenshot.addWidget(QtWidgets.QLabel("Save to :"), 5, 0)
         layout_screenshot.addWidget(self.btn_file, 5, 1, 1, 2,
                                     QtCore.Qt.AlignCenter)
 
@@ -569,14 +569,14 @@ class OptionsWindow(QtGui.QDialog):
         config = funcMisc.read_config()
 
         # init widgets
-        widget_equity_curves = QtGui.QGroupBox("Chart options")
-        layout_equity_curves = QtGui.QGridLayout()
+        widget_equity_curves = QtWidgets.QGroupBox("Chart options")
+        layout_equity_curves = QtWidgets.QGridLayout()
 
         self.btn_ec_color      = classCustomWidgets.CustomPushButton("ec_color")
-        self.combobox_ec_style = QtGui.QComboBox()    # curve style
-        self.spinbox_ec_size   = QtGui.QSpinBox()    # curve thickness
-        self.checkbox_details  = QtGui.QCheckBox()
-        self.checkbox_dates    = QtGui.QCheckBox()
+        self.combobox_ec_style = QtWidgets.QComboBox()    # curve style
+        self.spinbox_ec_size   = QtWidgets.QSpinBox()    # curve thickness
+        self.checkbox_details  = QtWidgets.QCheckBox()
+        self.checkbox_dates    = QtWidgets.QCheckBox()
 
         # configure widgets
         self.btn_ec_color.set_default_style(config["ec_color"])
@@ -611,22 +611,22 @@ class OptionsWindow(QtGui.QDialog):
         self.combobox_ec_style.currentIndexChanged.connect(self.update_options)
 
         # place widgets on layout
-        layout_equity_curves.addWidget(QtGui.QLabel("Color:"), 0, 0)
+        layout_equity_curves.addWidget(QtWidgets.QLabel("Color:"), 0, 0)
         layout_equity_curves.addWidget(self.btn_ec_color, 0, 1)
 
-        layout_equity_curves.addWidget(QtGui.QLabel("Style:"), 1, 0)
+        layout_equity_curves.addWidget(QtWidgets.QLabel("Style:"), 1, 0)
         layout_equity_curves.addWidget(self.combobox_ec_style, 1, 1)
 
-        layout_equity_curves.addWidget(QtGui.QLabel("Thickness:"), 2, 0)
+        layout_equity_curves.addWidget(QtWidgets.QLabel("Thickness:"), 2, 0)
         layout_equity_curves.addWidget(self.spinbox_ec_size, 2, 1)
 
-        layout_equity_curves.addWidget(QtGui.QLabel("Show positions details:"),
+        layout_equity_curves.addWidget(QtWidgets.QLabel("Show positions details:"),
                                        3, 0)
 
         layout_equity_curves.addWidget(self.checkbox_details, 3, 1, 1, 1,
                                        QtCore.Qt.AlignRight)
 
-        layout_equity_curves.addWidget(QtGui.QLabel("Show dates on axis:"), 4, 0)
+        layout_equity_curves.addWidget(QtWidgets.QLabel("Show dates on axis:"), 4, 0)
 
         layout_equity_curves.addWidget(self.checkbox_dates, 4, 1, 1, 1,
                                        QtCore.Qt.AlignRight)
@@ -648,22 +648,22 @@ class OptionsWindow(QtGui.QDialog):
         config = funcMisc.read_config()
 
         # init widgets
-        widget_dd_options = QtGui.QGroupBox("Scatter plot options")
-        layout_dd         = QtGui.QGridLayout()
+        widget_dd_options = QtWidgets.QGroupBox("Scatter plot options")
+        layout_dd         = QtWidgets.QGridLayout()
 
-        self.checkbox_dd    = QtGui.QCheckBox()
-        self.checkbox_maxdd = QtGui.QCheckBox()
-        self.checkbox_high  = QtGui.QCheckBox()
+        self.checkbox_dd    = QtWidgets.QCheckBox()
+        self.checkbox_maxdd = QtWidgets.QCheckBox()
+        self.checkbox_high  = QtWidgets.QCheckBox()
 
         self.btn_high_color   = classCustomWidgets.CustomPushButton("high_color")
         self.btn_dd_color     = classCustomWidgets.CustomPushButton("depth_color")
         self.btn_max_dd_color = classCustomWidgets.CustomPushButton("maxdd_color")
 
-        self.combobox_dd_style    = QtGui.QComboBox()
-        self.combobox_high_style  = QtGui.QComboBox()
-        self.combobox_maxdd_style = QtGui.QComboBox()
+        self.combobox_dd_style    = QtWidgets.QComboBox()
+        self.combobox_high_style  = QtWidgets.QComboBox()
+        self.combobox_maxdd_style = QtWidgets.QComboBox()
 
-        self.spinbox_symbol_size  = QtGui.QSpinBox()
+        self.spinbox_symbol_size  = QtWidgets.QSpinBox()
 
         # init lists to easily configure widgets
         combobox_name_list = ["depth_style", "high_style", "maxdd_style"]
@@ -702,7 +702,7 @@ class OptionsWindow(QtGui.QDialog):
 
         """
         plot_available contains strings used to create scatter items in
-        rhe main window, to place widgets and configure them in optionsWindow
+        the main window, to place widgets and configure them in optionsWindow
         to set objectName, to detect which scatter to show   or not and are
         used in config file as keys. If you modified it be  aware that you"ll
         need to modify default_dict in funcMisc.read_config(),  names of plot
@@ -765,16 +765,16 @@ class OptionsWindow(QtGui.QDialog):
 
         plot_available = ["high", "depth", "maxdd"]
 
-        label_list = [QtGui.QLabel("Symbol size: "), QtGui.QLabel(""),
-                      QtGui.QLabel("Show new highs: "),
-                      QtGui.QLabel("New high color: "),
-                      QtGui.QLabel("New high symbol: "), QtGui.QLabel(""),
-                      QtGui.QLabel("Show drawdowns: "),
-                      QtGui.QLabel("Drawdown color: "),
-                      QtGui.QLabel("Drawdown symbol: "), QtGui.QLabel(""),
-                      QtGui.QLabel("Show max drawdown: "),
-                      QtGui.QLabel("Max drawdown color: "),
-                      QtGui.QLabel("Max drawdown symbol: ")]
+        label_list = [QtWidgets.QLabel("Symbol size: "), QtWidgets.QLabel(""),
+                      QtWidgets.QLabel("Show new highs: "),
+                      QtWidgets.QLabel("New high color: "),
+                      QtWidgets.QLabel("New high symbol: "), QtWidgets.QLabel(""),
+                      QtWidgets.QLabel("Show drawdowns: "),
+                      QtWidgets.QLabel("Drawdown color: "),
+                      QtWidgets.QLabel("Drawdown symbol: "), QtWidgets.QLabel(""),
+                      QtWidgets.QLabel("Show max drawdown: "),
+                      QtWidgets.QLabel("Max drawdown color: "),
+                      QtWidgets.QLabel("Max drawdown symbol: ")]
 
         buttons_list = [self.spinbox_symbol_size, "",
                         self.checkbox_high, self.btn_high_color,
@@ -793,8 +793,8 @@ class OptionsWindow(QtGui.QDialog):
 
             # add a hline to separate scatter options
             if str(label_to_set.text()) == "":
-                h_line = QtGui.QFrame()
-                h_line.setFrameShape(QtGui.QFrame.HLine)
+                h_line = QtWidgets.QFrame()
+                h_line.setFrameShape(QtWidgets.QFrame.HLine)
                 h_line.setStyleSheet("color:rgb(173,173,173);")
                 layout_dd.addWidget(h_line, i, 0, 1, 2)
 
@@ -805,17 +805,17 @@ class OptionsWindow(QtGui.QDialog):
             if type(btn_to_set) == classCustomWidgets.CustomPushButton:
                 btn_to_set.clicked.connect(self.update_options)
 
-            elif type(btn_to_set) == QtGui.QComboBox:
+            elif type(btn_to_set) == QtWidgets.QComboBox:
                 btn_to_set.currentIndexChanged.connect(self.update_options)
 
-            elif type(btn_to_set) == QtGui.QCheckBox:
+            elif type(btn_to_set) == QtWidgets.QCheckBox:
                 plot = plot_available[j]
                 j += 1
                 btn_to_set.setObjectName(plot)
                 btn_to_set.setCheckState(config["what_to_show"][plot])
                 btn_to_set.stateChanged.connect(self.update_options)
 
-            elif type(btn_to_set) == QtGui.QSpinBox:
+            elif type(btn_to_set) == QtWidgets.QSpinBox:
                 btn_to_set.setObjectName("dd_size")
                 btn_to_set.setMinimum(1)
                 btn_to_set.setValue(int(config["dd_size"]))
@@ -836,8 +836,8 @@ class OptionsWindow(QtGui.QDialog):
         config = funcMisc.read_config()
 
         # init widget
-        widget_transactions_options = QtGui.QGroupBox("Transactions options")
-        layout_transactions_options = QtGui.QGridLayout()
+        widget_transactions_options = QtWidgets.QGroupBox("Transactions options")
+        layout_transactions_options = QtWidgets.QGridLayout()
 
         self.btn_profit_color = classCustomWidgets.CustomPushButton("profit_color")
         self.btn_loss_color   = classCustomWidgets.CustomPushButton("loss_color")
@@ -848,9 +848,9 @@ class OptionsWindow(QtGui.QDialog):
                               self.btn_loss_color,
                               self.btn_flat_color]
 
-        label_pnl_list = [QtGui.QLabel("Profit color:"),
-                          QtGui.QLabel("Loss color:"),
-                          QtGui.QLabel("Flat color:")]
+        label_pnl_list = [QtWidgets.QLabel("Profit color:"),
+                          QtWidgets.QLabel("Loss color:"),
+                          QtWidgets.QLabel("Flat color:")]
 
         pnl_color_list = [config["profit_color"],
                           config["loss_color"],
@@ -887,13 +887,13 @@ class OptionsWindow(QtGui.QDialog):
 
         # colors modified
         if type(self.sender()) == classCustomWidgets.CustomPushButton:
-            color       = QtGui.QColorDialog.getColor()
+            color       = QtWidgets.QColorDialog.getColor()
             which_color = str(self.sender().objectName())
             config[which_color] = str(color.name())
             self.sender().set_default_style(color.name())
 
         # style modified
-        elif type(self.sender()) == QtGui.QComboBox:
+        elif type(self.sender()) == QtWidgets.QComboBox:
             idx_data = self.sender().currentIndex()
             data     = self.sender().itemData(idx_data).toString()
             which_data         = str(self.sender().objectName())
@@ -904,13 +904,13 @@ class OptionsWindow(QtGui.QDialog):
                 config["what_to_show"][which_data] = str(data)
 
         # size modified
-        elif type(self.sender()) == QtGui.QSpinBox:
+        elif type(self.sender()) == QtWidgets.QSpinBox:
             size       = self.sender().value()
             which_size = str(self.sender().objectName())
             config[which_size] = size
 
         # what to show modified
-        elif type(self.sender()) == QtGui.QCheckBox:
+        elif type(self.sender()) == QtWidgets.QCheckBox:
             checkbox_name = self.sender().objectName()
             state         = self.sender().checkState()
             config["what_to_show"][str(checkbox_name)] = state
@@ -951,9 +951,9 @@ class OptionsWindow(QtGui.QDialog):
 
         config = funcMisc.read_config()
 
-        screen_dir_dialbox = QtGui.QFileDialog()
-        screen_dir_dialbox.setOption(QtGui.QFileDialog.ShowDirsOnly)
-        screen_dir_dialbox.setFileMode(QtGui.QFileDialog.Directory)
+        screen_dir_dialbox = QtWidgets.QFileDialog()
+        screen_dir_dialbox.setOption(QtWidgets.QFileDialog.ShowDirsOnly)
+        screen_dir_dialbox.setFileMode(QtWidgets.QFileDialog.Directory)
 
         dir_out = screen_dir_dialbox.getExistingDirectory()
         config["dir_out"] = str(dir_out)
@@ -972,7 +972,7 @@ class OptionsWindow(QtGui.QDialog):
         self.close()
 
 
-class ExportWindow(QtGui.QDialog):
+class ExportWindow(QtWidgets.QDialog):
 
     """
     Class to buid an very simple export windows. Users can
@@ -983,7 +983,7 @@ class ExportWindow(QtGui.QDialog):
 
         icons_path = os.getcwd() + "/icons"
 
-        QtGui.QDialog.__init__(self, parent)
+        super(ExportWindow, self).__init__(parent=parent)
         self.setWindowIcon(QtGui.QIcon(icons_path+"/main.png"))
         self.setWindowTitle("Export options")
         self.setModal(True)
@@ -999,7 +999,7 @@ class ExportWindow(QtGui.QDialog):
 
         list_export_options = ["All", "Transactions", "Summary"]
 
-        file_ico = self.style().standardIcon(QtGui.QStyle.SP_DirOpenIcon)
+        file_ico = self.style().standardIcon(QtWidgets.QStyle.SP_DirOpenIcon)
 
         # load config
         what_to_export = config["what_to_export"]
@@ -1007,13 +1007,13 @@ class ExportWindow(QtGui.QDialog):
         dir_export     = config["dir_export"]
 
         # init widgets
-        layout_export = QtGui.QGridLayout()
+        layout_export = QtWidgets.QGridLayout()
 
-        combobox_what_to_export = QtGui.QComboBox()
-        combobox_sep            = QtGui.QComboBox()
+        combobox_what_to_export = QtWidgets.QComboBox()
+        combobox_sep            = QtWidgets.QComboBox()
 
-        btn_dir_export = QtGui.QPushButton()
-        btn_close      = QtGui.QPushButton("OK")
+        btn_dir_export = QtWidgets.QPushButton()
+        btn_close      = QtWidgets.QPushButton("OK")
 
         # add separator to comboboxbox
         for count, key in enumerate(dict_sep.keys()):
@@ -1046,13 +1046,13 @@ class ExportWindow(QtGui.QDialog):
         btn_dir_export.setObjectName("dir_export")
 
         # place widgets
-        layout_export.addWidget(QtGui.QLabel("Select what to export: "), 0, 0)
+        layout_export.addWidget(QtWidgets.QLabel("Select what to export: "), 0, 0)
         layout_export.addWidget(combobox_what_to_export, 0, 1)
 
-        layout_export.addWidget(QtGui.QLabel("Select separator: "), 1, 0)
+        layout_export.addWidget(QtWidgets.QLabel("Select separator: "), 1, 0)
         layout_export.addWidget(combobox_sep, 1, 1)
 
-        layout_export.addWidget(QtGui.QLabel("Select folder: "), 2, 0)
+        layout_export.addWidget(QtWidgets.QLabel("Select folder: "), 2, 0)
         layout_export.addWidget(btn_dir_export, 2, 1)
 
         layout_export.addWidget(btn_close, 4, 0, 1, 2)
@@ -1070,11 +1070,11 @@ class ExportWindow(QtGui.QDialog):
         key = str(self.sender().objectName())    # get key to modify
 
         # separator or what_to_export has changed
-        if type(self.sender()) == QtGui.QComboBox:
+        if type(self.sender()) == QtWidgets.QComboBox:
             idx_data = self.sender().currentIndex()
             data     = str(self.sender().itemData(idx_data).toString())
 
-        config[key] = data
+        config[key] = data  # FIXME
 
         funcMisc.write_config(config)    # write config
 
@@ -1088,9 +1088,9 @@ class ExportWindow(QtGui.QDialog):
 
         config = funcMisc.read_config()
 
-        export_dir_dialbox = QtGui.QFileDialog()
-        export_dir_dialbox.setOption(QtGui.QFileDialog.ShowDirsOnly)
-        export_dir_dialbox.setFileMode(QtGui.QFileDialog.Directory)
+        export_dir_dialbox = QtWidgets.QFileDialog()
+        export_dir_dialbox.setOption(QtWidgets.QFileDialog.ShowDirsOnly)
+        export_dir_dialbox.setFileMode(QtWidgets.QFileDialog.Directory)
 
         dir_out = export_dir_dialbox.getExistingDirectory()
 
@@ -1106,7 +1106,7 @@ class ExportWindow(QtGui.QDialog):
         self.close()
 
 
-class AboutWindow(QtGui.QDialog):
+class AboutWindow(QtWidgets.QDialog):
 
     """
     Displays a typical about window
@@ -1115,7 +1115,7 @@ class AboutWindow(QtGui.QDialog):
 
     def __init__(self, parent):
 
-        QtGui.QDialog.__init__(self, parent)
+        super(AboutWindow, self).__init__(parent=parent)
 
         self.setWindowTitle("Ouiche lorraine")
         self.setModal(True)
@@ -1125,21 +1125,21 @@ class AboutWindow(QtGui.QDialog):
         icons_path = os.getcwd() + "/icons"
         self.setWindowIcon(QtGui.QIcon(icons_path+"/main.png"))
 
-        layout = QtGui.QGridLayout()
+        layout = QtWidgets.QGridLayout()
 
         # labels for basics infos
         pixmap = QtGui.QPixmap(icons_path+"/georges.png")
 
-        label_dev     = QtGui.QLabel("Developed by Benoit Soudan")
-        label_contact = QtGui.QLabel("benoit.soudan@gmail.com")
-        label_version = QtGui.QLabel("Version 2.2"+"\n"+"Andlil 2016")
+        label_dev     = QtWidgets.QLabel("Developed by Benoit Soudan")
+        label_contact = QtWidgets.QLabel("benoit.soudan@gmail.com")
+        label_version = QtWidgets.QLabel("Version 2.2"+"\n"+"Andlil 2016")
         label_dev.setAlignment(QtCore.Qt.AlignCenter)
 
         label_contact.setToolTip("Si tu veux me parler envoie moi un fax !")
         label_contact.setAlignment(QtCore.Qt.AlignCenter)
         label_version.setAlignment(QtCore.Qt.AlignCenter)
 
-        self.stupid_label = QtGui.QLabel()
+        self.stupid_label = QtWidgets.QLabel()
         self.stupid_label.setPixmap(pixmap)
         self.stupid_label.setAlignment(QtCore.Qt.AlignCenter)
 
@@ -1175,8 +1175,8 @@ class AboutWindow(QtGui.QDialog):
         ok_btn_height = self.ok_btn.height()
         ok_btn_width  = self.ok_btn.width()
 
-        window_center = self.mapToGlobal(QtCore.QPoint(self.rect().x()/2,
-                                                       self.rect().y()/2))
+        window_center = self.mapToGlobal(QtCore.QPoint(self.rect().x()//2,
+                                                       self.rect().y()//2))
 
         # calc new positon randomly
         random_x_shift = random.randint(-ok_btn_width*2, ok_btn_width*2)
@@ -1226,7 +1226,7 @@ class AboutWindow(QtGui.QDialog):
         self._initial_pos = initial_pos
 
 
-class FilterWindow(QtGui.QDialog):
+class FilterWindow(QtWidgets.QDialog):
 
     """
     Class to buid an filter window. This allow to
@@ -1237,7 +1237,7 @@ class FilterWindow(QtGui.QDialog):
 
     def __init__(self, parent):
 
-        QtGui.QDialog.__init__(self, parent)
+        super(FilterWindow, self).__init__(parent=parent)
         icons_path = os.getcwd() + "/icons"
 
         self.setWindowIcon(QtGui.QIcon(icons_path+"/main.png"))
@@ -1256,18 +1256,18 @@ class FilterWindow(QtGui.QDialog):
         self.unchanged_dict = result_dict
 
         # init grid layout and widgets
-        layout_main   = QtGui.QGridLayout()
-        layout_filter = QtGui.QGridLayout()
-        widget_filter = QtGui.QGroupBox("Select markets")
-        scroll_area   = QtGui.QScrollArea()
+        layout_main   = QtWidgets.QGridLayout()
+        layout_filter = QtWidgets.QGridLayout()
+        widget_filter = QtWidgets.QGroupBox("Select markets")
+        scroll_area   = QtWidgets.QScrollArea()
 
-        LABEL_ALL = QtGui.QLabel("All markets")
+        LABEL_ALL = QtWidgets.QLabel("All markets")
 
-        self.checkbox_all = QtGui.QCheckBox()
-        self.btn_close    = QtGui.QPushButton("OK")
+        self.checkbox_all = QtWidgets.QCheckBox()
+        self.btn_close    = QtWidgets.QPushButton("OK")
 
         if config["all"] == 2:    # means no filter set
-            self.checkbox_all.setCheckState(2)
+            self.checkbox_all.setCheckState(2)  # TODO: check
         else:
             self.checkbox_all.setCheckState(0)
 
@@ -1275,7 +1275,7 @@ class FilterWindow(QtGui.QDialog):
         self.btn_close.clicked.connect(self.on_close)
         self.checkbox_all.stateChanged.connect(self.selection_changed)
 
-        layout_filter.addWidget(QtGui.QLabel("All markets"), 0, 0)
+        layout_filter.addWidget(QtWidgets.QLabel("All markets"), 0, 0)
         layout_filter.addWidget(self.checkbox_all, 0, 1, 1, 1,
                                 QtCore.Qt.AlignRight)
 
@@ -1299,13 +1299,13 @@ class FilterWindow(QtGui.QDialog):
 
         for count, market_name in enumerate(market_list):
 
-            ascci_name = market_name.encode("ascii", "ignore")
-            label_market = QtGui.QLabel(QtCore.QString.fromUtf8(market_name))
+            ascci_name = market_name.encode("ascii", "ignore") # TODO: check encode/decode still needed?
+            label_market = QtWidgets.QLabel(market_name)
 
             if ascci_name not in self.dict_filter_checkbox:
 
                 # creates a checkbox and complete dict
-                market_checkbox = QtGui.QCheckBox()
+                market_checkbox = QtWidgets.QCheckBox()
                 self.dict_filter_checkbox[ascci_name] = market_checkbox
 
                 # configure checkbox
@@ -1320,7 +1320,7 @@ class FilterWindow(QtGui.QDialog):
 
                 # market was previoulsy unchecked
                 else:
-                    market_checkbox.setCheckState(0)
+                    market_checkbox.setCheckState(0)  # TODO: check all .setCheckState()
                     market_checkbox.setEnabled(True)
 
                 market_checkbox.stateChanged.connect(self.selection_changed)
@@ -1405,7 +1405,7 @@ class FilterWindow(QtGui.QDialog):
 
 # if __name__ == "__main__":
 #     import sys
-#     app = QtGui.QApplication(sys.argv)
+#     app = QtWidgets.QApplication(sys.argv)
 #     app.setApplicationName('WuTrading')
 
 #     a=OptionsWindow(parent=None)
