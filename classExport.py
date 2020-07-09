@@ -7,6 +7,9 @@ import numpy as np
 import funcMisc
 
 
+RE_TEXT_BETWEEN_TAGS = re.compile(r">(.*?)<")
+
+
 class ExportToExcel(object):
 
     """
@@ -45,7 +48,7 @@ class ExportToExcel(object):
                 (with html syntax) extract only interesting part of text
                 """
 
-                data = re.search(r">(.*?)<", value).group(1)
+                data = RE_TEXT_BETWEEN_TAGS.search(value).group(1)
                 values[count] = data  # replace html text in list
 
             except Exception as e:

@@ -17,6 +17,8 @@ try:
 except ImportError:
     codecs = None
 
+RE_FILENAME = re.compile(r"(\w)*(-)")
+
 
 class CustomTimedRotatingFileHandler(logging.handlers.TimedRotatingFileHandler):
 
@@ -82,7 +84,7 @@ class CustomTimedRotatingFileHandler(logging.handlers.TimedRotatingFileHandler):
         result = []
 
         # get the string before the date
-        prefix = re.match(r"(\w)*(-)", baseName).group()
+        prefix = RE_FILENAME.match(baseName).group()  # FIXME: match could be None
         plen = len(prefix)
 
         for fileName in fileNames:

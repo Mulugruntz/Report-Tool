@@ -13,6 +13,9 @@ import base64
 import logging
 import logging.config
 
+
+RE_CONVERT = re.compile(r"^(.*)converted")
+
 # init loggers
 logger_debug = logging.getLogger("ReportTool_debug.IGAPI")
 logger_info = logging.getLogger("ReportTool_info.IGAPI")
@@ -54,7 +57,7 @@ def format_market_name(market_name, *args, **kwargs):
     """
 
     try:
-        match = re.match("^(.*)converted", market_name)  # looks for conversion infos
+        match = RE_CONVERT.match(market_name)  # looks for conversion infos
         return match.group(1)  # name without conversion infos
     except AttributeError:
         return market_name

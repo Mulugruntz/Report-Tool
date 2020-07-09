@@ -15,6 +15,10 @@ import funcMisc
 import classRestCom
 
 
+RE_FLOAT = re.compile(r"[+-]? *(?:\d+(?:\.|\,\d*)?\.*\d+)(?:[eE][+-]?\d+)?")
+RE_DATE = re.compile(r"/(.*?)$")
+
+
 class TransactionThread(QtCore.QThread):
 
     """Create a thread for get the transaction of the given period"""
@@ -51,8 +55,9 @@ class TransactionThread(QtCore.QThread):
 
             date_range = self.transaction_queue.get()  # get element in queue
 
+            # TODO: Use datetime.datetime.strptime() instead?
             # extract start date and end date
-            date = re.findall(r"/(.*?)$", date_range)
+            date = RE_DATE.findall(date_range)
             date_lst = "/".join(date).replace("/", ",").split(",")
 
             start = date_lst[0]
@@ -185,9 +190,9 @@ class TransactionThread(QtCore.QThread):
                     re_float = r"[+-]? *(?:\d+(?:\.|\,\d*)?\.*\d+)(?:[eE][+-]?\d+)?"
 
                     try:
-                        pnl = float(re.findall(re_float, str_pnl)[0])
+                        pnl = float(RE_FLOAT.findall(str_pnl)[0])
                     except ValueError:
-                        pnl = float(re.findall(re_float, str_pnl)[0].replace(",", ""))
+                        pnl = float(RE_FLOAT.findall(str_pnl)[0].replace(",", ""))
 
                     if float(size) < 0:
                         direction = "SELL"
@@ -253,7 +258,7 @@ class TransactionThread(QtCore.QThread):
                     date = transactions_dict[deal_ref][count]["date"]
                     str_pnl = transactions_dict[deal_ref][count]["profitAndLoss"]
                     re_float = r"[+-]? *(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?"
-                    total_pnl = float(re.findall(re_float, str_pnl)[0])
+                    total_pnl = float(RE_FLOAT.findall(str_pnl)[0])
 
                     direction = "-"
                     open_level = "-"
@@ -266,7 +271,7 @@ class TransactionThread(QtCore.QThread):
                 #         date      = transactions_dict[deal_ref][count]["date"]
                 #         str_pnl   = transactions_dict[deal_ref][count]["profitAndLoss"]
                 #         re_float  = r"[+-]? *(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?"
-                #         total_pnl = float(re.findall(re_float, str_pnl)[0])
+                #         total_pnl = float(RE_FLOAT.findall(str_pnl)[0])
 
                 #         direction        = "-"
                 #         open_level       = "-"
@@ -280,7 +285,7 @@ class TransactionThread(QtCore.QThread):
                 #         date      = transactions_dict[deal_ref][count]["date"]
                 #         str_pnl   = transactions_dict[deal_ref][count]["profitAndLoss"]
                 #         re_float  = r"[+-]? *(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?"
-                #         total_pnl = float(re.findall(re_float, str_pnl)[0])
+                #         total_pnl = float(RE_FLOAT.findall(str_pnl)[0])
 
                 #         direction        = "-"
                 #         open_level       = "-"
@@ -294,7 +299,7 @@ class TransactionThread(QtCore.QThread):
                 #         date      = transactions_dict[deal_ref][count]["date"]
                 #         str_pnl   = transactions_dict[deal_ref][count]["profitAndLoss"]
                 #         re_float  = r"[+-]? *(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?"
-                #         total_pnl = float(re.findall(re_float, str_pnl)[0])
+                #         total_pnl = float(RE_FLOAT.findall(str_pnl)[0])
 
                 #         direction        = "-"
                 #         open_level       = "-"

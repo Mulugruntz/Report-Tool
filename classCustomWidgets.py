@@ -9,6 +9,9 @@ import datetime
 
 import funcMisc
 
+RE_LABEL = re.compile(r"(.*?[A-z]): ")
+RE_TAG = re.compile(r"<(.*?)>")
+
 
 class CustomPushButton(QtWidgets.QPushButton):
 
@@ -343,7 +346,7 @@ class CustomDockWidget(QtWidgets.QDockWidget):
             label_text = dict_details_labels[key].text()  # get label text
 
             try:  # get label title
-                static_text = re.search("(.*?[A-z]): ", label_text).group()
+                static_text = RE_LABEL.search(label_text).group()
             except AttributeError as e:  # temp
                 static_text = ""
 
@@ -394,7 +397,7 @@ class CustomDockWidget(QtWidgets.QDockWidget):
             label_text = dict_details_labels[key].text()  # get label text
 
             try:  # get label title
-                static_text = re.search(r"(.*?[A-z]): ", label_text).group()
+                static_text = RE_LABEL.search(label_text).group()
             except AttributeError:  # temp function
                 static_text = ""
 
@@ -500,8 +503,8 @@ class CustomDockWidget(QtWidgets.QDockWidget):
 
         """
         Hide profit in currency in profit string. Called when a
-        screenshot is taken or if the user wants to always
-        currency information. It's can of dirty code but it's work :-)
+        screenshot is taken or if the user wants to always hide
+        currency information. It's kind of dirty code but it works :-)
 
         :param currency_symbol: string, describing currency
         """
@@ -512,12 +515,12 @@ class CustomDockWidget(QtWidgets.QDockWidget):
 
         """
         As i don't want to spend time on understanding regex, it uses a trick:
-        reverse pnl string, find and replace the first text beetween
-        html tags as the first occurence is the one needed to be hidden
+        reverse pnl string, find and replace the first text between
+        html tags as the first occurrence is the one needed to be hidden
         """
 
         pnl_str = self.pnl_str[::-1]  # reversed string
-        pnl_hidden = re.sub(r"<(.*?)>", r"<" + currency_symbol + "-->", pnl_str, 1)[
+        pnl_hidden = RE_TAG.sub(f"<{currency_symbol}-->", pnl_str, 1)[
             ::-1
         ]  # find and replace first occurence
         pnl_label.setText(pnl_hidden)  # set text

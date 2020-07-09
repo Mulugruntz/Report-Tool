@@ -34,6 +34,15 @@ from PyQt5 import QtGui, QtWidgets
 from classThread import TransactionThread, UpdateCommentsThread
 
 
+RE_TEXT_BETWEEN_TAGS = re.compile(r">(.*?)<")
+RE_FLOAT = re.compile(r"[+-]? *(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?")
+RE_BEFORE_SLASH_HYPHEN = re.compile(r"(.*?[A-z])[-/]")
+RE_SPACE_START = re.compile(r"(.*?[A-z])\s")
+RE_SPACE_START_COLON_END = re.compile(r"(\s.*?[A-z]): ")
+RE_COLON_END = re.compile(r"(.*?[A-z]): ")
+RE_UNDERSCORE_START = re.compile(r"_(.*)")
+
+
 class ReportToolGUI(QtWidgets.QMainWindow):
 
     """Main class for ReportTool"""
@@ -1209,8 +1218,8 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         old_title = str(plot_widget.plotItem.titleLabel.text)
         old_y_label = str(plot_widget.plotItem.getAxis("left").labelText)
 
-        new_title = re.sub(">(.*?)<", title, old_title)
-        new_y_label = re.sub(">(.*?)<", y_label, old_y_label)
+        new_title = RE_TEXT_BETWEEN_TAGS.sub(title, old_title)
+        new_y_label = RE_TEXT_BETWEEN_TAGS.sub(y_label, old_y_label)
 
         plot_widget.plotItem.setTitle(new_title)
         plot_widget.plotItem.getAxis("left").labelText = new_y_label
@@ -1308,8 +1317,8 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
         # test capital entered by user
         capital = self.line_edit_capital.text()
-        re_float = r"[+-]? *(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?"
-        match = re.match(re_float, capital)
+
+        match = RE_FLOAT.match(capital)
 
         # capital is float
         if match is not None:
@@ -1519,7 +1528,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             plot_widget = self.graph_dict[key]["equity_plot"]
 
             old_title = str(plot_widget.plotItem.titleLabel.text)
-            new_title = re.sub(">(.*?)<", title_list[count], old_title)
+            new_title = RE_TEXT_BETWEEN_TAGS.sub(title_list[count], old_title)
 
             plot_widget.plotItem.setTitle(new_title)
 
@@ -1724,27 +1733,27 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
                 # get only 'points' if result in 'points/lot'
                 try:
-                    result_in = re.search(r"(.*?[A-z])[-/]", result_in).group(1)
+                    result_in = RE_BEFORE_SLASH_HYPHEN.search(result_in).group(1)
                 except AttributeError:
                     pass
 
-                static_text = re.search(r"(.*?[A-z])\s", label_text).group()
+                static_text = RE_SPACE_START.search(label_text).group()
                 static_text = static_text + "" + str(result_in).lower() + ": "
 
             elif count == 0 or count == 2:
 
                 # get only "points" if result in "points/lot"
                 try:
-                    result_in = re.search(r"(.*?[A-z])[-/]", result_in).group(1)
+                    result_in = RE_BEFORE_SLASH_HYPHEN.search(result_in).group(1)
                 except AttributeError:
                     pass
 
-                static_text = re.search(r"(\s.*?[A-z]): ", label_text).group()
+                static_text = RE_SPACE_START_COLON_END.search(label_text).group()
                 static_text = result_in + static_text
 
             else:
 
-                static_text = re.search(r"(.*?[A-z]): ", label_text).group()
+                static_text = RE_COLON_END.search(label_text).group()
 
             text_to_set = static_text + summary_dict[key]
             self.dict_summary_labels[key].setText(text_to_set)
@@ -1786,7 +1795,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
                 # item = QtWidgets.QTableWidgetItem()
                 # item.setTextAlignment(QtCore.Qt.AlignCenter)
                 # try:
-                #     ig_deal_id = re.search(r"(.*)_", deal_id).groups()[0]
+                #     ig_deal_id = RE_UNDERSCORE_START.search(deal_id).groups()[0]
                 # except Exception as e:
                 #     ig_deal_id = deal_id
 
@@ -1941,7 +1950,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             """
 
             # get scatter name as same as in config dict
-            scatter_type = re.sub(r"_(.*)", "", sender)
+            scatter_type = RE_UNDERSCORE_START.sub("", sender)
 
             # get state of scatter (show it or not)
             state_dd = states_dd[scatter_type]
