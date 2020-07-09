@@ -1,57 +1,61 @@
 # Report Tool
-Report Tool is an application coded in python/PyQt4 using IG Rest API to show basics statistics about past trades.
 
+Report Tool is an application coded in Python 3.8 / PyQt5 using IG Rest API to show basics statistics about past trades.
 
-# Features
-- Listing of past trades,
-- Summary in points, points per lot, currency or percentage
-- Equity curves,
-- Export of trades in .txt format or .jpeg format
-- Trades comment,
-- Market filter.
+## Features
 
-![alt tag](https://github.com/beniSo/Report-Tool/blob/master/main.png)
+* Listing of past trades,
+* Summary in points, points per lot, currency or percentage
+* Equity curves,
+* Export of trades in .txt format or .jpeg format
+* Trades comment,
+* Market filter.
 
+![Main interface](main.png)
 
-# Installation under Linux
-- for Debian
-```bash
-$ sudo apt-get install python-pyqtgraph
-$ sudo apt-get install python-qt4
-$ pip install requests
-$ pip install numpy
-$ pip install urllib3
+## Installing on Linux
+
+### Debian
+
+```shell script
+sudo apt-get install python-pyqtgraph
+sudo apt-get install python-qt5
+pip install requests numpy PyQt5
 ```
 
-- for Fedora
-```bash
-$ sudo dnf install python-qt4
-$ sudo dnf install python-pyqtgraph
-$ pip install requests
-$ pip install numpy
-$ pip install urllib3
+### Fedora
+
+```shell script
+sudo dnf install python-qt5
+sudo dnf install python-pyqtgraph
+pip install requests numpy PyQt5
 ```
 
-# Installation under Windows
+## Installing on MacOS
 
-- Download and install python 2.7 (https://www.python.org/downloads/)
-- Download and install PyQt4 (http://www.riverbankcomputing.co.uk/software/pyqt/download),
+```shell script
+pip install requests numpy PyQt5
+```
+
+## Installing on Windows
+
+- Download and install Python 3.8 (https://www.python.org/downloads/)
+- Download and install PyQt5 (http://www.riverbankcomputing.co.uk/software/pyqt/download),
 - Download and install PyQtGraph (http://www.pyqtgraph.org/
 
-```bash
-$ pip install requests
-$ pip install numpy
-$ pip install urllib3
+```shell script
+pip install requests numpy PyQt5
 ```
 
-# Usage
-- Download the archive and unzip it:
-```bash
-$ cd /path/to/Report-Tool/folder
-$ python main.py
+## Usage
+
+* Download the archive and unzip it:
+```shell script
+cd /path/to/Report-Tool/folder
+python main.py
 ```
-- Enter your credentials, via the menu "Connect"
+* Enter your credentials, via the menu "Connect"
 
-![alt tag](https://github.com/beniSo/Report-Tool/blob/master/connect.png)
+![Connect menu](connect.png)
 
-- Have fun !
+* Have fun !

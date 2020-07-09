@@ -42,7 +42,6 @@ includes = [
     "requests",
     "socket",
     "urllib",
-    "urllib2",
     "urllib3",
     "urlparse",
 ]  # include needed library
