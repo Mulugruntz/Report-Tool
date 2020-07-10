@@ -1167,7 +1167,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
         # get options set
         auto_calculate = self.checkbox_auto.checkState()
-        result_in = str(self.combobox_options.currentText().toUtf8())
+        result_in = self.combobox_options.currentText()
         include = self.checkbox_include.checkState()
         agregate = self.checkbox_agregate.checkState()
 
@@ -3244,9 +3244,9 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
         config = funcMisc.read_config()
 
-        # save state ans size of window
+        # save state and window size
         config["gui_size"] = (self.size().width(), self.size().height())
-        config["gui_state"] = self.saveState()
+        config["gui_state"] = QtCore.QByteArray(self.saveState())
         config["gui_pos"] = (self.pos().x(), self.pos().y())
 
         funcMisc.write_config(config)

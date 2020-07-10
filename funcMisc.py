@@ -91,8 +91,8 @@ def read_credentials(*args, **kwargs):
             for key in saved_accounts.keys():
 
                 # decode pwd and api key
-                decoded_pwd = str(base64.b64decode(saved_accounts[key]["pwd"]))
-                decoded_key = str(base64.b64decode(saved_accounts[key]["api_key"]))
+                decoded_pwd = base64.b64decode(saved_accounts[key]["pwd"]).decode()
+                decoded_key = base64.b64decode(saved_accounts[key]["api_key"]).decode()
 
                 saved_accounts[key]["api_key"] = decoded_key
                 saved_accounts[key]["pwd"] = decoded_pwd
@@ -123,8 +123,10 @@ def write_credentials(credentials):
         for key in credentials.keys():
 
             # encode pwd and api key
-            encoded_pwd = str(base64.b64encode(credentials[key]["pwd"].encode()))
-            encoded_key = str(base64.b64encode(credentials[key]["api_key"].encode()))
+            encoded_pwd = base64.b64encode(credentials[key]["pwd"].encode()).decode()
+            encoded_key = base64.b64encode(
+                credentials[key]["api_key"].encode()
+            ).decode()
 
             credentials[key]["api_key"] = encoded_key
             credentials[key]["pwd"] = encoded_pwd
@@ -172,6 +174,7 @@ def read_config(*args, **kwargs):
     common errors. In case of errors returns a default dict
     I may used QSettings instead of custom config file
     """
+    # TODO: call read_config less often!
 
     default_dict = {
         "ec_size": 3,
@@ -288,7 +291,7 @@ def write_config(config):
 
     config_path = os.getcwd() + "/config.json"
     out_config = copy.deepcopy(config)
-    out_config["gui_state"] = str(out_config["gui_state"].toBase64().data())
+    out_config["gui_state"] = out_config["gui_state"].toBase64().data().decode()
     with open(config_path, "w") as f:
         json.dump(out_config, f, indent=4)  # write dict (default or not)
 
