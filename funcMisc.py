@@ -1,5 +1,6 @@
 """Module for holding simple functions"""
 import copy
+from decimal import Decimal
 
 from PyQt5 import QtCore
 from PyQt5 import QtGui
@@ -13,6 +14,7 @@ import base64
 import logging
 import logging.config
 
+from src.lib.json_utils import RoundTripEncoder, RoundTripDecoder
 
 RE_CONVERT = re.compile(r"^(.*)converted")
 
@@ -86,7 +88,7 @@ def read_credentials(*args, **kwargs):
 
     with open(credentials_path, "r") as f:
         try:
-            saved_accounts = json.load(f)
+            saved_accounts = json.load(f, cls=RoundTripDecoder)
 
             for key in saved_accounts.keys():
 
@@ -131,7 +133,8 @@ def write_credentials(credentials):
             credentials[key]["api_key"] = encoded_key
             credentials[key]["pwd"] = encoded_pwd
 
-        json.dump(credentials, f, indent=4)  # write dict (default or not)
+        # write dict (default or not)
+        json.dump(credentials, f, cls=RoundTripEncoder, indent=4)
 
 
 def read_comment(*args, **kwargs):
@@ -142,7 +145,7 @@ def read_comment(*args, **kwargs):
 
     with open(comment_path, "r") as f:
         try:
-            saved_comments = json.load(f)
+            saved_comments = json.load(f, cls=RoundTripDecoder)
 
         # log error and returns empty dict
         except Exception as e:
@@ -164,7 +167,7 @@ def write_comments(comments):
     comment_path = os.getcwd() + "/comments.json"
 
     with open(comment_path, "w") as f:
-        json.dump(comments, f)  # write dict (default or not)
+        json.dump(comments, f, cls=RoundTripEncoder)  # write dict (default or not)
 
 
 def read_config(*args, **kwargs):
@@ -225,7 +228,7 @@ def read_config(*args, **kwargs):
     with open(config_path, "r") as f:
 
         try:
-            data_read = json.load(f)
+            data_read = json.load(f, cls=RoundTripDecoder)
 
             for key in default_dict.keys():
 
@@ -237,7 +240,7 @@ def read_config(*args, **kwargs):
                     if start_capital == "":
                         start_capital = 0
                     else:
-                        start_capital = float(data_read["start_capital"])
+                        start_capital = Decimal(data_read["start_capital"])
 
                     config["start_capital"] = start_capital
 
@@ -293,7 +296,8 @@ def write_config(config):
     out_config = copy.deepcopy(config)
     out_config["gui_state"] = out_config["gui_state"].toBase64().data().decode()
     with open(config_path, "w") as f:
-        json.dump(out_config, f, indent=4)  # write dict (default or not)
+        # write dict (default or not)
+        json.dump(out_config, f, cls=RoundTripEncoder, indent=4)
 
 
 def create_dates_list(state_dates, dates_string, key, start_capital):

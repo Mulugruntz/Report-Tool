@@ -5,6 +5,7 @@ verify_ssl = true
 
 [dev-packages]
 cx-freeze = "==6.2"
+pyqt5-stubs = "==5.14.2.2"
 
 [packages]
 numpy = "==1.19.0"

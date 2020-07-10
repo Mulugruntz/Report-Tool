@@ -1,5 +1,6 @@
 """ This module holds classes to custom base QtWidgets"""
 import warnings
+from decimal import Decimal
 
 from PyQt5 import QtCore
 from PyQt5 import QtGui, QtWidgets
@@ -437,22 +438,20 @@ class CustomDockWidget(QtWidgets.QDockWidget):
 
                     # create a list with suffix for each pnl infos
                     pnl_in = ["pts | ", "pts/lot | ", currency_symbol]
-                    pnl_str = ""  # init empty string
+                    pnl_list = []
 
                     for idx, info in enumerate(pnl_info):
-                        pnl = dict_to_search[deal_id_clicked][info]
+                        pnl = Decimal(dict_to_search[deal_id_clicked][info])
 
                         try:
-                            float(pnl)  # temp might be deleted
 
-                            if float(pnl) > 0:
-                                pnl_color = profit_color
-
-                            elif float(pnl) == 0:
-                                pnl_color = flat_color
-
-                            elif float(pnl) < 0:
-                                pnl_color = loss_color
+                            pnl_color = (
+                                profit_color
+                                if pnl > 0
+                                else flat_color
+                                if pnl == 0
+                                else loss_color
+                            )
 
                             # hide or not capital little bit hardcoded
                             if (
@@ -468,22 +467,15 @@ class CustomDockWidget(QtWidgets.QDockWidget):
                             else:
                                 pnl = str(pnl)
 
-                            pnl_text = (
-                                '<span style="color:'
-                                + pnl_color
-                                + '">'
-                                + pnl
-                                + pnl_in[idx]
-                                + "</span>"
-                            )
+                            pnl_text = f"""<span style="color: {pnl_color}">{pnl}{pnl_in[idx]}</span>"""
 
-                            pnl_str += pnl_text  # construct a pnl string
+                            pnl_list.append(pnl_text)  # construct a pnl string
 
                         except ValueError:  # not a float
                             continue
 
-                    data = pnl_str
-                    self.pnl_str = pnl_str
+                    data = "".join(pnl_list)
+                    self.pnl_str = data
 
                 else:
                     key_dict_to_search = pos_details_headers[key]

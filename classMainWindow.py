@@ -8,6 +8,7 @@ import traceback
 
 import queue as queue
 import warnings
+from decimal import Decimal
 
 import numpy as np
 import pyqtgraph as pg
@@ -460,7 +461,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
         # confiure widgets
         self.line_edit_capital.blockSignals(True)
-        self.line_edit_capital.setText(str(capital) + currency_symbol)
+        self.line_edit_capital.setText(f"{capital:.2f} {currency_symbol}")
         self.line_edit_capital.blockSignals(False)
         self.line_edit_capital.setFixedWidth(120)
 
@@ -1187,30 +1188,24 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         config = funcMisc.read_config()
 
         # get infos about dates
+
         start_date = self.start_date.date()
-        start_date_str = start_date.toString("dd-MM-yyyy")
-
         end_date = self.end_date.date()
-        end_date_str = end_date.toString("dd-MM-yyyy")
 
-        date_range = "/" + start_date_str + "/" + end_date_str
+        date_range = f"""/{start_date.toString("dd-MM-yyyy")}/{end_date.toString("dd-MM-yyyy")}"""
 
-        # quick and dirty way to update graph title and labels
-        if end_date == start_date:
-            graph_title = " on " + start_date.toString("dd/MM/yy")
-        else:
-            graph_title = (
-                " from "
-                + start_date.toString("dd/MM/yy")
-                + " to "
-                + end_date.toString("dd/MM/yy")
-            )
+        self.end_date.setMinimumDate(start_date)
+
+        # update graph titles
+        graph_title = f""" on {start_date.toString("dd/MM/yy")}"""
+        if end_date != start_date:
+            graph_title = f""" from {start_date.toString("dd/MM/yy")} to {end_date.toString("dd/MM/yy")}"""
 
         if result_in == "Points/lot":
-            title = ">Points/lot" + str(graph_title) + "<"
+            title = f">Points/lot{graph_title}<"
             y_label = ">Points/lot<"
         else:
-            title = ">Points" + str(graph_title) + "<"
+            title = f">Points{graph_title}<"
             y_label = ">Points<"
 
         plot_widget = self.graph_dict["Points"]["equity_plot"]
@@ -1319,24 +1314,16 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         capital = self.line_edit_capital.text()
 
         match = RE_FLOAT.match(capital)
+        float_capital = Decimal()
 
-        # capital is float
+        # capital is Decimal
         if match is not None:
-            float_capital = match.group(0)
-            self.line_edit_capital.setText(float_capital + currency_symbol)
+            float_capital = Decimal(match.group(0))
 
-            if float_capital == 0:
-                self.line_edit_capital.setCursorPosition(0)
-            else:
-                self.line_edit_capital.setCursorPosition(len(float_capital))
-
-            config["start_capital"] = str(float_capital)
-
-        # capital is not float set zero
-        else:
-            self.line_edit_capital.setText("0")
-            self.line_edit_capital.setCursorPosition(0)
-            config["start_capital"] = str(0)
+        text_capital = f"{float_capital}{currency_symbol}"
+        self.line_edit_capital.setText(text_capital)
+        self.line_edit_capital.setCursorPosition(len(str(float_capital)))
+        config["start_capital"] = float_capital
 
         funcMisc.write_config(config)
 
@@ -1352,9 +1339,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         # unpack items sends by LS server
         balance, deposit, profit_loss = myUpdateField
 
-        balance = str(balance)
-        deposit = str(deposit)
-        profit_loss = str(profit_loss)
+        profit_loss = Decimal(profit_loss)
 
         config = funcMisc.read_config()
         label_pnl = self.dict_account_labels["Profit/loss: "]
@@ -1370,37 +1355,17 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         if state_infos == "Always":
             return
 
-        else:
-            # set color according to config
-            if float(profit_loss) < 0:
-                label_pnl.setText(
-                    "<font color="
-                    + loss_color
-                    + ">"
-                    + profit_loss
-                    + currency_symbol
-                    + "</font>"
-                )
-
-            elif float(profit_loss) > 0:
-                label_pnl.setText(
-                    "<font color="
-                    + profit_color
-                    + ">"
-                    + profit_loss
-                    + currency_symbol
-                    + "</font>"
-                )
-
-            elif float(profit_loss) == 0.00:
-                label_pnl.setText(
-                    "<font color="
-                    + flat_color
-                    + ">"
-                    + profit_loss
-                    + currency_symbol
-                    + "</font>"
-                )
+        # set color according to config
+        color = (
+            profit_color
+            if profit_loss > 0
+            else flat_color
+            if profit_loss == 0
+            else loss_color
+        )
+        label_pnl.setText(
+            f"""<font color={color}">{profit_loss}{currency_symbol}</font>"""
+        )
 
     def update_positions(self, myUpdateField):
 
@@ -1494,35 +1459,27 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         result_in = self.combobox_options.currentText()
 
         start_date = self.start_date.date()
-        start_date_str = str(start_date.toString("dd-MM-yyyy"))
-
         end_date = self.end_date.date()
-        end_date_str = str(end_date.toString("dd-MM-yyyy"))
-        date_range = "/" + start_date_str + "/" + end_date_str
+
+        date_range = f"""/{start_date.toString("dd-MM-yyyy")}/{end_date.toString("dd-MM-yyyy")}"""
 
         self.end_date.setMinimumDate(start_date)
 
         # update graph titles
-        if end_date == start_date:
-            graph_title = " on " + start_date.toString("dd/MM/yy")
-        else:
-            graph_title = (
-                " from "
-                + start_date.toString("dd/MM/yy")
-                + " to "
-                + end_date.toString("dd/MM/yy")
-            )
+        graph_title = f""" on {start_date.toString("dd/MM/yy")}"""
+        if end_date != start_date:
+            graph_title = f""" from {start_date.toString("dd/MM/yy")} to {end_date.toString("dd/MM/yy")}"""
 
         title_list = [
             "",
-            ">Capital" + str(graph_title) + "<",
-            ">Capital growth" + str(graph_title) + "<",
+            f">Capital{graph_title}<",
+            f">Capital growth{graph_title}<",
         ]
 
         if result_in == "Points/lot":
-            title_list[0] = ">Points/lot" + str(graph_title) + "<"
+            title_list[0] = f">Points/lot{graph_title}<"
         else:
-            title_list[0] = ">Points" + str(graph_title) + "<"
+            title_list[0] = f">Points{graph_title}<"
 
         for count, key in enumerate(self.graph_dict.keys()):
             plot_widget = self.graph_dict[key]["equity_plot"]
@@ -1588,7 +1545,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
         config = funcMisc.read_config()  # read options
 
-        start_capital = float(config["start_capital"])
+        start_capital = config["start_capital"]
         currency_symbol = config["currency_symbol"]
         state_infos = str(config["what_to_show"]["state_infos"])
         state_size = str(config["what_to_show"]["state_size"])
@@ -1616,23 +1573,16 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             screenshot = kwargs["screenshot"]
             sender = kwargs["sender"]
         except KeyError:
-            self.local_transactions = transactions  # used dict send by thread
+            self.local_transactions = transactions  # use dict sent by thread
             screenshot = False
             sender = "thread"
 
-            if transactions == {}:  # manage when no trades done between period
+            if not transactions:  # manage when no trades done between period
                 self.statusBar().showMessage("No transactions received")
 
         result_in = self.combobox_options.currentText()
 
-        cash_available = self.session._get_cash_available()
-
-        summary_args = {
-            "transactions": transactions,
-            "start_capital": start_capital,
-            "cash_available": cash_available,
-            "screenshot": screenshot,
-        }
+        cash_available = Decimal(self.session._get_cash_available())
 
         summary = classResults.TradesResults()
 
@@ -1640,7 +1590,9 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         self.logger_info.log(logging.INFO, "Calculating summary...")
 
         try:
-            dict_results = summary.calculate_result(**summary_args)
+            dict_results = summary.calculate_result(
+                transactions, start_capital, cash_available, screenshot
+            )
 
         except Exception:
             msg = "An error occured: see log file"
@@ -1677,7 +1629,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             self.line_edit_capital.blockSignals(True)
 
             # hide initial capital
-            self.line_edit_capital.setText("xxxx" + currency_symbol)
+            self.line_edit_capital.setText(f"xxxx {currency_symbol}")
 
             # hide capital axe on graph
             self.graph_dict["Capital"]["equity_plot"].plotItem.hideAxis("left")
@@ -1692,7 +1644,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             self.line_edit_capital.blockSignals(True)
 
             # show initial capital
-            self.line_edit_capital.setText(str(start_capital) + currency_symbol)
+            self.line_edit_capital.setText(f"{start_capital:.2f} {currency_symbol}")
 
             # show capital axe on graph
             self.graph_dict["Capital"]["equity_plot"].plotItem.showAxis("left")
@@ -1730,32 +1682,29 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             label_text = self.dict_summary_labels[key].text()
 
             if count == 4:
-
                 # get only 'points' if result in 'points/lot'
                 try:
                     result_in = RE_BEFORE_SLASH_HYPHEN.search(result_in).group(1)
                 except AttributeError:
                     pass
 
-                static_text = RE_SPACE_START.search(label_text).group()
-                static_text = static_text + "" + str(result_in).lower() + ": "
+                static_text = RE_SPACE_START.search(label_text).group(0)
+                static_text = f"{static_text}{result_in.lower()}: "
 
             elif count == 0 or count == 2:
-
                 # get only "points" if result in "points/lot"
                 try:
                     result_in = RE_BEFORE_SLASH_HYPHEN.search(result_in).group(1)
                 except AttributeError:
                     pass
 
-                static_text = RE_SPACE_START_COLON_END.search(label_text).group()
-                static_text = result_in + static_text
+                static_text = RE_SPACE_START_COLON_END.search(label_text).group(0)
+                static_text = f"{result_in}{static_text}"
 
             else:
+                static_text = RE_COLON_END.search(label_text).group(0)
 
-                static_text = RE_COLON_END.search(label_text).group()
-
-            text_to_set = static_text + summary_dict[key]
+            text_to_set = f"{static_text}{summary_dict[key]}"
             self.dict_summary_labels[key].setText(text_to_set)
 
         # update transactions table
@@ -1773,13 +1722,8 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             if config["include"] != 2 and transaction_type in kw_fees:
                 continue
 
-            elif (
-                transaction_type == "CASHIN"
-                or transaction_type == "TRANSFER"
-                or transaction_type == "CASHOUT"
-                or transaction_type == "UNDEFINED"
-            ):  # account transaction are never showed
-                continue
+            elif transaction_type in ["CASHIN", "TRANSFER", "CASHOUT", "UNDEFINED"]:
+                continue  # account transaction are never showed
 
             else:
 
@@ -1816,10 +1760,10 @@ class ReportToolGUI(QtWidgets.QMainWindow):
                             and screenshot == True
                             and result_in != currency_symbol
                         ):
-                            item.setText("--" + currency_symbol)  # hide profit/loss
+                            item.setText(f"-- {currency_symbol}")  # hide profit/loss
                         else:
                             item.setText(
-                                transactions[deal_id][header] + currency_symbol
+                                f"{transactions[deal_id][header]}{currency_symbol}"
                             )  # show profit/loss
 
                     elif header == "open_size":
@@ -1831,27 +1775,29 @@ class ReportToolGUI(QtWidgets.QMainWindow):
                         ):  # screenshot is being taken
                             item.setText("-")  # hide lot size
                             self.dock_pos_details.hide_lot_size()
-                        else:
-                            item.setText(transactions[deal_id][header])  # show lot_size
+                        else:  # show lot_size
+                            item.setText(f"{transactions[deal_id][header]}")
 
                     elif header == "growth":
                         continue  # don"t show growth in table
 
                     else:
-                        item.setText(transactions[deal_id][header])
+                        item.setText(f"{transactions[deal_id][header]}")
 
                     profit_color = config["profit_color"]
                     flat_color = config["flat_color"]
                     loss_color = config["loss_color"]
-                    pnl = float(transactions[deal_id]["pnl"])
+                    pnl = transactions[deal_id]["pnl"]
 
                     # set line color according to profit/loss
-                    if pnl < 0:
-                        item.setForeground(QtGui.QColor(loss_color))
-                    elif pnl > 0:
-                        item.setForeground(QtGui.QColor(profit_color))
-                    elif pnl == 0:
-                        item.setForeground(QtGui.QColor(flat_color))
+                    color = (
+                        loss_color
+                        if pnl < 0
+                        else profit_color
+                        if pnl > 0
+                        else flat_color
+                    )
+                    item.setForeground(QtGui.QColor(color))
 
                     self.widget_pos.setItem(nb_row, idx, item)
 
@@ -2843,7 +2789,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
                         label.setText("Live-xxxx")
 
                 elif currency_symbol in old_text:
-                    label.setText("xxxx" + currency_symbol)
+                    label.setText(f"xxxx{currency_symbol}")
 
                 else:
                     label.setText("xxxx")
@@ -2948,7 +2894,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             self.statusBar().showMessage(msg)
             self.logger_debug.log(logging.ERROR, traceback.format_exc())
 
-        if state_infos != "Never":  # reset account labels if it have been changed
+        if state_infos != "Never":  # reset account labels if they have been changed
             for key in self.dict_account_labels.keys():
                 label = self.dict_account_labels[key]
                 label.setText(old_labels[key])

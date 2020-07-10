@@ -320,9 +320,7 @@ class IGAPI(object):
 
         # request is successfull, returns transactions
         else:
-            r_text = json.loads(r_transaction.text, encoding="utf-8")
-
-            transaction_received = json.loads(r_transaction.text)
+            transaction_received = json.loads(r_transaction.text)  # TODO: sanitize
 
             return transaction_received
 
@@ -439,7 +437,7 @@ class IGAPI(object):
 
         """Getter method"""
 
-        return self._cash_available
+        return self._cash_available  # TODO: change to Decimal + property
 
     def _set_cash_available(self, cash_available):
 

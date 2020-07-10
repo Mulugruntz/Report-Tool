@@ -1,3 +1,4 @@
+from decimal import Decimal, DivisionByZero
 from typing import Text, List, Dict
 
 from PyQt5 import QtCore
@@ -6,7 +7,7 @@ import re
 import os
 import time
 
-from collections import OrderedDict
+from collections import OrderedDict, defaultdict
 
 import logging
 import traceback
@@ -15,7 +16,7 @@ import funcMisc
 import classRestCom
 
 
-RE_FLOAT = re.compile(r"[+-]? *(?:\d+(?:\.|\,\d*)?\.*\d+)(?:[eE][+-]?\d+)?")
+RE_FLOAT = re.compile(r"[+-]? *(?:\d+(?:\.|,\d*)?\.*\d+)(?:[eE][+-]?\d+)?")
 RE_DATE = re.compile(r"/(.*?)$")
 
 
@@ -124,7 +125,7 @@ class TransactionThread(QtCore.QThread):
 
         # load initial capital and config
         config = funcMisc.read_config()
-        start_capital = float(config["start_capital"])
+        start_capital = Decimal(config["start_capital"])
         symbol = config["currency_symbol"]
         auto_calculate = config["auto_calculate"]
         agregate = config["agregate"]
@@ -149,6 +150,11 @@ class TransactionThread(QtCore.QThread):
         a list with all transactions attached to that dealId
         """
 
+        transactions_dict2 = defaultdict(list)
+        for transaction in transactions_result["transactions"]:
+            deal_ref = transaction["reference"]
+            transactions_dict2[deal_ref].append(transaction)
+
         transactions_dict = OrderedDict()
         for transaction in transactions_result["transactions"]:
 
@@ -166,9 +172,9 @@ class TransactionThread(QtCore.QThread):
         # FIXME: dict .keys() order was not deterministic prior to 3.6. Reviewing is needed
         # iterate over each deal_ref from older to newer
         for deal_ref in reversed(transactions_dict.keys()):
-            total_pnl = 0
-            total_points = 0
-            total_size = 0
+            total_pnl = Decimal()
+            total_points = Decimal()
+            total_size = Decimal()
 
             # iterate over each event that concerns deal_ref
             for count, deal_transaction in enumerate(transactions_dict[deal_ref]):
@@ -180,33 +186,30 @@ class TransactionThread(QtCore.QThread):
 
                 market_name = funcMisc.format_market_name(market)
 
-                if transaction_type in kw_order:  # transaction is an trade
-                    open_level = transactions_dict[deal_ref][count]["openLevel"]
-                    close_level = transactions_dict[deal_ref][count]["closeLevel"]
-                    size = transactions_dict[deal_ref][count]["size"]
+                if transaction_type in kw_order:  # transaction is a trade
+                    # TODO: create sub-methods
+                    open_level = Decimal(
+                        transactions_dict[deal_ref][count]["openLevel"]
+                    )
+                    close_level = Decimal(
+                        transactions_dict[deal_ref][count]["closeLevel"]
+                    )
+                    size = Decimal(transactions_dict[deal_ref][count]["size"])
                     str_pnl = transactions_dict[deal_ref][count]["profitAndLoss"]
 
                     # as the pnl is an alphanumeric value extract the float part
-                    re_float = r"[+-]? *(?:\d+(?:\.|\,\d*)?\.*\d+)(?:[eE][+-]?\d+)?"
+                    pnl = Decimal(RE_FLOAT.findall(str_pnl)[0].replace(",", ""))
 
-                    try:
-                        pnl = float(RE_FLOAT.findall(str_pnl)[0])
-                    except ValueError:
-                        pnl = float(RE_FLOAT.findall(str_pnl)[0].replace(",", ""))
-
-                    if float(size) < 0:
-                        direction = "SELL"
-                    elif float(size) > 0:
-                        direction = "BUY"
+                    direction = "SELL" if size < 0 else "BUY"
 
                     date = transactions_dict[deal_ref][count]["date"]
 
                     """
                     we suppose that the first close level
-                    in the list is the last that occured
+                    in the list is the last that occurred
                     """
 
-                    final_level = transactions_dict[deal_ref][0]["closeLevel"]
+                    final_level = Decimal(transactions_dict[deal_ref][0]["closeLevel"])
 
                     """
                     calculate points won/lost. it"s done according to
@@ -215,28 +218,22 @@ class TransactionThread(QtCore.QThread):
                     it can corrupt a result if the user never do it
                     """
 
-                    pnl_args = {
-                        "open_level": open_level,
-                        "close_level": close_level,
-                        "size": size,
-                        "direction": direction,
-                        "market_name": market_name,
-                    }
-
-                    points = self.calculate_pnl(**pnl_args)
+                    points = self.calculate_pnl(
+                        open_level, close_level, size, direction, market_name
+                    )
 
                     # if agregate cumulate size, points, pnl
-                    if agregate == 2:
+                    if agregate == 2:  # FIXME: Nani???
                         total_points += points
-                        total_pnl += float(pnl)
-                        total_size += float(size)
+                        total_pnl += pnl
+                        total_size += size
 
                     else:
                         total_points = points
-                        total_pnl = float(pnl)
-                        total_size = float(size)
+                        total_pnl = pnl
+                        total_size = size
 
-                elif transaction_type in kw_fees:
+                elif transaction_type in kw_fees:  # TODO: create sub-methods
 
                     """
                     depending of market name change
@@ -258,7 +255,7 @@ class TransactionThread(QtCore.QThread):
                     date = transactions_dict[deal_ref][count]["date"]
                     str_pnl = transactions_dict[deal_ref][count]["profitAndLoss"]
                     re_float = r"[+-]? *(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?"
-                    total_pnl = float(RE_FLOAT.findall(str_pnl)[0])
+                    total_pnl = Decimal(RE_FLOAT.findall(str_pnl)[0])
 
                     direction = "-"
                     open_level = "-"
@@ -308,7 +305,7 @@ class TransactionThread(QtCore.QThread):
                 #         total_points     = "-"
                 #         transaction_type = "TRANSFER"    # change transaction type with clearer one
 
-                else:
+                else:  # TODO: create sub-methods
                     msg = "%s is undefined type" % transaction_type
                     self.logger_debug.log(logging.ERROR, msg)
 
@@ -328,13 +325,10 @@ class TransactionThread(QtCore.QThread):
                     )
 
                 try:
-
-                    try:
-                        points_lot = round((total_points / abs(total_size)), 2)
-                    except ZeroDivisionError:
-                        points_lot = "-"
-
-                except TypeError:
+                    # TODO: work on types so total_size can only be Decimal or int.
+                    #       Can currently be str('-').
+                    points_lot = round(total_points / abs(total_size), 2)
+                except DivisionByZero:
                     points_lot = "-"
 
                 infos_list = [
@@ -342,12 +336,12 @@ class TransactionThread(QtCore.QThread):
                     date,
                     market_name,
                     direction,
-                    str(total_size),
+                    total_size,
                     open_level,
                     final_level,
-                    str(total_points),
-                    str(points_lot),
-                    str(total_pnl),
+                    total_points,
+                    points_lot,
+                    total_pnl,
                 ]
 
                 """
@@ -380,51 +374,39 @@ class TransactionThread(QtCore.QThread):
 
         self.transaction_received.emit(result_dict)  # emit dict
 
-    def calculate_pnl(self, *args, **kwargs):
+    def calculate_pnl(
+        self,
+        open_level: Decimal,
+        close_level: Decimal,
+        size: Decimal,
+        direction: str,
+        market_name: str,
+    ) -> Decimal:
 
         """
         Calculate profit loss in point and currency
 
-        :kw param open_level: string, open level of trade
-        :kw param close_level: string, close level of trade
-        :kw param size: string, size of trade
+        :kw param open_level: Decimal, open level of trade
+        :kw param close_level: Decimal, close level of trade
+        :kw param size: Decimal, size of trade
         :kw param direction: string, direction (BUY or SELL) of trade
         :kw param market_name: string, used to get type of market(FOREX, Indices)
         """
-
-        open_level = kwargs["open_level"]
-        close_level = kwargs["close_level"]
-        size = kwargs["size"]
-        direction = kwargs["direction"]
-        market_name = kwargs["market_name"]
 
         if direction == "BUY":
 
             # means market is Forex
             if "/" in market_name.lower():
 
+                # TODO: is round() still necessary with Decimal()??
                 # means cross is with Yen
                 if "jpy" in market_name.lower():
-                    points = (
-                        round(
-                            (float(close_level) - float(open_level)) * abs(float(size)),
-                            5,
-                        )
-                        * 100
-                    )
+                    points = round((close_level - open_level) * abs(size), 5) * 100
                 else:
-                    points = (
-                        round(
-                            (float(close_level) - float(open_level)) * abs(float(size)),
-                            5,
-                        )
-                        * 10000
-                    )
+                    points = round((close_level - open_level) * abs(size), 5) * 10000
 
             else:
-                points = round(
-                    (float(close_level) - float(open_level)) * abs(float(size)), 2
-                )
+                points = round((close_level - open_level) * abs(size), 2)
 
         elif direction == "SELL":
 
@@ -433,25 +415,11 @@ class TransactionThread(QtCore.QThread):
 
                 # means cross is with Yen
                 if "jpy" in market_name.lower():
-                    points = (
-                        round(
-                            (float(open_level) - float(close_level)) * abs(float(size)),
-                            5,
-                        )
-                        * 100
-                    )
+                    points = round((open_level - close_level) * abs(size), 5,) * 100
                 else:
-                    points = (
-                        round(
-                            (float(open_level) - float(close_level)) * abs(float(size)),
-                            5,
-                        )
-                        * 10000
-                    )
+                    points = round((open_level - close_level) * abs(size), 5,) * 10000
             else:
-                points = round(
-                    (float(open_level) - float(close_level)) * abs(float(size)), 2
-                )
+                points = round((open_level - close_level) * abs(size), 2)
 
         return points
 
