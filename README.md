@@ -13,49 +13,34 @@ Report Tool is an application coded in Python 3.8 / PyQt5 using IG Rest API to s
 
 ![Main interface](main.png)
 
-## Installing on Linux
+## Installation
 
-### Debian
+### What you will need
 
-```shell script
-sudo apt-get install python-pyqtgraph
-sudo apt-get install python-qt5
-pip install requests numpy PyQt5
-```
+* Python 3.8: https://www.python.org/downloads/
+* pip (should already be installed with Python): https://pip.pypa.io/en/stable/installing/
+* pipenv: `pip install pip --upgrade ; pip install pipenv`
 
-### Fedora
+### Dependencies
 
 ```shell script
-sudo dnf install python-qt5
-sudo dnf install python-pyqtgraph
-pip install requests numpy PyQt5
-```
-
-## Installing on MacOS
-
-```shell script
-pip install requests numpy PyQt5
-```
-
-## Installing on Windows
-
-- Download and install Python 3.8 (https://www.python.org/downloads/)
-- Download and install PyQt5 (http://www.riverbankcomputing.co.uk/software/pyqt/download),
-- Download and install PyQtGraph (http://www.pyqtgraph.org/
-
-```shell script
-pip install requests numpy PyQt5
+cd Report-Tool
+pipenv run python main.py
 ```
 
 ## Usage
 
 * Download the archive and unzip it:
 ```shell script
-cd /path/to/Report-Tool/folder
-python main.py
+cd Report-Tool
+pipenv run python main.py
 ```
 * Enter your credentials, via the menu "Connect"
 
 ![Connect menu](connect.png)
 
 * Have fun !
+
+## Disclaimer
+
+This tool was originally created by user **beniSo** but he's no longer on GitHub.

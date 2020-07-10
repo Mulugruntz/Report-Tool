@@ -92,9 +92,10 @@
 - Increase performance (decrease between v1.5 and 2.0 was due to an error in signal management),
 - Add possibilty to take screenshot using a configurable shortcut.
 
-####version 3.0####
+####version 3.0.0####
 - Changed from Python 2.7 to Python 3.8
 - Changed from PyQt4 to PyQt5
 - Cleaner code formatting (Black)
 - Cleaner imports
 - Performances: Precompiled regex
+- More reliable installation with pipenv
