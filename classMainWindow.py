@@ -16,7 +16,7 @@ import pyqtgraph as pg
 from collections import OrderedDict
 from copy import deepcopy
 
-import classDialogBox
+from src.gui.classDialogBox import ConnectWindow, OptionsWindow, FilterWindow, AboutWindow, ExportWindow
 from src.gui.widgets import CustomLabel, CustomLineEdit, CustomDockWidget
 
 from classEquityChart import EquityChart
@@ -768,7 +768,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         :param auto_connect: boolean if true do not show a diagbox
 
         :kw param connect_dict: dict with data needed to make a request
-                                See classDialogBox.ConnectWindow
+                                See ConnectWindow
         """
 
         """
@@ -843,7 +843,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             elif self.dock_pos_details.isHidden() == False:
                 self.dock_pos_details.hide()
 
-            connect_diag = classDialogBox.ConnectWindow(self)
+            connect_diag = ConnectWindow(self)
             connect_dict = connect_diag._get_connect_dict()
             if not connect_dict:
                 return
@@ -987,7 +987,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         self.pos_update_sig.pos_signal.connect(self.update_positions)
 
         # configure options changed signal
-        self.diag_options = classDialogBox.OptionsWindow(self)
+        self.diag_options = OptionsWindow(self)
         options_sig = self.diag_options.options_signal
         options_sig.connect(self.update_options)
 
@@ -2663,7 +2663,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         if not os.path.exists("Export"):
             os.makedirs("Export")
 
-        export_diag = classDialogBox.ExportWindow(self)
+        export_diag = ExportWindow(self)
 
         try:
             self.export_data.organize_data(self.widget_pos)
@@ -2694,7 +2694,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             self.dock_pos_details.hide()
 
         # init window
-        filter_diag = classDialogBox.FilterWindow(self)
+        filter_diag = FilterWindow(self)
         filter_sig = filter_diag.filter_signal
 
         # connect signal that notify filter has changed
@@ -2723,7 +2723,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         elif self.dock_pos_details.isHidden() == False:
             self.dock_pos_details.hide()
 
-        about_window = classDialogBox.AboutWindow(self)
+        about_window = AboutWindow(self)
         about_window.exec_()
 
         config = funcMisc.read_config()
