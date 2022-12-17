@@ -1,4 +1,4 @@
-"""Module with classes to interacts with IG Rest API"""
+"""Module with classes to interact with IG Rest API"""
 import logging
 import requests
 
@@ -9,7 +9,7 @@ import traceback
 from collections import OrderedDict
 from copy import deepcopy
 
-import funcMisc
+from report_tool.qt.functions import read_config, write_config
 
 
 class APIError(Exception):
@@ -107,7 +107,7 @@ class IGAPI(object):
 
             # try to see if ig as send a clear error msg
             try:
-                response_text = json.loads(response.text, encoding="utf-8")
+                response_text = json.loads(response.text)
 
                 error_msg = base_msg + response_text["errorCode"]
                 error_obj = APIError()
@@ -154,7 +154,7 @@ class IGAPI(object):
 
         # request is successfull
         else:
-            r_text = json.loads(r_connect.text, encoding="utf-8")
+            r_text = json.loads(r_connect.text)
             token = r_connect.headers["x-security-token"]
             cst = r_connect.headers["cst"]
 
@@ -179,7 +179,7 @@ class IGAPI(object):
         Else return APIError object.
         """
 
-        config = funcMisc.read_config()
+        config = read_config()
 
         # dict with ISO code of currency as keys
         # and corresponding symbol as values
@@ -228,7 +228,7 @@ class IGAPI(object):
 
         # request is successfull, return accounts
         else:
-            r_text = json.loads(r_account.text, encoding="utf-8")
+            r_text = json.loads(r_account.text)
 
             dict_account = OrderedDict()
 
@@ -240,14 +240,14 @@ class IGAPI(object):
 
                 # write new currency symbol
                 config["currency_symbol"] = currency_symbol
-                funcMisc.write_config(config)
+                write_config(config)
 
                 """
                 read new config to have the correct formatting
                 for currency symbol. may have a better solution
                 """
 
-                config = funcMisc.read_config()
+                config = read_config()
                 currency_symbol = config["currency_symbol"]
 
                 """
@@ -291,7 +291,7 @@ class IGAPI(object):
                 currency_symbol = dict_currency["EUR"]
 
             config["currency_symbol"] = currency_symbol
-            funcMisc.write_config(config)
+            write_config(config)
 
             return dict_account
 
@@ -352,7 +352,7 @@ class IGAPI(object):
 
         # request is successfull
         else:
-            r_text = json.loads(r_switch.text, encoding="utf-8")
+            r_text = json.loads(r_switch.text)
 
             # when switch to another account
             # a new token is provided
@@ -394,9 +394,9 @@ class IGAPI(object):
     def _set_ls_endpoint(self, endpoint):
 
         """
-           Setter method
+        Setter method
 
-           :param endpoint: string
+        :param endpoint: string
         """
 
         self._ls_endpoint = endpoint
@@ -410,9 +410,9 @@ class IGAPI(object):
     def _set_req_args(self, req_args):
 
         """
-           Setter method
+        Setter method
 
-           :param req_args: dict
+        :param req_args: dict
         """
 
         self._req_args = req_args
@@ -426,9 +426,9 @@ class IGAPI(object):
     def _set_connect_dict(self, connect_dict):
 
         """
-           Setter method
+        Setter method
 
-           :param connect_dict: OrderedDict()
+        :param connect_dict: OrderedDict()
         """
 
         self._connect_dict = connect_dict
@@ -448,7 +448,7 @@ class IGAPI(object):
         :param cash_available: str, cash on user's account
         """
 
-        config = funcMisc.read_config()
+        config = read_config()
         currency_symbol = config["currency_symbol"]
 
         self._cash_available = cash_available.replace(currency_symbol, "")

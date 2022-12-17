@@ -5,15 +5,15 @@ import numpy as np
 
 from collections import OrderedDict
 
-import funcMisc
+from report_tool.qt.functions import read_config, read_ig_config
 
 
 # TODO: is it needed to subclass dict? Especially for one huge method!
 class TradesResults(dict):
 
     """
-       Class with method to calculates
-       summary and equity plots about trades
+    Class with method to calculates
+    summary and equity plots about trades
     """
 
     def __init__(self):
@@ -60,7 +60,7 @@ class TradesResults(dict):
                              taken to properly format infos
         """
 
-        config = funcMisc.read_config()  # load config file
+        config = read_config()  # load config file
         currency_symbol = config["currency_symbol"]
         result_in = config["result_in"]
         auto_calculate = config["auto_calculate"]
@@ -91,7 +91,7 @@ class TradesResults(dict):
             "Transfers",
         ]  # same lis as the one used to create dock
 
-        ig_config = funcMisc.read_ig_config()
+        ig_config = read_ig_config()
 
         """
         ig sends keywords to identify transactions type known
@@ -458,7 +458,7 @@ class TradesResults(dict):
             # calculate dd in %
             try:
                 per_cent_avg_dd = round(
-                    (Decimal(sum(dd_list)) / len(dd_list)) / start_capital * 100, 2,
+                    (Decimal(sum(dd_list)) / len(dd_list)) / start_capital * 100, 2
                 )
                 per_cent_max_dd = round(max_dd / start_capital * 100, 2)
 
@@ -650,20 +650,20 @@ class TradesResults(dict):
     def create_curves(*args, **kwargs):
 
         """
-           Function to build scatterplot representing
-           max dd, depth and high and equity curves
-           Returns a dict buil correspond to 'curve'
-           subkey in graph_dict (see classIGReport)
-           {nameofthegraph: {equity_curve: np.array,
-                             high: np.array,
-                             depth: np.array,
-                             maxdd: np.array;
-                            }
-            }
+        Function to build scatterplot representing
+        max dd, depth and high and equity curves
+        Returns a dict buil correspond to 'curve'
+        subkey in graph_dict (see classIGReport)
+        {nameofthegraph: {equity_curve: np.array,
+                          high: np.array,
+                          depth: np.array,
+                          maxdd: np.array;
+                         }
+         }
 
-           :kw param transactions: OrderedDict() of all trades
-           :kw param start_capital: Decimal
-           :kw param config: dict with config saved
+        :kw param transactions: OrderedDict() of all trades
+        :kw param start_capital: Decimal
+        :kw param config: dict with config saved
         """
 
         transactions = kwargs["transactions"]
@@ -672,7 +672,7 @@ class TradesResults(dict):
         config = kwargs["config"]
         include = config["include"]
         result_in = config["result_in"]
-        ig_config = funcMisc.read_ig_config()
+        ig_config = read_ig_config()
 
         """
         ig sends keywords to identify transactions type known

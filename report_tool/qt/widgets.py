@@ -8,7 +8,7 @@ from PyQt5 import QtGui, QtWidgets
 import re
 import datetime
 
-import funcMisc
+from report_tool.qt.functions import read_config
 
 RE_LABEL = re.compile(r"(.*?[A-z]): ")
 RE_TAG = re.compile(r"<(.*?)>")
@@ -220,7 +220,7 @@ class CustomDockWidget(QtWidgets.QDockWidget):
     def init_dock(self, pos_details_headers):
 
         """
-        Create the a non closable QDockWidget. Contains labels with
+        Create a non-closable QDockWidget. Contains labels with
         infos about a clicked trade and a QPlainText to comments the
         clicked trade All widget are set in a QScrollArea.
 
@@ -229,7 +229,7 @@ class CustomDockWidget(QtWidgets.QDockWidget):
                                     keys as values
         """
 
-        config = funcMisc.read_config()
+        config = read_config()
 
         # init widgets and layout
         splitter = QtWidgets.QSplitter()
@@ -298,7 +298,9 @@ class CustomDockWidget(QtWidgets.QDockWidget):
         )
 
         layout_comment.addWidget(
-            self.text_edit_comment, 1, 1,
+            self.text_edit_comment,
+            1,
+            1,
         )
         widget_comment.setLayout(layout_comment)
 
@@ -329,12 +331,12 @@ class CustomDockWidget(QtWidgets.QDockWidget):
     def empty_labels(self, pos_details_headers):
 
         """
-       Called when no trades received. Set empty string for each labels
+        Called when no trades received. Set empty string for each labels
 
-       :param pos_details_headers: OrderedDict with same keys of result_dict
-                                   as keys and a clearer description of these
-                                   keys as values.
-                                   See classMainWindow.create_dock_details
+        :param pos_details_headers: OrderedDict with same keys of result_dict
+                                    as keys and a clearer description of these
+                                    keys as values.
+                                    See classMainWindow.create_dock_details
         """
 
         dict_details_labels = self._dict_details_labels
@@ -378,7 +380,7 @@ class CustomDockWidget(QtWidgets.QDockWidget):
         screenshot = kwargs["screenshot"]
 
         # get configuration
-        config = funcMisc.read_config()
+        config = read_config()
         profit_color = config["profit_color"]
         flat_color = config["flat_color"]
         loss_color = config["loss_color"]

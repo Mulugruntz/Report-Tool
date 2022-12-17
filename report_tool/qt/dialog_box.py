@@ -3,15 +3,27 @@
 from PyQt5 import QtCore
 from PyQt5 import QtGui, QtWidgets
 
-import os
-
 import json
 import random
 
 from copy import deepcopy
 
-import funcMisc
-import classCustomWidgets
+from report_tool.qt.functions import (
+    read_credentials,
+    read_config,
+    write_credentials,
+    write_config,
+    read_ig_config,
+    create_icons,
+)
+from report_tool.qt.widgets import (
+    CustomComboBox,
+    CustomLabel,
+    CustomPushButton,
+    CustomShortcutLineEdit,
+    CustomCloseButton,
+)
+from report_tool.utils.fs_utils import get_icon_path
 
 
 class ConnectWindow(QtWidgets.QDialog):
@@ -23,8 +35,6 @@ class ConnectWindow(QtWidgets.QDialog):
         super(ConnectWindow, self).__init__(parent=parent)
         self._connect_dict = {}
 
-        icons_path = os.getcwd() + "/icons"
-
         # configure QDialog
         self.setModal(True)
         self.setWindowTitle("Login Informations")
@@ -32,7 +42,7 @@ class ConnectWindow(QtWidgets.QDialog):
         layout_login = QtWidgets.QGridLayout()
 
         # create input widgets
-        self.combobox_usr = classCustomWidgets.CustomComboBox("user_choice")
+        self.combobox_usr = CustomComboBox("user_choice")
         self.combobox_type = QtWidgets.QComboBox()
 
         self.line_edit_proxies = QtWidgets.QLineEdit()
@@ -42,7 +52,7 @@ class ConnectWindow(QtWidgets.QDialog):
         self.chkbox_autoconnect = QtWidgets.QCheckBox()
         self.chkbox_remember = QtWidgets.QCheckBox()
 
-        self.btn_trash = classCustomWidgets.CustomLabel("trash")
+        self.btn_trash = CustomLabel("trash")
         self.btn_connect = QtWidgets.QPushButton("Connect")
 
         # configure widgets
@@ -54,7 +64,7 @@ class ConnectWindow(QtWidgets.QDialog):
         self.line_edit_pwd.setEchoMode(QtWidgets.QLineEdit.Password)
 
         self.btn_trash.set_default_style("transparent", "transparent", "transparent")
-        self.btn_trash.setPixmap(QtGui.QPixmap(icons_path + "/trash.png"))
+        self.btn_trash.setPixmap(QtGui.QPixmap(str(get_icon_path("trash"))))
 
         list_widgets_login = [
             QtWidgets.QLabel("Username: "),
@@ -110,8 +120,8 @@ class ConnectWindow(QtWidgets.QDialog):
         """Load saved accounts in credentials.json"""
 
         # read config file and credentials
-        saved_accounts = funcMisc.read_credentials()
-        config = funcMisc.read_config()
+        saved_accounts = read_credentials()
+        config = read_config()
 
         list_type = ["Live", "Demo"]
         acc_type = self.combobox_type.currentText()  # get account type
@@ -162,7 +172,7 @@ class ConnectWindow(QtWidgets.QDialog):
         credentials file. called when combobox user loses focus
         """
 
-        saved_accounts = funcMisc.read_credentials()
+        saved_accounts = read_credentials()
 
         # get set infos
         usr = self.combobox_usr.currentText()
@@ -211,13 +221,13 @@ class ConnectWindow(QtWidgets.QDialog):
             self.btn_trash.setEnabled(True)
 
         # write new credentials
-        funcMisc.write_credentials(saved_accounts)
+        write_credentials(saved_accounts)
 
     def delete_account(self):
 
         """When user clicks on button trash deletes selected account"""
 
-        saved_accounts = funcMisc.read_credentials()
+        saved_accounts = read_credentials()
 
         usr_to_delete = str(self.combobox_usr.currentText())
         idx_usr_to_delete = self.combobox_usr.currentIndex()
@@ -227,14 +237,13 @@ class ConnectWindow(QtWidgets.QDialog):
         self.combobox_usr.removeItem(idx_usr_to_delete)
 
         # write new credentials
-        funcMisc.write_credentials(saved_accounts)
+        write_credentials(saved_accounts)
 
     def user_edition(self):
 
         """User is editing account via inputs widgets."""
 
-        saved_accounts = funcMisc.read_credentials()
-        credentials_path = os.getcwd() + "/credentials.txt"
+        saved_accounts = read_credentials()
         list_type = ["Live", "Demo"]
 
         # get user modifications
@@ -280,7 +289,7 @@ class ConnectWindow(QtWidgets.QDialog):
                 self.btn_connect.setEnabled(True)
 
         # write new credentials
-        funcMisc.write_credentials(saved_accounts)
+        write_credentials(saved_accounts)
 
         # enabled (or not) trash button
         if usr == "":
@@ -303,10 +312,10 @@ class ConnectWindow(QtWidgets.QDialog):
         api_key = str(self.line_edit_key.text())
         proxies = str(self.line_edit_proxies.text())
 
-        chkbox_state = self.chkbox_remember.checkState()
+        checkbox_state = self.chkbox_remember.checkState()
         auto_connect = self.chkbox_autoconnect.checkState()
-        saved_accounts = funcMisc.read_credentials()
-        config = funcMisc.read_config()
+        saved_accounts = read_credentials()
+        config = read_config()
 
         # set selected account in dict to saved
         saved_accounts[usr] = {}
@@ -319,13 +328,13 @@ class ConnectWindow(QtWidgets.QDialog):
         # update config file
         config["last_usr"] = usr
         config["auto_connect"] = auto_connect
-        funcMisc.write_config(config)
+        write_config(config)
 
         # delete empty key (created when file is empty)
         if "" in saved_accounts:
             saved_accounts.pop("", None)
 
-        ig_urls = funcMisc.read_ig_config()
+        ig_urls = read_ig_config()
 
         if acc_type == "Live":
             base_url = ig_urls["base_url"]["live"]
@@ -336,11 +345,11 @@ class ConnectWindow(QtWidgets.QDialog):
         # credentials["pwd"]     = pwd
         # credentials["api_key"] = api_key
 
-        # save file according to user"s choice(remember or not)
-        if chkbox_state == 2:
-            funcMisc.write_credentials(saved_accounts)
+        # save file according to user's choice(remember or not)
+        if checkbox_state == 2:
+            write_credentials(saved_accounts)
         elif checkbox_state == 0:
-            funcMisc.write_credentials({})  # save empty dict
+            write_credentials({})  # save empty dict
 
         connect_args = {
             "urls": base_url,
@@ -411,15 +420,12 @@ class OptionsWindow(QtWidgets.QDialog):
     options_signal = QtCore.pyqtSignal(object)  # signal send when options changes
 
     def __init__(self, parent):
-
-        icons_path = os.getcwd() + "/icons"
-
         super(OptionsWindow, self).__init__(parent=parent)
-        self.setWindowIcon(QtGui.QIcon(icons_path + "/main.png"))
+        self.setWindowIcon(QtGui.QIcon(str(get_icon_path("main"))))
         self.setWindowTitle("Options")
         self.setModal(True)
 
-        ec_icons, dd_icons = funcMisc.create_icons()
+        ec_icons, dd_icons = create_icons()
 
         widget_screenshot = self.create_screenshot_options()
         widget_equity_curves = self.create_chart_options(ec_icons)
@@ -449,7 +455,7 @@ class OptionsWindow(QtWidgets.QDialog):
         chose what to print, where and what to hide
         """
 
-        config = funcMisc.read_config()
+        config = read_config()
 
         # init widgets
         layout_screenshot = QtWidgets.QGridLayout()
@@ -458,7 +464,7 @@ class OptionsWindow(QtWidgets.QDialog):
         self.combobox_what_to_print = QtWidgets.QComboBox()
         self.combobox_infos = QtWidgets.QComboBox()
         self.combobox_size = QtWidgets.QComboBox()
-        self.line_edit_shortcut = classCustomWidgets.CustomShortcutLineEdit("shortcut")
+        self.line_edit_shortcut = CustomShortcutLineEdit("shortcut")
 
         self.btn_file = QtWidgets.QPushButton()
 
@@ -557,13 +563,13 @@ class OptionsWindow(QtWidgets.QDialog):
         :param ec_icons: dict with pixmap of curves style
         """
 
-        config = funcMisc.read_config()
+        config = read_config()
 
         # init widgets
         widget_equity_curves = QtWidgets.QGroupBox("Chart options")
         layout_equity_curves = QtWidgets.QGridLayout()
 
-        self.btn_ec_color = classCustomWidgets.CustomPushButton("ec_color")
+        self.btn_ec_color = CustomPushButton("ec_color")
         self.combobox_ec_style = QtWidgets.QComboBox()  # curve style
         self.spinbox_ec_size = QtWidgets.QSpinBox()  # curve thickness
         self.checkbox_details = QtWidgets.QCheckBox()
@@ -639,7 +645,7 @@ class OptionsWindow(QtWidgets.QDialog):
 
         :param dd_icons: dict with pixmap of scatter style
         """
-        config = funcMisc.read_config()
+        config = read_config()
 
         # init widgets
         widget_dd_options = QtWidgets.QGroupBox("Scatter plot options")
@@ -649,9 +655,9 @@ class OptionsWindow(QtWidgets.QDialog):
         self.checkbox_maxdd = QtWidgets.QCheckBox()
         self.checkbox_high = QtWidgets.QCheckBox()
 
-        self.btn_high_color = classCustomWidgets.CustomPushButton("high_color")
-        self.btn_dd_color = classCustomWidgets.CustomPushButton("depth_color")
-        self.btn_max_dd_color = classCustomWidgets.CustomPushButton("maxdd_color")
+        self.btn_high_color = CustomPushButton("high_color")
+        self.btn_dd_color = CustomPushButton("depth_color")
+        self.btn_max_dd_color = CustomPushButton("maxdd_color")
 
         self.combobox_dd_style = QtWidgets.QComboBox()
         self.combobox_high_style = QtWidgets.QComboBox()
@@ -700,9 +706,9 @@ class OptionsWindow(QtWidgets.QDialog):
         the main window, to place widgets and configure them in optionsWindow
         to set objectName, to detect which scatter to show   or not and are
         used in config file as keys. If you modified it be  aware that you"ll
-        need to modify default_dict in funcMisc.read_config(),  names of plot
+        need to modify default_dict in read_config(),  names of plot
         in MainWindow.create_central_widget(), plot_available and order in
-        scatter_data in funcMisc.create_curves() . If you want to modify
+        scatter_data in create_curves() . If you want to modify
         the positions of widgets in optionsWindow, you"ll nedd to modify
         label_list and   buttons_list to keep the functions work correctly.
         see examples below.
@@ -810,7 +816,7 @@ class OptionsWindow(QtWidgets.QDialog):
                 layout_dd.addWidget(label_to_set, i, 0)
                 layout_dd.addWidget(btn_to_set, i, 1)
 
-            if type(btn_to_set) == classCustomWidgets.CustomPushButton:
+            if type(btn_to_set) == CustomPushButton:
                 btn_to_set.clicked.connect(self.update_options)
 
             elif type(btn_to_set) == QtWidgets.QComboBox:
@@ -840,15 +846,15 @@ class OptionsWindow(QtWidgets.QDialog):
         User can change flat, profit and loss colors
         """
 
-        config = funcMisc.read_config()
+        config = read_config()
 
         # init widget
         widget_transactions_options = QtWidgets.QGroupBox("Transactions options")
         layout_transactions_options = QtWidgets.QGridLayout()
 
-        self.btn_profit_color = classCustomWidgets.CustomPushButton("profit_color")
-        self.btn_loss_color = classCustomWidgets.CustomPushButton("loss_color")
-        self.btn_flat_color = classCustomWidgets.CustomPushButton("flat_color")
+        self.btn_profit_color = CustomPushButton("profit_color")
+        self.btn_loss_color = CustomPushButton("loss_color")
+        self.btn_flat_color = CustomPushButton("flat_color")
 
         # init list to easily configure and place widgets
         btn_pnl_color_list = [
@@ -891,14 +897,14 @@ class OptionsWindow(QtWidgets.QDialog):
         Options are saved each time function is called
         """
 
-        config = funcMisc.read_config()
+        config = read_config()
 
         # get config set by user and update config dict
         what_to_print = str(self.combobox_what_to_print.currentText())
         config["what_to_print"] = what_to_print
 
         # colors modified
-        if type(self.sender()) == classCustomWidgets.CustomPushButton:
+        if type(self.sender()) == CustomPushButton:
             color = QtWidgets.QColorDialog.getColor()
             which_color = str(self.sender().objectName())
             config[which_color] = str(color.name())
@@ -928,7 +934,7 @@ class OptionsWindow(QtWidgets.QDialog):
             config["what_to_show"][str(checkbox_name)] = state
 
         # shortcut to take screenshot modified
-        elif type(self.sender()) == classCustomWidgets.CustomShortcutLineEdit:
+        elif type(self.sender()) == CustomShortcutLineEdit:
             line_edit_name = self.sender().objectName()
             human_shortcut = self.sender().keysequence.toString(
                 QtGui.QKeySequence.NativeText
@@ -950,7 +956,7 @@ class OptionsWindow(QtWidgets.QDialog):
 
             config[str(line_edit_name)] = str(human_shortcut)
 
-        funcMisc.write_config(config)
+        write_config(config)
 
         # notify main window what option has changed
         try:
@@ -965,7 +971,7 @@ class OptionsWindow(QtWidgets.QDialog):
         directory where to save screenshot
         """
 
-        config = funcMisc.read_config()
+        config = read_config()
 
         screen_dir_dialbox = QtWidgets.QFileDialog()
         screen_dir_dialbox.setOption(QtWidgets.QFileDialog.ShowDirsOnly)
@@ -974,7 +980,7 @@ class OptionsWindow(QtWidgets.QDialog):
         dir_out = screen_dir_dialbox.getExistingDirectory()
         config["dir_out"] = str(dir_out)
 
-        funcMisc.write_config(config)
+        write_config(config)
 
     def on_close(self):
 
@@ -995,15 +1001,12 @@ class ExportWindow(QtWidgets.QDialog):
     """
 
     def __init__(self, parent, *args, **kwargs):
-
-        icons_path = os.getcwd() + "/icons"
-
         super(ExportWindow, self).__init__(parent=parent)
-        self.setWindowIcon(QtGui.QIcon(icons_path + "/main.png"))
+        self.setWindowIcon(QtGui.QIcon(str(get_icon_path("main"))))
         self.setWindowTitle("Export options")
         self.setModal(True)
 
-        config = funcMisc.read_config()
+        config = read_config()
 
         dict_sep = {
             "Comma": ",",
@@ -1077,7 +1080,7 @@ class ExportWindow(QtWidgets.QDialog):
 
         """Write config file with new options"""
 
-        config = funcMisc.read_config()
+        config = read_config()
 
         key = str(self.sender().objectName())  # get key to modify
 
@@ -1088,7 +1091,7 @@ class ExportWindow(QtWidgets.QDialog):
 
         config[key] = data  # FIXME
 
-        funcMisc.write_config(config)  # write config
+        write_config(config)  # write config
 
     def set_export_path(self, *args, **kwargs):
 
@@ -1097,7 +1100,7 @@ class ExportWindow(QtWidgets.QDialog):
         directory where to save exported data
         """
 
-        config = funcMisc.read_config()
+        config = read_config()
 
         export_dir_dialbox = QtWidgets.QFileDialog()
         export_dir_dialbox.setOption(QtWidgets.QFileDialog.ShowDirsOnly)
@@ -1107,7 +1110,7 @@ class ExportWindow(QtWidgets.QDialog):
 
         config["dir_export"] = str(dir_out)
 
-        funcMisc.write_config(config)
+        write_config(config)
 
     def on_close(self, *args, **kwargs):
 
@@ -1132,13 +1135,12 @@ class AboutWindow(QtWidgets.QDialog):
 
         self._initial_pos = None
 
-        icons_path = os.getcwd() + "/icons"
-        self.setWindowIcon(QtGui.QIcon(icons_path + "/main.png"))
+        self.setWindowIcon(QtGui.QIcon(str(get_icon_path("main"))))
 
         layout = QtWidgets.QGridLayout()
 
         # labels for basics infos
-        pixmap = QtGui.QPixmap(icons_path + "/georges.png")
+        pixmap = QtGui.QPixmap(str(get_icon_path("georges")))
 
         label_dev = QtWidgets.QLabel("Developed by Benoit Soudan")
         label_contact = QtWidgets.QLabel("benoit.soudan@gmail.com")
@@ -1153,7 +1155,7 @@ class AboutWindow(QtWidgets.QDialog):
         self.stupid_label.setPixmap(pixmap)
         self.stupid_label.setAlignment(QtCore.Qt.AlignCenter)
 
-        self.ok_btn = classCustomWidgets.CustomCloseButton("Rosebud !")
+        self.ok_btn = CustomCloseButton("Rosebud !")
         self.ok_btn.setToolTip("Don't do it ! You can break the internet")
         self.ok_btn.setMaximumWidth(200)
         self.ok_btn.clicked.connect(self.close)
@@ -1208,7 +1210,7 @@ class AboutWindow(QtWidgets.QDialog):
             self._set_initial_pos(initial_pos)  # save initial position
 
             # stupid gif
-            gif = QtGui.QMovie(os.getcwd() + "/icons/cat.gif")
+            gif = QtGui.QMovie(str(get_icon_path("cat", ext="gif")))
             gif.start()
             self.stupid_label.setMovie(gif)
 
@@ -1249,9 +1251,8 @@ class FilterWindow(QtWidgets.QDialog):
     def __init__(self, parent):
 
         super(FilterWindow, self).__init__(parent=parent)
-        icons_path = os.getcwd() + "/icons"
 
-        self.setWindowIcon(QtGui.QIcon(icons_path + "/main.png"))
+        self.setWindowIcon(QtGui.QIcon(str(get_icon_path("main"))))
         self.setWindowTitle("Filter")
         self.setModal(True)
 
@@ -1262,7 +1263,7 @@ class FilterWindow(QtWidgets.QDialog):
         :param previous filter: list of previoulsy selected markets
         """
 
-        config = funcMisc.read_config()
+        config = read_config()
         self.unchanged_dict = result_dict
 
         # init grid layout and widgets
@@ -1367,13 +1368,13 @@ class FilterWindow(QtWidgets.QDialog):
         result_dict called filtered_dict without the selected markets
         """
 
-        config = funcMisc.read_config()
+        config = read_config()
 
         filtered_dict = deepcopy(self.unchanged_dict)  # deepcopy of unchanged_dict
         checkbox_all_state = self.checkbox_all.checkState()
         config["all"] = checkbox_all_state
 
-        funcMisc.write_config(config)
+        write_config(config)
 
         for key in self.dict_filter_checkbox.keys():  # loop over checkbox
             checkbox = self.dict_filter_checkbox[key]
@@ -1406,11 +1407,11 @@ class FilterWindow(QtWidgets.QDialog):
 
         """Close function"""
 
-        config = funcMisc.read_config()
+        config = read_config()
         checkbox_all_state = self.checkbox_all.checkState()
         config["all"] = checkbox_all_state
 
-        funcMisc.write_config(config)
+        write_config(config)
 
         if checkbox_all_state == 2:  # if no filter set, send unchanged_dict
             self.filter_signal.emit(self.unchanged_dict)

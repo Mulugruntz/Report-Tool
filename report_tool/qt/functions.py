@@ -6,7 +6,6 @@ from PyQt5 import QtCore
 from PyQt5 import QtGui
 
 import re
-import os
 import json
 import math
 
@@ -14,7 +13,15 @@ import base64
 import logging
 import logging.config
 
-from src.utils.json_utils import RoundTripEncoder, RoundTripDecoder
+from report_tool.utils.constants import (
+    get_root_project_dir,
+    get_credentials_file,
+    get_comments_file,
+    get_screenshots_dir,
+    get_export_dir,
+    get_config_file,
+)
+from report_tool.utils.json_utils import RoundTripEncoder, RoundTripDecoder
 
 RE_CONVERT = re.compile(r"^(.*)converted")
 
@@ -66,27 +73,20 @@ def format_market_name(market_name, *args, **kwargs):
 
 
 def read_ig_config(*args, **kwargs):
-
     """Read ig_config.json file"""
-
-    ig_config_path = os.getcwd() + "/ig_config.json"
-
-    with open(ig_config_path, "r") as f:
-        ig_config = json.load(f)
-
-    return ig_config
+    return json.loads((get_root_project_dir() / "ig_config.json").read_text())
 
 
 def read_credentials(*args, **kwargs):
 
     """Reads credentials files"""
 
-    credentials_path = os.getcwd() + "/credentials.json"
+    credentials_path = get_credentials_file()
     empty_account = {"pwd": "", "api_key": "", "type": "Live", "proxies": {"https": ""}}
 
     saved_accounts = {}
 
-    with open(credentials_path, "r") as f:
+    with credentials_path.open("r") as f:
         try:
             saved_accounts = json.load(f, cls=RoundTripDecoder)
 
@@ -119,9 +119,9 @@ def write_credentials(credentials):
     :param credentials: dict with all users saved
     """
 
-    credentials_path = os.getcwd() + "/credentials.json"
+    credentials_path = get_credentials_file()
 
-    with open(credentials_path, "w") as f:
+    with credentials_path.open("w") as f:
         for key in credentials.keys():
 
             # encode pwd and api key
@@ -141,9 +141,9 @@ def read_comment(*args, **kwargs):
 
     """Reads comments files"""
 
-    comment_path = os.getcwd() + "/comments.json"
+    comment_path = get_comments_file()
 
-    with open(comment_path, "r") as f:
+    with comment_path.open("r") as f:
         try:
             saved_comments = json.load(f, cls=RoundTripDecoder)
 
@@ -164,9 +164,9 @@ def write_comments(comments):
     :param coments: dict of comments to saved
     """
 
-    comment_path = os.getcwd() + "/comments.json"
+    comment_path = get_comments_file()
 
-    with open(comment_path, "w") as f:
+    with comment_path.open("w") as f:
         json.dump(comments, f, cls=RoundTripEncoder)  # write dict (default or not)
 
 
@@ -197,7 +197,7 @@ def read_config(*args, **kwargs):
         "what_to_print": "All window",
         "result_in": "Points",
         "last_usr": "",
-        "dir_out": os.getcwd() + "\Screenshots",
+        "dir_out": get_screenshots_dir(),
         "shortcut": "Enter shorcut",
         "start_capital": 0,
         "auto_calculate": 2,
@@ -217,15 +217,15 @@ def read_config(*args, **kwargs):
         "gui_state": QtCore.QByteArray(b""),
         "gui_size": (800, 600),
         "gui_pos": (0, 0),
-        "dir_export": os.getcwd() + "\Export",
+        "dir_export": get_export_dir(),
         "what_to_export": "All",
         "separator": ";",
     }
 
     config = {}
-    config_path = os.getcwd() + "/config.json"
+    config_path = get_config_file()
 
-    with open(config_path, "r") as f:
+    with config_path.open("r") as f:
 
         try:
             data_read = json.load(f, cls=RoundTripDecoder)
@@ -292,10 +292,10 @@ def write_config(config):
     :param: config: dict of config to save
     """
 
-    config_path = os.getcwd() + "/config.json"
+    config_file = get_config_file()
     out_config = copy.deepcopy(config)
     out_config["gui_state"] = out_config["gui_state"].toBase64().data().decode()
-    with open(config_path, "w") as f:
+    with config_file.open("w") as f:
         # write dict (default or not)
         json.dump(out_config, f, cls=RoundTripEncoder, indent=4)
 
@@ -394,11 +394,11 @@ def create_icons():
     painter = QtGui.QPainter(pixmap)
     painter.setRenderHint(QtGui.QPainter.Antialiasing)
     painter.rotate(45)
-    painter.translate(math.sqrt((14 ** 2) / 2) / 2, -math.sqrt((14 ** 2) / 2) / 2)
+    painter.translate(math.sqrt((14**2) / 2) / 2, -math.sqrt((14**2) / 2) / 2)
     painter.setPen(pen)
     painter.setBrush(brush)
     painter.fillRect(
-        QtCore.QRectF(0, 0, math.sqrt((14 ** 2) / 2), math.sqrt((14 ** 2) / 2)), brush
+        QtCore.QRectF(0, 0, math.sqrt((14**2) / 2), math.sqrt((14**2) / 2)), brush
     )
     painter.resetTransform()
     painter.end()

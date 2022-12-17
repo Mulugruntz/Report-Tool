@@ -24,24 +24,23 @@ import socket
 import threading
 import time
 import urllib.request, urllib.parse, urllib.error
+from typing import Generator
 
 import requests
 
-import os
+from report_tool.logger.handlers import ReportToolFileHandler
+from report_tool.utils.constants import get_logs_dir
 
-import classCustomHandler
+logs_dir = get_logs_dir()
 
 day = time.strftime("%d")
 month = time.strftime("%m")
 year = time.strftime("%Y")
 
-if not os.path.exists("Logs"):
-    os.makedirs("Logs")
+logs_dir.mkdir(exist_ok=True)
 
 LOG = logging.getLogger("lightstreamer")
-hdlr = classCustomHandler.CustomTimedRotatingFileHandler(
-    prefix="log-", when="D", backupCount=7
-)
+hdlr = ReportToolFileHandler("lightstreamer.log", when="D", backupCount=7)
 
 formatter = logging.Formatter("%(asctime)s %(levelname)s %(message)s")
 hdlr.setFormatter(formatter)
@@ -173,15 +172,15 @@ def _replace_url_host(url, hostname=None):
 
 def _decode_field(s, prev=None):
     """
-        Decode a single field according to the Lightstreamer encoding rules.
-        1. Literal '$' is the empty string.
-        2. Literal '#' is null (None).
-        3. Literal '' indicates unchanged since previous update.
-        4. If the string starts with either '$' or '#', but is not length 1,
-           trim the first character.
-        5. Unicode escapes of the form uXXXX are unescaped.
+    Decode a single field according to the Lightstreamer encoding rules.
+    1. Literal '$' is the empty string.
+    2. Literal '#' is null (None).
+    3. Literal '' indicates unchanged since previous update.
+    4. If the string starts with either '$' or '#', but is not length 1,
+       trim the first character.
+    5. Unicode escapes of the form uXXXX are unescaped.
 
-        Returns the decoded Unicode string.
+    Returns the decoded Unicode string.
     """
     if s == "$":
         return ""
@@ -238,7 +237,7 @@ class WorkQueue(object):
         while True:
             tup = self.queue.get()
             if tup is None:
-                self.log.info("Got shutdown semaphore; exitting.")
+                self.log.info("Got shutdown semaphore; exiting.")
                 return
             func, args, kwargs = tup
             run_and_log(func, *args, **kwargs)
@@ -527,7 +526,7 @@ class LsClient(object):
             verify=False,
             proxies=self.proxies,
         )
-        line_it = req.iter_lines(chunk_size=1)
+        line_it = req.iter_lines(chunk_size=1, decode_unicode=True)
         self._parse_and_raise_status(req, line_it)
         self._parse_session_info(line_it)
         self._set_state(STATE_CONNECTED)
@@ -561,7 +560,7 @@ class LsClient(object):
                     self.log.exception("_do_recv failure")
                     break
                 fail_wait = min(
-                    RETRY_WAIT_MAX_SECS, RETRY_WAIT_SECS * (2 ** fail_count)
+                    RETRY_WAIT_MAX_SECS, RETRY_WAIT_SECS * (2**fail_count)
                 )
                 fail_count += 1
                 self.log.info(
@@ -579,7 +578,8 @@ class LsClient(object):
         self._control_url = None
         self.log.debug("Receive thread exiting")
 
-    def _parse_and_raise_status(self, req, line_it):
+    @staticmethod
+    def _parse_and_raise_status(req, line_it: Generator[str, None, None]):
         """Parse the status part of a control/session create/bind response.
         Either a single "OK", or "ERROR" followed by the error description. If
         ERROR, raise RequestFailed.
@@ -619,15 +619,18 @@ class LsClient(object):
         self._set_state(STATE_CONNECTING)
         try:
             req = self._post("create_session.txt", encode_dict(dct))
-            line_it_custom = req.iter_lines(chunk_size=1)
-            for line in line_it_custom:
-                if "ControlAddress" in line:
-                    splitresult = line.split(":")
-                    CustomControlAddress = splitresult[1]
+            for line in req.text.splitlines():
+                if line.startswith("ControlAddress:"):
+                    _, control_address = line.split(":", maxsplit=1)
+                    break
+            else:
+                raise ValueError(
+                    "`ControlAddress` not found. Frame was: `%s`", req.text
+                )
 
-            line_it = req.iter_lines(chunk_size=1)
+            line_it = req.iter_lines(chunk_size=1, decode_unicode=True)
             self._parse_and_raise_status(req, line_it)
-            self.control_url = CustomControlAddress
+            self.control_url = control_address
         except Exception:
             self._set_state(STATE_DISCONNECTED)
             raise
@@ -708,7 +711,7 @@ class LsClient(object):
         req = self._post(
             "control.txt", data="\r\n".join(bits), base_url=self.control_url
         )
-        self._parse_and_raise_status(req, req.iter_lines())
+        self._parse_and_raise_status(req, req.iter_lines(decode_unicode=True))
         self.log.debug("Control message successful.")
 
     def _enqueue_table_create(self, table):

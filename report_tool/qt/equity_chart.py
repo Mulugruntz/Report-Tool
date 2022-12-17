@@ -6,7 +6,7 @@ import weakref
 import numpy as np
 import pyqtgraph as pg
 
-import classCustomGraphicsItems
+from report_tool.qt.graphics_items import CustomLinearRegion, DateAxis
 
 
 class EquityChart(pg.PlotWidget):
@@ -23,7 +23,7 @@ class EquityChart(pg.PlotWidget):
         Set a title and axes label, using HTML formatting
         """
 
-        date_axis = classCustomGraphicsItems.DateAxis({}, orientation="bottom")
+        date_axis = DateAxis({}, orientation="bottom")
 
         pg.PlotWidget.__init__(self, axisItems={"bottom": date_axis}, *args, **kwargs)
 
@@ -37,7 +37,7 @@ class EquityChart(pg.PlotWidget):
         # create a linear region item
         lr_pen = pg.mkPen(95, 95, 95, width=1)
         lr_brush = pg.mkBrush(200, 200, 200, 75)
-        self.linear_region = classCustomGraphicsItems.CustomLinearRegion()
+        self.linear_region = CustomLinearRegion()
 
         self.linear_region.setBrush(lr_brush)
         self.linear_region.set_pen(lr_pen)
@@ -76,7 +76,9 @@ class EquityChart(pg.PlotWidget):
         qt_ec_style = QtCore.Qt.PenStyle(style_dict[ec_style])
 
         equity_pen = pg.mkPen(
-            color=QtGui.QColor(ec_color), width=ec_size, style=qt_ec_style,
+            color=QtGui.QColor(ec_color),
+            width=ec_size,
+            style=qt_ec_style,
         )
 
         """

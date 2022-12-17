@@ -4,7 +4,6 @@ from typing import Text, List, Dict
 from PyQt5 import QtCore
 
 import re
-import os
 import time
 
 from collections import OrderedDict, defaultdict
@@ -12,9 +11,14 @@ from collections import OrderedDict, defaultdict
 import logging
 import traceback
 
-import funcMisc
-import classRestCom
-
+from report_tool.communications.ig_rest_api import APIError
+from report_tool.qt.functions import (
+    read_ig_config,
+    read_config,
+    format_market_name,
+    read_comment,
+    write_comments,
+)
 
 RE_FLOAT = re.compile(r"[+-]? *(?:\d+(?:\.|,\d*)?\.*\d+)(?:[eE][+-]?\d+)?")
 RE_DATE = re.compile(r"/(.*?)$")
@@ -29,7 +33,7 @@ class TransactionThread(QtCore.QThread):
     def __init__(self, session, transaction_queue, result_handler, parent=None):
 
         """
-        :param session: classRestCom.IGAPI instance
+        :param session: :any:`IGAPI` instance
         :param transaction_queue: Queue
         :result_handler: classMainWindow.update_results
         """
@@ -70,7 +74,7 @@ class TransactionThread(QtCore.QThread):
             transactions_result = self.session.get_transactions(date_range)
 
             # requests failed
-            if type(transactions_result) == classRestCom.APIError:
+            if type(transactions_result) == APIError:
                 self.transaction_received.emit(transactions_result)
                 return
 
@@ -124,14 +128,14 @@ class TransactionThread(QtCore.QThread):
         ]
 
         # load initial capital and config
-        config = funcMisc.read_config()
+        config = read_config()
         start_capital = Decimal(config["start_capital"])
         symbol = config["currency_symbol"]
         auto_calculate = config["auto_calculate"]
         agregate = config["agregate"]
         capital = start_capital
 
-        ig_config = funcMisc.read_ig_config()
+        ig_config = read_ig_config()
 
         """
         ig sends keywords to identify transactions type known
@@ -184,7 +188,7 @@ class TransactionThread(QtCore.QThread):
 
                 market = transactions_dict[deal_ref][count]["instrumentName"]
 
-                market_name = funcMisc.format_market_name(market)
+                market_name = format_market_name(market)
 
                 if transaction_type in kw_order:  # transaction is a trade
                     # TODO: create sub-methods
@@ -415,9 +419,9 @@ class TransactionThread(QtCore.QThread):
 
                 # means cross is with Yen
                 if "jpy" in market_name.lower():
-                    points = round((open_level - close_level) * abs(size), 5,) * 100
+                    points = round((open_level - close_level) * abs(size), 5) * 100
                 else:
-                    points = round((open_level - close_level) * abs(size), 5,) * 10000
+                    points = round((open_level - close_level) * abs(size), 5) * 10000
             else:
                 points = round((open_level - close_level) * abs(size), 2)
 
@@ -468,13 +472,12 @@ class UpdateCommentsThread(QtCore.QThread):
         update comments. see in line comments below
         """
 
-        comment_path = os.getcwd() + "/comments.json"
-        config = funcMisc.read_config()
+        config = read_config()
         last_usr = config["last_usr"]
 
         while True:
             while not self.comments_queue.empty():  # run until queue is empty
-                comments = funcMisc.read_comment()  # read saved comments
+                comments = read_comment()  # read saved comments
 
                 # pop empty user key, when first start or error while loading
                 try:
@@ -556,6 +559,6 @@ class UpdateCommentsThread(QtCore.QThread):
                     ] = comment_to_save  # build dict to save
                     comments[last_usr] = usr_comments
 
-                    funcMisc.write_comments(comments)
+                    write_comments(comments)
 
             time.sleep(0.05)
