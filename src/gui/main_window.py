@@ -22,7 +22,7 @@ from src.gui.widgets import CustomLabel, CustomLineEdit, CustomDockWidget
 from src.gui.equity_chart import EquityChart
 
 import classRestCom
-from src.gui.classLsEvent import LsEvent
+from src.gui.ls_event import LsEvent
 import classResults
 import classExport
 
