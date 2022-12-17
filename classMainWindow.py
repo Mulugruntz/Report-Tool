@@ -17,7 +17,7 @@ from collections import OrderedDict
 from copy import deepcopy
 
 import classDialogBox
-import classCustomWidgets
+from src.gui import classCustomWidgets
 
 from classEquityChart import EquityChart
 

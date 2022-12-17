@@ -11,7 +11,7 @@ import random
 from copy import deepcopy
 
 import funcMisc
-import classCustomWidgets
+from src.gui import classCustomWidgets
 
 
 class ConnectWindow(QtWidgets.QDialog):
@@ -303,7 +303,7 @@ class ConnectWindow(QtWidgets.QDialog):
         api_key = str(self.line_edit_key.text())
         proxies = str(self.line_edit_proxies.text())
 
-        chkbox_state = self.chkbox_remember.checkState()
+        checkbox_state = self.chkbox_remember.checkState()
         auto_connect = self.chkbox_autoconnect.checkState()
         saved_accounts = funcMisc.read_credentials()
         config = funcMisc.read_config()
@@ -336,8 +336,8 @@ class ConnectWindow(QtWidgets.QDialog):
         # credentials["pwd"]     = pwd
         # credentials["api_key"] = api_key
 
-        # save file according to user"s choice(remember or not)
-        if chkbox_state == 2:
+        # save file according to user's choice(remember or not)
+        if checkbox_state == 2:
             funcMisc.write_credentials(saved_accounts)
         elif checkbox_state == 0:
             funcMisc.write_credentials({})  # save empty dict
