@@ -11,7 +11,13 @@ import random
 from copy import deepcopy
 
 import funcMisc
-from src.gui import classCustomWidgets
+from src.gui.widgets import (
+    CustomComboBox,
+    CustomLabel,
+    CustomPushButton,
+    CustomShortcutLineEdit,
+    CustomCloseButton,
+)
 
 
 class ConnectWindow(QtWidgets.QDialog):
@@ -32,7 +38,7 @@ class ConnectWindow(QtWidgets.QDialog):
         layout_login = QtWidgets.QGridLayout()
 
         # create input widgets
-        self.combobox_usr = classCustomWidgets.CustomComboBox("user_choice")
+        self.combobox_usr = CustomComboBox("user_choice")
         self.combobox_type = QtWidgets.QComboBox()
 
         self.line_edit_proxies = QtWidgets.QLineEdit()
@@ -42,7 +48,7 @@ class ConnectWindow(QtWidgets.QDialog):
         self.chkbox_autoconnect = QtWidgets.QCheckBox()
         self.chkbox_remember = QtWidgets.QCheckBox()
 
-        self.btn_trash = classCustomWidgets.CustomLabel("trash")
+        self.btn_trash = CustomLabel("trash")
         self.btn_connect = QtWidgets.QPushButton("Connect")
 
         # configure widgets
@@ -458,7 +464,7 @@ class OptionsWindow(QtWidgets.QDialog):
         self.combobox_what_to_print = QtWidgets.QComboBox()
         self.combobox_infos = QtWidgets.QComboBox()
         self.combobox_size = QtWidgets.QComboBox()
-        self.line_edit_shortcut = classCustomWidgets.CustomShortcutLineEdit("shortcut")
+        self.line_edit_shortcut = CustomShortcutLineEdit("shortcut")
 
         self.btn_file = QtWidgets.QPushButton()
 
@@ -563,7 +569,7 @@ class OptionsWindow(QtWidgets.QDialog):
         widget_equity_curves = QtWidgets.QGroupBox("Chart options")
         layout_equity_curves = QtWidgets.QGridLayout()
 
-        self.btn_ec_color = classCustomWidgets.CustomPushButton("ec_color")
+        self.btn_ec_color = CustomPushButton("ec_color")
         self.combobox_ec_style = QtWidgets.QComboBox()  # curve style
         self.spinbox_ec_size = QtWidgets.QSpinBox()  # curve thickness
         self.checkbox_details = QtWidgets.QCheckBox()
@@ -649,9 +655,9 @@ class OptionsWindow(QtWidgets.QDialog):
         self.checkbox_maxdd = QtWidgets.QCheckBox()
         self.checkbox_high = QtWidgets.QCheckBox()
 
-        self.btn_high_color = classCustomWidgets.CustomPushButton("high_color")
-        self.btn_dd_color = classCustomWidgets.CustomPushButton("depth_color")
-        self.btn_max_dd_color = classCustomWidgets.CustomPushButton("maxdd_color")
+        self.btn_high_color = CustomPushButton("high_color")
+        self.btn_dd_color = CustomPushButton("depth_color")
+        self.btn_max_dd_color = CustomPushButton("maxdd_color")
 
         self.combobox_dd_style = QtWidgets.QComboBox()
         self.combobox_high_style = QtWidgets.QComboBox()
@@ -810,7 +816,7 @@ class OptionsWindow(QtWidgets.QDialog):
                 layout_dd.addWidget(label_to_set, i, 0)
                 layout_dd.addWidget(btn_to_set, i, 1)
 
-            if type(btn_to_set) == classCustomWidgets.CustomPushButton:
+            if type(btn_to_set) == CustomPushButton:
                 btn_to_set.clicked.connect(self.update_options)
 
             elif type(btn_to_set) == QtWidgets.QComboBox:
@@ -846,9 +852,9 @@ class OptionsWindow(QtWidgets.QDialog):
         widget_transactions_options = QtWidgets.QGroupBox("Transactions options")
         layout_transactions_options = QtWidgets.QGridLayout()
 
-        self.btn_profit_color = classCustomWidgets.CustomPushButton("profit_color")
-        self.btn_loss_color = classCustomWidgets.CustomPushButton("loss_color")
-        self.btn_flat_color = classCustomWidgets.CustomPushButton("flat_color")
+        self.btn_profit_color = CustomPushButton("profit_color")
+        self.btn_loss_color = CustomPushButton("loss_color")
+        self.btn_flat_color = CustomPushButton("flat_color")
 
         # init list to easily configure and place widgets
         btn_pnl_color_list = [
@@ -898,7 +904,7 @@ class OptionsWindow(QtWidgets.QDialog):
         config["what_to_print"] = what_to_print
 
         # colors modified
-        if type(self.sender()) == classCustomWidgets.CustomPushButton:
+        if type(self.sender()) == CustomPushButton:
             color = QtWidgets.QColorDialog.getColor()
             which_color = str(self.sender().objectName())
             config[which_color] = str(color.name())
@@ -928,7 +934,7 @@ class OptionsWindow(QtWidgets.QDialog):
             config["what_to_show"][str(checkbox_name)] = state
 
         # shortcut to take screenshot modified
-        elif type(self.sender()) == classCustomWidgets.CustomShortcutLineEdit:
+        elif type(self.sender()) == CustomShortcutLineEdit:
             line_edit_name = self.sender().objectName()
             human_shortcut = self.sender().keysequence.toString(
                 QtGui.QKeySequence.NativeText
@@ -1153,7 +1159,7 @@ class AboutWindow(QtWidgets.QDialog):
         self.stupid_label.setPixmap(pixmap)
         self.stupid_label.setAlignment(QtCore.Qt.AlignCenter)
 
-        self.ok_btn = classCustomWidgets.CustomCloseButton("Rosebud !")
+        self.ok_btn = CustomCloseButton("Rosebud !")
         self.ok_btn.setToolTip("Don't do it ! You can break the internet")
         self.ok_btn.setMaximumWidth(200)
         self.ok_btn.clicked.connect(self.close)

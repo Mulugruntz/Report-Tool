@@ -298,7 +298,9 @@ class CustomDockWidget(QtWidgets.QDockWidget):
         )
 
         layout_comment.addWidget(
-            self.text_edit_comment, 1, 1,
+            self.text_edit_comment,
+            1,
+            1,
         )
         widget_comment.setLayout(layout_comment)
 
@@ -329,12 +331,12 @@ class CustomDockWidget(QtWidgets.QDockWidget):
     def empty_labels(self, pos_details_headers):
 
         """
-       Called when no trades received. Set empty string for each labels
+        Called when no trades received. Set empty string for each labels
 
-       :param pos_details_headers: OrderedDict with same keys of result_dict
-                                   as keys and a clearer description of these
-                                   keys as values.
-                                   See classMainWindow.create_dock_details
+        :param pos_details_headers: OrderedDict with same keys of result_dict
+                                    as keys and a clearer description of these
+                                    keys as values.
+                                    See classMainWindow.create_dock_details
         """
 
         dict_details_labels = self._dict_details_labels

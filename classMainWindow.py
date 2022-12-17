@@ -17,7 +17,7 @@ from collections import OrderedDict
 from copy import deepcopy
 
 import classDialogBox
-from src.gui import classCustomWidgets
+from src.gui.widgets import CustomLabel, CustomLineEdit, CustomDockWidget
 
 from classEquityChart import EquityChart
 
@@ -162,9 +162,9 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         self.menu_switch.setEnabled(False)
 
         # create buttons to update results and take screenshot
-        self.btn_screenshot = classCustomWidgets.CustomLabel("lbl_screen")
-        self.btn_refresh = classCustomWidgets.CustomLabel("lbl_refresh")
-        self.btn_export = classCustomWidgets.CustomLabel("lbl_export")
+        self.btn_screenshot = CustomLabel("lbl_screen")
+        self.btn_refresh = CustomLabel("lbl_refresh")
+        self.btn_export = CustomLabel("lbl_export")
 
         widget_corner = QtWidgets.QWidget()
         layout_corner = QtWidgets.QHBoxLayout()
@@ -311,7 +311,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
         for count, equity_plot in enumerate(graph_list):
             # create a simplified plotWidget
-            overview_plot = EquityChart(title=None, x_label=None, y_label=None,)
+            overview_plot = EquityChart(title=None, x_label=None, y_label=None)
 
             tab_text = title_list[count]
 
@@ -449,8 +449,8 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         LABEL_AGREGATE = QtWidgets.QLabel("Agregate positions: ")
         LABEL_FILTER = QtWidgets.QLabel("Set a filter: ")
 
-        self.line_edit_capital = classCustomWidgets.CustomLineEdit()
-        self.btn_filter = classCustomWidgets.CustomLabel("btn_filter")
+        self.line_edit_capital = CustomLineEdit()
+        self.btn_filter = CustomLabel("btn_filter")
         self.combobox_options = QtWidgets.QComboBox()
         self.checkbox_auto = QtWidgets.QCheckBox()
         self.checkbox_include = QtWidgets.QCheckBox()
@@ -695,13 +695,9 @@ class ReportToolGUI(QtWidgets.QMainWindow):
                 else:
                     lbl_variable.setText("xxxx")
 
-                layout_account.addWidget(
-                    lbl_static, count, 0, 1, 1,
-                )
+                layout_account.addWidget(lbl_static, count, 0, 1, 1)
                 # QtCore.Qt.AlignLeft)
-                layout_account.addWidget(
-                    lbl_variable, count, 1, 1, 1,
-                )
+                layout_account.addWidget(lbl_variable, count, 1, 1, 1)
                 # QtCore.Qt.AlignRight)
 
                 # store labels in dict
@@ -746,9 +742,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             ]
         )
         # init dock
-        self.dock_pos_details = classCustomWidgets.CustomDockWidget(
-            self, pos_details_headers
-        )
+        self.dock_pos_details = CustomDockWidget(self, pos_details_headers)
 
         self.text_edit_comment = self.dock_pos_details.text_edit_comment
         self.checkbox_showongraph = self.dock_pos_details.checkbox_showongraph
@@ -930,11 +924,11 @@ class ReportToolGUI(QtWidgets.QMainWindow):
     def connect_to_ls(self, ls_endpoint, *args, **kwargs):
 
         """
-           Connect to LighStreamer. Suscribe to positions
-           and balance table. See online doc for schema
+        Connect to LighStreamer. Suscribe to positions
+        and balance table. See online doc for schema
 
-           :param ls_endpoint: string private attribute of
-                               classRestCom.IGAPI
+        :param ls_endpoint: string private attribute of
+                            classRestCom.IGAPI
         """
 
         self.ls_client = igls.LsClient(ls_endpoint + "/lightstreamer/")
