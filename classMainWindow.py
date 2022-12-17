@@ -374,7 +374,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
             # set plot sizes bottom graph height is 1/5 of the top one
             height = equity_plot.geometry().height()
-            splitter.setSizes([height, height / 5])
+            splitter.setSizes([height, height // 5])
 
             self.widget_tab.addTab(splitter, str(tab_text))
 
