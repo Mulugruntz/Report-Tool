@@ -24,7 +24,7 @@ from src.gui.equity_chart import EquityChart
 import classRestCom
 from src.gui.ls_event import LsEvent
 import classResults
-from src.exports.classExport import ExportToExcel
+from src.exports.excel import ExportToExcel
 
 import funcMisc
 import igls
