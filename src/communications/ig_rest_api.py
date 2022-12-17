@@ -1,4 +1,4 @@
-"""Module with classes to interacts with IG Rest API"""
+"""Module with classes to interact with IG Rest API"""
 import logging
 import requests
 
@@ -9,7 +9,7 @@ import traceback
 from collections import OrderedDict
 from copy import deepcopy
 
-import funcMisc
+from src.gui.funcMisc import read_config, write_config
 
 
 class APIError(Exception):
@@ -179,7 +179,7 @@ class IGAPI(object):
         Else return APIError object.
         """
 
-        config = funcMisc.read_config()
+        config = read_config()
 
         # dict with ISO code of currency as keys
         # and corresponding symbol as values
@@ -240,14 +240,14 @@ class IGAPI(object):
 
                 # write new currency symbol
                 config["currency_symbol"] = currency_symbol
-                funcMisc.write_config(config)
+                write_config(config)
 
                 """
                 read new config to have the correct formatting
                 for currency symbol. may have a better solution
                 """
 
-                config = funcMisc.read_config()
+                config = read_config()
                 currency_symbol = config["currency_symbol"]
 
                 """
@@ -291,7 +291,7 @@ class IGAPI(object):
                 currency_symbol = dict_currency["EUR"]
 
             config["currency_symbol"] = currency_symbol
-            funcMisc.write_config(config)
+            write_config(config)
 
             return dict_account
 
@@ -448,7 +448,7 @@ class IGAPI(object):
         :param cash_available: str, cash on user's account
         """
 
-        config = funcMisc.read_config()
+        config = read_config()
         currency_symbol = config["currency_symbol"]
 
         self._cash_available = cash_available.replace(currency_symbol, "")

@@ -23,6 +23,8 @@ from src.gui.dialog_box import (
     AboutWindow,
     ExportWindow,
 )
+from src.gui.funcMisc import read_config, create_status_icons, create_graph_args, write_config, create_dates_list, \
+    read_ig_config, read_credentials
 from src.gui.widgets import CustomLabel, CustomLineEdit, CustomDockWidget
 
 from src.gui.equity_chart import EquityChart
@@ -32,7 +34,6 @@ from src.gui.ls_event import LsEvent
 from src.calculate.trades import TradesResults
 from src.exports.excel import ExportToExcel
 
-import funcMisc
 import igls
 
 from PyQt5 import QtCore
@@ -62,7 +63,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
         icons_path = os.getcwd() + "/icons"
 
-        config = funcMisc.read_config()
+        config = read_config()
 
         # load size and state of window
         state = config["gui_state"]
@@ -210,7 +211,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
         # create and configure a button to take screeenshot
         disconnected_color = QtGui.QColor("#F51616")
-        icon_status = funcMisc.create_status_icons(disconnected_color)
+        icon_status = create_status_icons(disconnected_color)
         self.lbl_status = QtWidgets.QLabel()
 
         self.lbl_status.setFixedSize(18, 18)
@@ -242,7 +243,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             "Profit/Loss",
         ]
 
-        config = funcMisc.read_config()
+        config = read_config()
 
         currency_symbol = config["currency_symbol"]
 
@@ -261,15 +262,15 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         pg.setConfigOption("background", (242, 242, 237))
         pg.setConfigOptions(antialias=True)
 
-        points_args = funcMisc.create_graph_args(
+        points_args = create_graph_args(
             "Points over the period", "# of trades", "Points"
         )
 
-        capital_args = funcMisc.create_graph_args(
+        capital_args = create_graph_args(
             "Capital over the period", "# of trades", "Capital" + currency_symbol
         )
 
-        growth_args = funcMisc.create_graph_args(
+        growth_args = create_graph_args(
             "Capital growth over the period", "# of trades", "Capital growth (%)"
         )
 
@@ -399,7 +400,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         -->custom clickable label to set a filter
         """
 
-        config = funcMisc.read_config()  # load config file
+        config = read_config()  # load config file
 
         icons_path = os.getcwd() + "/icons/"
         icon_filter = QtGui.QPixmap(icons_path + "filter.png")
@@ -559,7 +560,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         """Creates a QDockWidget with qlabel to show stat about trades."""
 
         # load config
-        config = funcMisc.read_config()
+        config = read_config()
 
         currency_symbol = config["currency_symbol"]
         result_in = config["result_in"]
@@ -649,7 +650,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         informations (Balance, cash, profit...)
         """
 
-        config = funcMisc.read_config()
+        config = read_config()
 
         # init widgets
         dock_account = QtWidgets.QDockWidget("Account Informations")
@@ -725,7 +726,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         Others widgets are for display purpose only
         """
 
-        config = funcMisc.read_config()  # load config file
+        config = read_config()  # load config file
         state_details = config["what_to_show"]["state_details"]
 
         """
@@ -805,9 +806,9 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             "Profit/loss: ",
         ]
 
-        credentials = funcMisc.read_credentials()
-        config = funcMisc.read_config()
-        ig_urls = funcMisc.read_ig_config()
+        credentials = read_credentials()
+        config = read_config()
+        ig_urls = read_ig_config()
 
         # auto connect do not show connect window
         if auto_connect == True:
@@ -1003,14 +1004,14 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
         # update status infos
         connected_color = QtGui.QColor("#23A627")
-        status_icon = funcMisc.create_status_icons(connected_color)
+        status_icon = create_status_icons(connected_color)
         self.lbl_status.setPixmap(status_icon)
 
     def switch_account(self):
 
         """Switch to account selected by user"""
 
-        config = funcMisc.read_config()
+        config = read_config()
 
         self.set_gui_enabled(False)  # disable interactions
 
@@ -1021,7 +1022,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
         # update status icons
         disconnected_color = QtGui.QColor("#F51616")
-        status_icon = funcMisc.create_status_icons(disconnected_color)
+        status_icon = create_status_icons(disconnected_color)
         self.lbl_status.setPixmap(status_icon)
 
         # get the name of the account to connect to
@@ -1087,7 +1088,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
             # update status infos
             connected_color = QtGui.QColor("#23A627")
-            status_icon = funcMisc.create_status_icons(connected_color)
+            status_icon = create_status_icons(connected_color)
             self.lbl_status.setPixmap(status_icon)
 
     def update_menu_switch(self):
@@ -1154,7 +1155,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         :param sender: string sent by function caller
         """
 
-        config = funcMisc.read_config()  # read config file
+        config = read_config()  # read config file
 
         list_account_labels = [
             "Account ID: ",
@@ -1182,9 +1183,9 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         config["include"] = include
         config["agregate"] = agregate
 
-        funcMisc.write_config(config)
+        write_config(config)
 
-        config = funcMisc.read_config()
+        config = read_config()
 
         # get infos about dates
 
@@ -1305,7 +1306,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         Set a empty string if it's not a float
         """
 
-        config = funcMisc.read_config()
+        config = read_config()
 
         currency_symbol = config["currency_symbol"]
 
@@ -1324,7 +1325,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         self.line_edit_capital.setCursorPosition(len(str(float_capital)))
         config["start_capital"] = float_capital
 
-        funcMisc.write_config(config)
+        write_config(config)
 
     def update_account(self, myUpdateField):
 
@@ -1340,7 +1341,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
         profit_loss = Decimal(profit_loss)
 
-        config = funcMisc.read_config()
+        config = read_config()
         label_pnl = self.dict_account_labels["Profit/loss: "]
 
         currency_symbol = config["currency_symbol"]
@@ -1437,12 +1438,12 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
         if state == "connected Lightstreamer session":
             connected_color = QtGui.QColor("#23A627")
-            status_icon = funcMisc.create_status_icons(connected_color)
+            status_icon = create_status_icons(connected_color)
             self.lbl_status.setPixmap(status_icon)
 
         elif state == "disconnected from Lightstreamer":
             disconnected_color = QtGui.QColor("#F51616")
-            status_icon = funcMisc.create_status_icons(disconnected_color)
+            status_icon = create_status_icons(disconnected_color)
             self.lbl_status.setPixmap(status_icon)
 
     def update_transactions(self):
@@ -1453,7 +1454,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         Infos and errors are log in classThread
         """
 
-        config = funcMisc.read_config()
+        config = read_config()
 
         result_in = self.combobox_options.currentText()
 
@@ -1491,7 +1492,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         self.filtered_dict = OrderedDict()  # reset filtered dict
         config["all"] = 2  # reset filter
 
-        funcMisc.write_config(config)
+        write_config(config)
 
         self.statusBar().showMessage("Updating transactions...")
 
@@ -1542,7 +1543,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             "growth",
         ]
 
-        config = funcMisc.read_config()  # read options
+        config = read_config()  # read options
 
         start_capital = config["start_capital"]
         currency_symbol = config["currency_symbol"]
@@ -1552,7 +1553,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         state_details = config["what_to_show"]["state_details"]
         all_state = config["all"]  # all markets or filter set
 
-        ig_config = funcMisc.read_ig_config()
+        ig_config = read_ig_config()
 
         """
         ig sends keywords to identify transactions type known
@@ -2017,7 +2018,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         states_dd = config["what_to_show"]  # get what to show
 
         result_in = self.combobox_options.currentText()
-        ig_config = funcMisc.read_ig_config()
+        ig_config = read_ig_config()
 
         """
         ig sends keywords to identify transactions type known
@@ -2091,7 +2092,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
                 overview_plot._set_deal_id_plotted(trades_plotted)
                 equity_plot._set_deal_id_plotted(trades_plotted)
                 deal_id_list = trades_plotted
-                xaxis_dict = funcMisc.create_dates_list(
+                xaxis_dict = create_dates_list(
                     state_dates, dates_plotted, key, start_capital
                 )
 
@@ -2102,7 +2103,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
                     overview_plot._set_deal_id_plotted(deal_id_plotted)
                     equity_plot._set_deal_id_plotted(deal_id_plotted)
                     deal_id_list = deal_id_plotted
-                    xaxis_dict = funcMisc.create_dates_list(
+                    xaxis_dict = create_dates_list(
                         state_dates, dates_plotted_all, key, start_capital
                     )
 
@@ -2110,7 +2111,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
                     overview_plot._set_deal_id_plotted(trades_plotted)
                     equity_plot._set_deal_id_plotted(trades_plotted)
                     deal_id_list = trades_plotted
-                    xaxis_dict = funcMisc.create_dates_list(
+                    xaxis_dict = create_dates_list(
                         state_dates, dates_plotted, key, start_capital
                     )
 
@@ -2381,7 +2382,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
                              is being taken
         """
 
-        config = funcMisc.read_config()
+        config = read_config()
 
         """
         ordered dict with Label title as keys and values
@@ -2647,7 +2648,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
         self.diag_options.exec_()
 
-        config = funcMisc.read_config()
+        config = read_config()
         state_details = config["what_to_show"]["state_details"]
 
         if self.dock_pos_details.isHidden() == True and state_details == 2:
@@ -2657,7 +2658,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
         """Show a Qdialog to configure export"""
 
-        config = funcMisc.read_config()
+        config = read_config()
 
         if self.dock_pos_details.isFloating() == False:
             pass
@@ -2712,7 +2713,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
         filter_diag.build_window(self.local_transactions, previous_filter)
 
-        config = funcMisc.read_config()
+        config = read_config()
         state_details = config["what_to_show"]["state_details"]
 
         if self.dock_pos_details.isHidden() == True and state_details == 2:
@@ -2731,7 +2732,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         about_window = AboutWindow(self)
         about_window.exec_()
 
-        config = funcMisc.read_config()
+        config = read_config()
         state_details = config["what_to_show"]["state_details"]
 
         if self.dock_pos_details.isHidden() == True and state_details == 2:
@@ -2744,7 +2745,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         Called when user clicks on screenshot buttons.
         """
 
-        config = funcMisc.read_config()  # load config file
+        config = read_config()  # load config file
 
         what_to_print = config["what_to_print"]
         state_infos = str(config["what_to_show"]["state_infos"])
@@ -2937,7 +2938,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         :param event: QtCOre.QKeyEvent
         """
 
-        config = funcMisc.read_config()
+        config = read_config()
         state_details = config["what_to_show"]["state_details"]
         shortcut = config["shortcut"]
 
@@ -3115,7 +3116,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         :param event: QtCore.QMouseEvent
         """
 
-        config = funcMisc.read_config()
+        config = read_config()
         state_details = config["what_to_show"]["state_details"]
 
         if event.button() == QtCore.Qt.LeftButton:
@@ -3187,14 +3188,14 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
         """User closes window"""
 
-        config = funcMisc.read_config()
+        config = read_config()
 
         # save state and window size
         config["gui_size"] = (self.size().width(), self.size().height())
         config["gui_state"] = QtCore.QByteArray(self.saveState())
         config["gui_pos"] = (self.pos().x(), self.pos().y())
 
-        funcMisc.write_config(config)
+        write_config(config)
 
         self.close()
 

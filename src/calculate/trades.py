@@ -5,7 +5,7 @@ import numpy as np
 
 from collections import OrderedDict
 
-import funcMisc
+from src.gui.funcMisc import read_config, read_ig_config
 
 
 # TODO: is it needed to subclass dict? Especially for one huge method!
@@ -60,7 +60,7 @@ class TradesResults(dict):
                              taken to properly format infos
         """
 
-        config = funcMisc.read_config()  # load config file
+        config = read_config()  # load config file
         currency_symbol = config["currency_symbol"]
         result_in = config["result_in"]
         auto_calculate = config["auto_calculate"]
@@ -91,7 +91,7 @@ class TradesResults(dict):
             "Transfers",
         ]  # same lis as the one used to create dock
 
-        ig_config = funcMisc.read_ig_config()
+        ig_config = read_ig_config()
 
         """
         ig sends keywords to identify transactions type known
@@ -672,7 +672,7 @@ class TradesResults(dict):
         config = kwargs["config"]
         include = config["include"]
         result_in = config["result_in"]
-        ig_config = funcMisc.read_ig_config()
+        ig_config = read_ig_config()
 
         """
         ig sends keywords to identify transactions type known

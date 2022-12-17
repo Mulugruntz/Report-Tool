@@ -4,8 +4,7 @@ import re
 from collections import OrderedDict
 import numpy as np
 
-import funcMisc
-
+from src.gui.funcMisc import read_config
 
 RE_TEXT_BETWEEN_TAGS = re.compile(r">(.*?)<")
 
@@ -33,7 +32,7 @@ class ExportToExcel(object):
                            to options (include interest, agregate pos...)
         """
 
-        config = funcMisc.read_config()
+        config = read_config()
 
         summary = self._data_to_export["summary"]
         summary_infos = summary.keys()
@@ -83,7 +82,7 @@ class ExportToExcel(object):
         :param header_type: string, Summary or Transactions first word of header
         """
 
-        config = funcMisc.read_config()
+        config = read_config()
 
         result_in = config["result_in"]
         auto_calc = config["auto_calculate"]
@@ -178,7 +177,7 @@ class ExportToExcel(object):
             "Profit/Loss",
         ]  # human readable columns name
 
-        config = funcMisc.read_config()
+        config = read_config()
 
         what_to_export = config["what_to_export"]
         separator = config["separator"]

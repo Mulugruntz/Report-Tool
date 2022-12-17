@@ -10,7 +10,14 @@ import random
 
 from copy import deepcopy
 
-import funcMisc
+from src.gui.funcMisc import (
+    read_credentials,
+    read_config,
+    write_credentials,
+    write_config,
+    read_ig_config,
+    create_icons,
+)
 from src.gui.widgets import (
     CustomComboBox,
     CustomLabel,
@@ -116,8 +123,8 @@ class ConnectWindow(QtWidgets.QDialog):
         """Load saved accounts in credentials.json"""
 
         # read config file and credentials
-        saved_accounts = funcMisc.read_credentials()
-        config = funcMisc.read_config()
+        saved_accounts = read_credentials()
+        config = read_config()
 
         list_type = ["Live", "Demo"]
         acc_type = self.combobox_type.currentText()  # get account type
@@ -168,7 +175,7 @@ class ConnectWindow(QtWidgets.QDialog):
         credentials file. called when combobox user loses focus
         """
 
-        saved_accounts = funcMisc.read_credentials()
+        saved_accounts = read_credentials()
 
         # get set infos
         usr = self.combobox_usr.currentText()
@@ -217,13 +224,13 @@ class ConnectWindow(QtWidgets.QDialog):
             self.btn_trash.setEnabled(True)
 
         # write new credentials
-        funcMisc.write_credentials(saved_accounts)
+        write_credentials(saved_accounts)
 
     def delete_account(self):
 
         """When user clicks on button trash deletes selected account"""
 
-        saved_accounts = funcMisc.read_credentials()
+        saved_accounts = read_credentials()
 
         usr_to_delete = str(self.combobox_usr.currentText())
         idx_usr_to_delete = self.combobox_usr.currentIndex()
@@ -233,13 +240,13 @@ class ConnectWindow(QtWidgets.QDialog):
         self.combobox_usr.removeItem(idx_usr_to_delete)
 
         # write new credentials
-        funcMisc.write_credentials(saved_accounts)
+        write_credentials(saved_accounts)
 
     def user_edition(self):
 
         """User is editing account via inputs widgets."""
 
-        saved_accounts = funcMisc.read_credentials()
+        saved_accounts = read_credentials()
         credentials_path = os.getcwd() + "/credentials.txt"
         list_type = ["Live", "Demo"]
 
@@ -286,7 +293,7 @@ class ConnectWindow(QtWidgets.QDialog):
                 self.btn_connect.setEnabled(True)
 
         # write new credentials
-        funcMisc.write_credentials(saved_accounts)
+        write_credentials(saved_accounts)
 
         # enabled (or not) trash button
         if usr == "":
@@ -311,8 +318,8 @@ class ConnectWindow(QtWidgets.QDialog):
 
         checkbox_state = self.chkbox_remember.checkState()
         auto_connect = self.chkbox_autoconnect.checkState()
-        saved_accounts = funcMisc.read_credentials()
-        config = funcMisc.read_config()
+        saved_accounts = read_credentials()
+        config = read_config()
 
         # set selected account in dict to saved
         saved_accounts[usr] = {}
@@ -325,13 +332,13 @@ class ConnectWindow(QtWidgets.QDialog):
         # update config file
         config["last_usr"] = usr
         config["auto_connect"] = auto_connect
-        funcMisc.write_config(config)
+        write_config(config)
 
         # delete empty key (created when file is empty)
         if "" in saved_accounts:
             saved_accounts.pop("", None)
 
-        ig_urls = funcMisc.read_ig_config()
+        ig_urls = read_ig_config()
 
         if acc_type == "Live":
             base_url = ig_urls["base_url"]["live"]
@@ -344,9 +351,9 @@ class ConnectWindow(QtWidgets.QDialog):
 
         # save file according to user's choice(remember or not)
         if checkbox_state == 2:
-            funcMisc.write_credentials(saved_accounts)
+            write_credentials(saved_accounts)
         elif checkbox_state == 0:
-            funcMisc.write_credentials({})  # save empty dict
+            write_credentials({})  # save empty dict
 
         connect_args = {
             "urls": base_url,
@@ -425,7 +432,7 @@ class OptionsWindow(QtWidgets.QDialog):
         self.setWindowTitle("Options")
         self.setModal(True)
 
-        ec_icons, dd_icons = funcMisc.create_icons()
+        ec_icons, dd_icons = create_icons()
 
         widget_screenshot = self.create_screenshot_options()
         widget_equity_curves = self.create_chart_options(ec_icons)
@@ -455,7 +462,7 @@ class OptionsWindow(QtWidgets.QDialog):
         chose what to print, where and what to hide
         """
 
-        config = funcMisc.read_config()
+        config = read_config()
 
         # init widgets
         layout_screenshot = QtWidgets.QGridLayout()
@@ -563,7 +570,7 @@ class OptionsWindow(QtWidgets.QDialog):
         :param ec_icons: dict with pixmap of curves style
         """
 
-        config = funcMisc.read_config()
+        config = read_config()
 
         # init widgets
         widget_equity_curves = QtWidgets.QGroupBox("Chart options")
@@ -645,7 +652,7 @@ class OptionsWindow(QtWidgets.QDialog):
 
         :param dd_icons: dict with pixmap of scatter style
         """
-        config = funcMisc.read_config()
+        config = read_config()
 
         # init widgets
         widget_dd_options = QtWidgets.QGroupBox("Scatter plot options")
@@ -706,9 +713,9 @@ class OptionsWindow(QtWidgets.QDialog):
         the main window, to place widgets and configure them in optionsWindow
         to set objectName, to detect which scatter to show   or not and are
         used in config file as keys. If you modified it be  aware that you"ll
-        need to modify default_dict in funcMisc.read_config(),  names of plot
+        need to modify default_dict in read_config(),  names of plot
         in MainWindow.create_central_widget(), plot_available and order in
-        scatter_data in funcMisc.create_curves() . If you want to modify
+        scatter_data in create_curves() . If you want to modify
         the positions of widgets in optionsWindow, you"ll nedd to modify
         label_list and   buttons_list to keep the functions work correctly.
         see examples below.
@@ -846,7 +853,7 @@ class OptionsWindow(QtWidgets.QDialog):
         User can change flat, profit and loss colors
         """
 
-        config = funcMisc.read_config()
+        config = read_config()
 
         # init widget
         widget_transactions_options = QtWidgets.QGroupBox("Transactions options")
@@ -897,7 +904,7 @@ class OptionsWindow(QtWidgets.QDialog):
         Options are saved each time function is called
         """
 
-        config = funcMisc.read_config()
+        config = read_config()
 
         # get config set by user and update config dict
         what_to_print = str(self.combobox_what_to_print.currentText())
@@ -956,7 +963,7 @@ class OptionsWindow(QtWidgets.QDialog):
 
             config[str(line_edit_name)] = str(human_shortcut)
 
-        funcMisc.write_config(config)
+        write_config(config)
 
         # notify main window what option has changed
         try:
@@ -971,7 +978,7 @@ class OptionsWindow(QtWidgets.QDialog):
         directory where to save screenshot
         """
 
-        config = funcMisc.read_config()
+        config = read_config()
 
         screen_dir_dialbox = QtWidgets.QFileDialog()
         screen_dir_dialbox.setOption(QtWidgets.QFileDialog.ShowDirsOnly)
@@ -980,7 +987,7 @@ class OptionsWindow(QtWidgets.QDialog):
         dir_out = screen_dir_dialbox.getExistingDirectory()
         config["dir_out"] = str(dir_out)
 
-        funcMisc.write_config(config)
+        write_config(config)
 
     def on_close(self):
 
@@ -1009,7 +1016,7 @@ class ExportWindow(QtWidgets.QDialog):
         self.setWindowTitle("Export options")
         self.setModal(True)
 
-        config = funcMisc.read_config()
+        config = read_config()
 
         dict_sep = {
             "Comma": ",",
@@ -1083,7 +1090,7 @@ class ExportWindow(QtWidgets.QDialog):
 
         """Write config file with new options"""
 
-        config = funcMisc.read_config()
+        config = read_config()
 
         key = str(self.sender().objectName())  # get key to modify
 
@@ -1094,7 +1101,7 @@ class ExportWindow(QtWidgets.QDialog):
 
         config[key] = data  # FIXME
 
-        funcMisc.write_config(config)  # write config
+        write_config(config)  # write config
 
     def set_export_path(self, *args, **kwargs):
 
@@ -1103,7 +1110,7 @@ class ExportWindow(QtWidgets.QDialog):
         directory where to save exported data
         """
 
-        config = funcMisc.read_config()
+        config = read_config()
 
         export_dir_dialbox = QtWidgets.QFileDialog()
         export_dir_dialbox.setOption(QtWidgets.QFileDialog.ShowDirsOnly)
@@ -1113,7 +1120,7 @@ class ExportWindow(QtWidgets.QDialog):
 
         config["dir_export"] = str(dir_out)
 
-        funcMisc.write_config(config)
+        write_config(config)
 
     def on_close(self, *args, **kwargs):
 
@@ -1268,7 +1275,7 @@ class FilterWindow(QtWidgets.QDialog):
         :param previous filter: list of previoulsy selected markets
         """
 
-        config = funcMisc.read_config()
+        config = read_config()
         self.unchanged_dict = result_dict
 
         # init grid layout and widgets
@@ -1373,13 +1380,13 @@ class FilterWindow(QtWidgets.QDialog):
         result_dict called filtered_dict without the selected markets
         """
 
-        config = funcMisc.read_config()
+        config = read_config()
 
         filtered_dict = deepcopy(self.unchanged_dict)  # deepcopy of unchanged_dict
         checkbox_all_state = self.checkbox_all.checkState()
         config["all"] = checkbox_all_state
 
-        funcMisc.write_config(config)
+        write_config(config)
 
         for key in self.dict_filter_checkbox.keys():  # loop over checkbox
             checkbox = self.dict_filter_checkbox[key]
@@ -1412,11 +1419,11 @@ class FilterWindow(QtWidgets.QDialog):
 
         """Close function"""
 
-        config = funcMisc.read_config()
+        config = read_config()
         checkbox_all_state = self.checkbox_all.checkState()
         config["all"] = checkbox_all_state
 
-        funcMisc.write_config(config)
+        write_config(config)
 
         if checkbox_all_state == 2:  # if no filter set, send unchanged_dict
             self.filter_signal.emit(self.unchanged_dict)
