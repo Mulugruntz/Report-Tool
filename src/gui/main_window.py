@@ -29,7 +29,7 @@ from src.gui.equity_chart import EquityChart
 
 from src.communications.ig_rest_api import IGAPI, APIError
 from src.gui.ls_event import LsEvent
-import classResults
+from src.calculate.classResults import TradesResults
 from src.exports.excel import ExportToExcel
 
 import funcMisc
@@ -1583,7 +1583,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
         cash_available = Decimal(self.session._get_cash_available())
 
-        summary = classResults.TradesResults()
+        summary = TradesResults()
 
         # calculate summary infos
         self.logger_info.log(logging.INFO, "Calculating summary...")
