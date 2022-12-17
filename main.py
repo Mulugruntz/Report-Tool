@@ -7,7 +7,7 @@ import sys
 
 import logging.config
 
-from src.gui.classMainWindow import ReportToolGUI
+from src.gui.main_window import ReportToolGUI
 
 if getattr(sys, "frozen", False):
     os.environ["REQUESTS_CA_BUNDLE"] = os.path.join(os.getcwd(), "cacert.pem")
