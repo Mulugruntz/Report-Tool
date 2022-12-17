@@ -100,3 +100,6 @@
 - Performances: Precompiled regex
 - More reliable installation with pipenv
 - Bugfix: Float are handled correclty now
+
+#### TODO ####
+- Bugfix: currency / Points are equal in the panels
