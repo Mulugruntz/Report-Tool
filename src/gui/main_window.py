@@ -41,7 +41,7 @@ from src.gui.ls_event import LsEvent
 from src.calculate.trades import TradesResults
 from src.exports.excel import ExportToExcel
 
-import igls
+from src.communications.igls import LsClient, Table, MODE_DISTINCT, MODE_MERGE
 
 from PyQt5 import QtCore
 from PyQt5 import QtGui, QtWidgets
@@ -944,7 +944,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         :param ls_endpoint: string private attribute of :any:`IGAPI`.
         """
 
-        self.ls_client = igls.LsClient(ls_endpoint + "/lightstreamer/")
+        self.ls_client = LsClient(ls_endpoint + "/lightstreamer/")
         req_args = self.session._get_req_args()
 
         # get name of current account
@@ -974,17 +974,17 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         )
 
         # create a new subscription to account balance
-        self.balance_table = igls.Table(
+        self.balance_table = Table(
             self.ls_client,
-            mode=igls.MODE_MERGE,
+            mode=MODE_MERGE,
             item_ids="ACCOUNT:" + acc_id,
             schema="AVAILABLE_CASH DEPOSIT PNL",
         )
 
         # create a new subscription to positons
-        self.pos_table = igls.Table(
+        self.pos_table = Table(
             self.ls_client,
-            mode=igls.MODE_DISTINCT,
+            mode=MODE_DISTINCT,
             item_ids="TRADE:" + acc_id,
             schema="CONFIRMS",
         )

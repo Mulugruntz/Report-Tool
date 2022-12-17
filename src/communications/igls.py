@@ -35,8 +35,8 @@ day = time.strftime("%d")
 month = time.strftime("%m")
 year = time.strftime("%Y")
 
-if not os.path.exists("Logs"):
-    os.makedirs("Logs")
+if not os.path.exists("../../Logs"):
+    os.makedirs("../../Logs")
 
 LOG = logging.getLogger("lightstreamer")
 hdlr = CustomTimedRotatingFileHandler(prefix="log-", when="D", backupCount=7)
