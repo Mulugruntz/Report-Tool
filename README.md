@@ -17,15 +17,16 @@ Report Tool is an application coded in Python 3.8 / PyQt5 using IG Rest API to s
 
 ### What you will need
 
-* Python 3.8: https://www.python.org/downloads/
+* Python 3.11: https://www.python.org/downloads/
 * pip (should already be installed with Python): https://pip.pypa.io/en/stable/installing/
-* pipenv: `pip install pip --upgrade ; pip install pipenv`
+* poetry: `curl -sSL https://install.python-poetry.org | python3 -`
+  * More info: https://python-poetry.org/docs/#installing-with-the-official-installer
 
 ### Dependencies
 
 ```shell script
 cd Report-Tool
-pipenv run python main.py
+poetry run python main.py
 ```
 
 ## Usage
@@ -33,7 +34,7 @@ pipenv run python main.py
 * Download the archive and unzip it:
 ```shell script
 cd Report-Tool
-pipenv run python main.py
+poetry run python main.py
 ```
 * Enter your credentials, via the menu "Connect"
 
@@ -43,4 +44,4 @@ pipenv run python main.py
 
 ## Disclaimer
 
-This tool was originally created by user **beniSo** but he's no longer on GitHub.
+This tool was originally created by user **beniSo**, but he's no longer on GitHub.
