@@ -41,7 +41,12 @@ from src.gui.ls_event import LsEvent
 from src.calculate.trades import TradesResults
 from src.exports.excel import ExportToExcel
 
-from src.communications.igls import LsClient, Table, MODE_DISTINCT, MODE_MERGE
+from src.communications.ig_lightstreamer import (
+    LsClient,
+    Table,
+    MODE_DISTINCT,
+    MODE_MERGE,
+)
 
 from PyQt5 import QtCore
 from PyQt5 import QtGui, QtWidgets
