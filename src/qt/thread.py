@@ -13,7 +13,7 @@ import logging
 import traceback
 
 from src.communications.ig_rest_api import APIError
-from src.gui.functions import (
+from src.qt.functions import (
     read_ig_config,
     read_config,
     format_market_name,

@@ -8,7 +8,7 @@ import sys
 
 import logging.config
 
-from src.gui.main_window import ReportToolGUI
+from src.qt.main_window import ReportToolGUI
 
 ROOT = Path(__file__).parent
 

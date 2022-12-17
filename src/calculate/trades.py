@@ -5,7 +5,7 @@ import numpy as np
 
 from collections import OrderedDict
 
-from src.gui.functions import read_config, read_ig_config
+from src.qt.functions import read_config, read_ig_config
 
 
 # TODO: is it needed to subclass dict? Especially for one huge method!

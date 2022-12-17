@@ -16,14 +16,14 @@ import pyqtgraph as pg
 from collections import OrderedDict
 from copy import deepcopy
 
-from src.gui.dialog_box import (
+from src.qt.dialog_box import (
     ConnectWindow,
     OptionsWindow,
     FilterWindow,
     AboutWindow,
     ExportWindow,
 )
-from src.gui.functions import (
+from src.qt.functions import (
     read_config,
     create_status_icons,
     create_graph_args,
@@ -32,12 +32,12 @@ from src.gui.functions import (
     read_ig_config,
     read_credentials,
 )
-from src.gui.widgets import CustomLabel, CustomLineEdit, CustomDockWidget
+from src.qt.widgets import CustomLabel, CustomLineEdit, CustomDockWidget
 
-from src.gui.equity_chart import EquityChart
+from src.qt.equity_chart import EquityChart
 
 from src.communications.ig_rest_api import IGAPI, APIError
-from src.gui.ls_event import LsEvent
+from src.qt.ls_event import LsEvent
 from src.calculate.trades import TradesResults
 from src.exports.excel import ExportToExcel
 
@@ -51,7 +51,7 @@ from src.communications.ig_lightstreamer import (
 from PyQt5 import QtCore
 from PyQt5 import QtGui, QtWidgets
 
-from src.gui.thread import TransactionThread, UpdateCommentsThread
+from src.qt.thread import TransactionThread, UpdateCommentsThread
 
 
 RE_TEXT_BETWEEN_TAGS = re.compile(r">(.*?)<")
