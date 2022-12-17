@@ -352,8 +352,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             overview_curve = overview_plot.plot_curve(ec_color, ec_size, ec_style)
             region = overview_plot.linear_region  # region for bottom graph
 
-            equity_plot.addItem(equity_curve)
-            overview_plot.addItem(overview_curve)
             overview_plot.addItem(region)
 
             equity_plot.sigRangeChanged.connect(self.update_overview_graph)
