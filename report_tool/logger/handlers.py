@@ -12,6 +12,8 @@ import glob
 import logging
 import logging.handlers
 
+from report_tool.utils.constants import get_logs_dir
+
 try:
     import codecs
 except ImportError:
@@ -53,11 +55,11 @@ class CustomTimedRotatingFileHandler(logging.handlers.TimedRotatingFileHandler):
             raise ValueError("Invalid rollover interval specified: %s" % self.when)
 
         self.prefix = prefix
-        self.dir_log = os.getcwd() + "/Logs/"
+        self.dir_log = get_logs_dir()
 
         # dir_log here MUST be with os.sep on the end
-        filename = self.dir_log + self.prefix + time.strftime(suffix) + ".log"
-        log_files = glob.glob(self.dir_log + "*.log")
+        filename = self.dir_log / f"{self.prefix}{time.strftime(suffix)}.log"
+        log_files = glob.glob(str(self.dir_log / "*.log"))
 
         logging.handlers.TimedRotatingFileHandler.__init__(
             self, filename, when=when, backupCount=backupCount

@@ -9,7 +9,7 @@ import traceback
 from collections import OrderedDict
 from copy import deepcopy
 
-from src.qt.functions import read_config, write_config
+from report_tool.qt.functions import read_config, write_config
 
 
 class APIError(Exception):

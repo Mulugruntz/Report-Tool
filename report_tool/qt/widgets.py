@@ -8,7 +8,7 @@ from PyQt5 import QtGui, QtWidgets
 import re
 import datetime
 
-from src.qt.functions import read_config
+from report_tool.qt.functions import read_config
 
 RE_LABEL = re.compile(r"(.*?[A-z]): ")
 RE_TAG = re.compile(r"<(.*?)>")

@@ -5,7 +5,9 @@ description = "Report Tool is an application that uses IG Rest API to show basic
 authors = ["Samuel Giffard <samuel@giffard.co>", "Tioneb Nadous"]
 license = "MIT"
 readme = "README.md"
-packages = [{include = "report_tool"}]
+packages = [
+    { include = "report_tool" },
+]
 
 [tool.poetry.dependencies]
 python = "^3.11"
@@ -22,3 +24,6 @@ black = "^22.12.0"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+report-tool = 'report_tool.__main__:main'

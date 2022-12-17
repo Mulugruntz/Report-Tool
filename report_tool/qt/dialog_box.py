@@ -10,7 +10,7 @@ import random
 
 from copy import deepcopy
 
-from src.qt.functions import (
+from report_tool.qt.functions import (
     read_credentials,
     read_config,
     write_credentials,
@@ -18,7 +18,7 @@ from src.qt.functions import (
     read_ig_config,
     create_icons,
 )
-from src.qt.widgets import (
+from report_tool.qt.widgets import (
     CustomComboBox,
     CustomLabel,
     CustomPushButton,

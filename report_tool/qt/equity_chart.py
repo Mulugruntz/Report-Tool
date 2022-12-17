@@ -6,7 +6,7 @@ import weakref
 import numpy as np
 import pyqtgraph as pg
 
-from src.qt.graphics_items import CustomLinearRegion, DateAxis
+from report_tool.qt.graphics_items import CustomLinearRegion, DateAxis
 
 
 class EquityChart(pg.PlotWidget):

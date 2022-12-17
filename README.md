@@ -26,15 +26,21 @@ Report Tool is an application coded in Python 3.8 / PyQt5 using IG Rest API to s
 
 ```shell script
 cd Report-Tool
-poetry run python main.py
+poetry install
 ```
 
 ## Usage
 
 * Download the archive and unzip it:
+* Either run the entry point:
 ```shell script
 cd Report-Tool
-poetry run python main.py
+poetry run report-tool
+```
+* Or run the script:
+```shell script
+cd Report-Tool
+poetry run python -m report_tool
 ```
 * Enter your credentials, via the menu "Connect"
 

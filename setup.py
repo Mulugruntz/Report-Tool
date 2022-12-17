@@ -10,7 +10,7 @@ shutil.rmtree(Path("dist"), ignore_errors=True)
 
 compagny_name = "Tioneb Nadous"
 application_title = "Report Tool"
-main_python_file = "main.py"
+main_python_file = "report_tool/__main__.py"
 current_dir: Path = Path.cwd()
 base = None
 

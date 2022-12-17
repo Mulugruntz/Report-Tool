@@ -4,7 +4,7 @@ import re
 from collections import OrderedDict
 import numpy as np
 
-from src.qt.functions import read_config
+from report_tool.qt.functions import read_config
 
 RE_TEXT_BETWEEN_TAGS = re.compile(r">(.*?)<")
 

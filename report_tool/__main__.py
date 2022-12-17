@@ -3,14 +3,14 @@
 from PyQt5 import QtWidgets
 
 import os
-from pathlib import Path
 import sys
 
-import logging.config
+from logging.config import fileConfig
 
-from src.qt.main_window import ReportToolGUI
+from report_tool.qt.main_window import ReportToolGUI
+from report_tool.utils.constants import get_root_project_dir
 
-ROOT = Path(__file__).parent
+ROOT = get_root_project_dir()
 
 if getattr(sys, "frozen", False):
     os.environ["REQUESTS_CA_BUNDLE"] = str(ROOT / "cacert.pem")
@@ -21,7 +21,7 @@ def main():
     app = QtWidgets.QApplication(sys.argv)
     app.setApplicationName("Report Tool")
 
-    logging.config.fileConfig(ROOT / "logging.ini")
+    fileConfig(ROOT / "logging.ini")
 
     # app.setStyle(QtWidgets.QStyleFactory.create('Cleanlooks'))
     gui = ReportToolGUI("Report Tool")
