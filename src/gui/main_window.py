@@ -21,7 +21,7 @@ from src.gui.widgets import CustomLabel, CustomLineEdit, CustomDockWidget
 
 from src.gui.equity_chart import EquityChart
 
-import classRestCom
+from src.communications.classRestCom import IGAPI, APIError
 from src.gui.ls_event import LsEvent
 import classResults
 from src.exports.excel import ExportToExcel
@@ -853,11 +853,11 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         self.statusBar().showMessage(msg)
         self.logger_info.log(logging.INFO, msg)
 
-        self.session = classRestCom.IGAPI(connect_dict)
+        self.session = IGAPI(connect_dict)
         connect_reply = self.session.create_session()
 
         # request failed show error msg
-        if type(connect_reply) == classRestCom.APIError:
+        if type(connect_reply) == APIError:
             msg = connect_reply._get_error_msg()
             self.statusBar().showMessage(msg)
             return
@@ -867,7 +867,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             accounts_reply = self.session.get_user_accounts()
 
             # request failed show error msg
-            if type(accounts_reply) == classRestCom.APIError:
+            if type(accounts_reply) == APIError:
                 msg = accounts_reply._get_error_msg()
                 self.statusBar().showMessage(msg)
                 return
@@ -927,8 +927,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         Connect to LighStreamer. Suscribe to positions
         and balance table. See online doc for schema
 
-        :param ls_endpoint: string private attribute of
-                            classRestCom.IGAPI
+        :param ls_endpoint: string private attribute of :any:`IGAPI`.
         """
 
         self.ls_client = igls.LsClient(ls_endpoint + "/lightstreamer/")
@@ -1053,7 +1052,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         # method returns a msg even if request is succesfull display it
 
         # request failed
-        if type(switch_reply) == classRestCom.APIError:
+        if type(switch_reply) == APIError:
             msg = switch_reply._get_error_msg()
             self.statusBar().showMessage(msg)
             return
@@ -1517,7 +1516,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         """
 
         # an error occured while requests
-        if type(transactions) == classRestCom.APIError:
+        if type(transactions) == APIError:
             msg = transactions._get_error_msg()
             self.statusBar().showMessage(msg)
             return
@@ -3220,7 +3219,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         logout_reply = self.session.logout()
 
         # request failed
-        if type(logout_reply) == classRestCom.APIError:
+        if type(logout_reply) == APIError:
             msg = logout_reply._get_error_msg()
             self.statusBar().showMessage(msg)
             return

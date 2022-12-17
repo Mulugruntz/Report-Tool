@@ -13,8 +13,7 @@ import logging
 import traceback
 
 import funcMisc
-import classRestCom
-
+from src.communications.classRestCom import APIError
 
 RE_FLOAT = re.compile(r"[+-]? *(?:\d+(?:\.|,\d*)?\.*\d+)(?:[eE][+-]?\d+)?")
 RE_DATE = re.compile(r"/(.*?)$")
@@ -29,7 +28,7 @@ class TransactionThread(QtCore.QThread):
     def __init__(self, session, transaction_queue, result_handler, parent=None):
 
         """
-        :param session: classRestCom.IGAPI instance
+        :param session: :any:`IGAPI` instance
         :param transaction_queue: Queue
         :result_handler: classMainWindow.update_results
         """
@@ -70,7 +69,7 @@ class TransactionThread(QtCore.QThread):
             transactions_result = self.session.get_transactions(date_range)
 
             # requests failed
-            if type(transactions_result) == classRestCom.APIError:
+            if type(transactions_result) == APIError:
                 self.transaction_received.emit(transactions_result)
                 return
 
