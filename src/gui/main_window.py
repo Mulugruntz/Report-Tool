@@ -22,7 +22,7 @@ from src.gui.widgets import CustomLabel, CustomLineEdit, CustomDockWidget
 from src.gui.equity_chart import EquityChart
 
 import classRestCom
-import classLsEvent
+from src.gui.classLsEvent import LsEvent
 import classResults
 import classExport
 
@@ -977,12 +977,12 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         )
 
         # configure account event
-        self.acc_update_sig = classLsEvent.LsEvent()
+        self.acc_update_sig = LsEvent()
         self.balance_table.on_update.listen(self.acc_update_sig.acc_update_event)
         self.acc_update_sig.acc_signal.connect(self.update_account)
 
         # configure positions event
-        self.pos_update_sig = classLsEvent.LsEvent()
+        self.pos_update_sig = LsEvent()
         self.pos_table.on_update.listen(self.pos_update_sig.pos_update_event)
         self.pos_update_sig.pos_signal.connect(self.update_positions)
 
@@ -992,7 +992,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         options_sig.connect(self.update_options)
 
         # configure status event
-        status_sig = classLsEvent.LsEvent()
+        status_sig = LsEvent()
         self.ls_client.on_state.listen(status_sig.on_state)
         status_sig.status_signal.connect(self.update_status)
 
