@@ -28,7 +28,7 @@ from typing import Generator
 
 import requests
 
-from report_tool.logger.handlers import CustomTimedRotatingFileHandler
+from report_tool.logger.handlers import ReportToolFileHandler
 from report_tool.utils.constants import get_logs_dir
 
 logs_dir = get_logs_dir()
@@ -40,7 +40,7 @@ year = time.strftime("%Y")
 logs_dir.mkdir(exist_ok=True)
 
 LOG = logging.getLogger("lightstreamer")
-hdlr = CustomTimedRotatingFileHandler(prefix="log-", when="D", backupCount=7)
+hdlr = ReportToolFileHandler("lightstreamer.log", when="D", backupCount=7)
 
 formatter = logging.Formatter("%(asctime)s %(levelname)s %(message)s")
 hdlr.setFormatter(formatter)
