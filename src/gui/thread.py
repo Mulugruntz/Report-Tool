@@ -13,7 +13,7 @@ import logging
 import traceback
 
 import funcMisc
-from src.communications.classRestCom import APIError
+from src.communications.ig_rest_api import APIError
 
 RE_FLOAT = re.compile(r"[+-]? *(?:\d+(?:\.|,\d*)?\.*\d+)(?:[eE][+-]?\d+)?")
 RE_DATE = re.compile(r"/(.*?)$")

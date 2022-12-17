@@ -21,7 +21,7 @@ from src.gui.widgets import CustomLabel, CustomLineEdit, CustomDockWidget
 
 from src.gui.equity_chart import EquityChart
 
-from src.communications.classRestCom import IGAPI, APIError
+from src.communications.ig_rest_api import IGAPI, APIError
 from src.gui.ls_event import LsEvent
 import classResults
 from src.exports.excel import ExportToExcel
