@@ -29,7 +29,7 @@ import requests
 
 import os
 
-import classCustomHandler
+from src.logging.classCustomHandler import CustomTimedRotatingFileHandler
 
 day = time.strftime("%d")
 month = time.strftime("%m")
@@ -39,9 +39,7 @@ if not os.path.exists("Logs"):
     os.makedirs("Logs")
 
 LOG = logging.getLogger("lightstreamer")
-hdlr = classCustomHandler.CustomTimedRotatingFileHandler(
-    prefix="log-", when="D", backupCount=7
-)
+hdlr = CustomTimedRotatingFileHandler(prefix="log-", when="D", backupCount=7)
 
 formatter = logging.Formatter("%(asctime)s %(levelname)s %(message)s")
 hdlr.setFormatter(formatter)
