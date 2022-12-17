@@ -32,7 +32,7 @@ import igls
 from PyQt5 import QtCore
 from PyQt5 import QtGui, QtWidgets
 
-from src.gui.classThread import TransactionThread, UpdateCommentsThread
+from src.gui.thread import TransactionThread, UpdateCommentsThread
 
 
 RE_TEXT_BETWEEN_TAGS = re.compile(r">(.*?)<")
