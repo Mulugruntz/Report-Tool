@@ -12,8 +12,8 @@ import funcMisc
 class TradesResults(dict):
 
     """
-       Class with method to calculates
-       summary and equity plots about trades
+    Class with method to calculates
+    summary and equity plots about trades
     """
 
     def __init__(self):
@@ -458,7 +458,7 @@ class TradesResults(dict):
             # calculate dd in %
             try:
                 per_cent_avg_dd = round(
-                    (Decimal(sum(dd_list)) / len(dd_list)) / start_capital * 100, 2,
+                    (Decimal(sum(dd_list)) / len(dd_list)) / start_capital * 100, 2
                 )
                 per_cent_max_dd = round(max_dd / start_capital * 100, 2)
 
@@ -650,20 +650,20 @@ class TradesResults(dict):
     def create_curves(*args, **kwargs):
 
         """
-           Function to build scatterplot representing
-           max dd, depth and high and equity curves
-           Returns a dict buil correspond to 'curve'
-           subkey in graph_dict (see classIGReport)
-           {nameofthegraph: {equity_curve: np.array,
-                             high: np.array,
-                             depth: np.array,
-                             maxdd: np.array;
-                            }
-            }
+        Function to build scatterplot representing
+        max dd, depth and high and equity curves
+        Returns a dict buil correspond to 'curve'
+        subkey in graph_dict (see classIGReport)
+        {nameofthegraph: {equity_curve: np.array,
+                          high: np.array,
+                          depth: np.array,
+                          maxdd: np.array;
+                         }
+         }
 
-           :kw param transactions: OrderedDict() of all trades
-           :kw param start_capital: Decimal
-           :kw param config: dict with config saved
+        :kw param transactions: OrderedDict() of all trades
+        :kw param start_capital: Decimal
+        :kw param config: dict with config saved
         """
 
         transactions = kwargs["transactions"]

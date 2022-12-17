@@ -394,11 +394,11 @@ def create_icons():
     painter = QtGui.QPainter(pixmap)
     painter.setRenderHint(QtGui.QPainter.Antialiasing)
     painter.rotate(45)
-    painter.translate(math.sqrt((14 ** 2) / 2) / 2, -math.sqrt((14 ** 2) / 2) / 2)
+    painter.translate(math.sqrt((14**2) / 2) / 2, -math.sqrt((14**2) / 2) / 2)
     painter.setPen(pen)
     painter.setBrush(brush)
     painter.fillRect(
-        QtCore.QRectF(0, 0, math.sqrt((14 ** 2) / 2), math.sqrt((14 ** 2) / 2)), brush
+        QtCore.QRectF(0, 0, math.sqrt((14**2) / 2), math.sqrt((14**2) / 2)), brush
     )
     painter.resetTransform()
     painter.end()

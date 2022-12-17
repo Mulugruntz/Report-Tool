@@ -76,7 +76,9 @@ class EquityChart(pg.PlotWidget):
         qt_ec_style = QtCore.Qt.PenStyle(style_dict[ec_style])
 
         equity_pen = pg.mkPen(
-            color=QtGui.QColor(ec_color), width=ec_size, style=qt_ec_style,
+            color=QtGui.QColor(ec_color),
+            width=ec_size,
+            style=qt_ec_style,
         )
 
         """

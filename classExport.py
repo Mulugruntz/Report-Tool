@@ -117,16 +117,21 @@ class ExportToExcel(object):
 
         # constructs a header with options
         if header_type == "Summary":
-            header = "#" + header_type + " calculated in " + result_in.lower() + " | interest " + str(
-                include
-            ) + "included" " | positions " + str(
-                agregate
-            ) + "agregated" + " | capital inital = " + str(
-                start_capital
-            ) + str(
-                currency_symbol
-            ) + str(
-                str_capital
+            header = (
+                "#"
+                + header_type
+                + " calculated in "
+                + result_in.lower()
+                + " | interest "
+                + str(include)
+                + "included"
+                " | positions "
+                + str(agregate)
+                + "agregated"
+                + " | capital inital = "
+                + str(start_capital)
+                + str(currency_symbol)
+                + str(str_capital)
             )
 
         # constructs a header with date range

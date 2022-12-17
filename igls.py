@@ -173,15 +173,15 @@ def _replace_url_host(url, hostname=None):
 
 def _decode_field(s, prev=None):
     """
-        Decode a single field according to the Lightstreamer encoding rules.
-        1. Literal '$' is the empty string.
-        2. Literal '#' is null (None).
-        3. Literal '' indicates unchanged since previous update.
-        4. If the string starts with either '$' or '#', but is not length 1,
-           trim the first character.
-        5. Unicode escapes of the form uXXXX are unescaped.
+    Decode a single field according to the Lightstreamer encoding rules.
+    1. Literal '$' is the empty string.
+    2. Literal '#' is null (None).
+    3. Literal '' indicates unchanged since previous update.
+    4. If the string starts with either '$' or '#', but is not length 1,
+       trim the first character.
+    5. Unicode escapes of the form uXXXX are unescaped.
 
-        Returns the decoded Unicode string.
+    Returns the decoded Unicode string.
     """
     if s == "$":
         return ""
@@ -561,7 +561,7 @@ class LsClient(object):
                     self.log.exception("_do_recv failure")
                     break
                 fail_wait = min(
-                    RETRY_WAIT_MAX_SECS, RETRY_WAIT_SECS * (2 ** fail_count)
+                    RETRY_WAIT_MAX_SECS, RETRY_WAIT_SECS * (2**fail_count)
                 )
                 fail_count += 1
                 self.log.info(

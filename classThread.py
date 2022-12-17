@@ -415,9 +415,9 @@ class TransactionThread(QtCore.QThread):
 
                 # means cross is with Yen
                 if "jpy" in market_name.lower():
-                    points = round((open_level - close_level) * abs(size), 5,) * 100
+                    points = round((open_level - close_level) * abs(size), 5) * 100
                 else:
-                    points = round((open_level - close_level) * abs(size), 5,) * 10000
+                    points = round((open_level - close_level) * abs(size), 5) * 10000
             else:
                 points = round((open_level - close_level) * abs(size), 2)
 

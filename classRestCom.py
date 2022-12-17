@@ -394,9 +394,9 @@ class IGAPI(object):
     def _set_ls_endpoint(self, endpoint):
 
         """
-           Setter method
+        Setter method
 
-           :param endpoint: string
+        :param endpoint: string
         """
 
         self._ls_endpoint = endpoint
@@ -410,9 +410,9 @@ class IGAPI(object):
     def _set_req_args(self, req_args):
 
         """
-           Setter method
+        Setter method
 
-           :param req_args: dict
+        :param req_args: dict
         """
 
         self._req_args = req_args
@@ -426,9 +426,9 @@ class IGAPI(object):
     def _set_connect_dict(self, connect_dict):
 
         """
-           Setter method
+        Setter method
 
-           :param connect_dict: OrderedDict()
+        :param connect_dict: OrderedDict()
         """
 
         self._connect_dict = connect_dict
