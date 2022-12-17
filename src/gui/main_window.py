@@ -29,7 +29,7 @@ from src.gui.equity_chart import EquityChart
 
 from src.communications.ig_rest_api import IGAPI, APIError
 from src.gui.ls_event import LsEvent
-from src.calculate.classResults import TradesResults
+from src.calculate.trades import TradesResults
 from src.exports.excel import ExportToExcel
 
 import funcMisc
