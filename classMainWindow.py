@@ -16,7 +16,7 @@ import pyqtgraph as pg
 from collections import OrderedDict
 from copy import deepcopy
 
-from src.gui.classDialogBox import ConnectWindow, OptionsWindow, FilterWindow, AboutWindow, ExportWindow
+from src.gui.dialog_box import ConnectWindow, OptionsWindow, FilterWindow, AboutWindow, ExportWindow
 from src.gui.widgets import CustomLabel, CustomLineEdit, CustomDockWidget
 
 from classEquityChart import EquityChart
