@@ -19,7 +19,7 @@ from copy import deepcopy
 from src.gui.dialog_box import ConnectWindow, OptionsWindow, FilterWindow, AboutWindow, ExportWindow
 from src.gui.widgets import CustomLabel, CustomLineEdit, CustomDockWidget
 
-from src.gui.classEquityChart import EquityChart
+from src.gui.equity_chart import EquityChart
 
 import classRestCom
 import classLsEvent
