@@ -14,7 +14,7 @@ import base64
 import logging
 import logging.config
 
-from src.lib.json_utils import RoundTripEncoder, RoundTripDecoder
+from src.utils.json_utils import RoundTripEncoder, RoundTripDecoder
 
 RE_CONVERT = re.compile(r"^(.*)converted")
 
