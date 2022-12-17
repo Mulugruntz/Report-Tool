@@ -1,17 +1,17 @@
 from cx_Freeze import setup, Executable
 
 import shutil
-import os
-import requests.certs
+from pathlib import Path
+import certifi
 
 # Remove the build folder
-shutil.rmtree("build", ignore_errors=True)
-shutil.rmtree("dist", ignore_errors=True)
+shutil.rmtree(Path("build"), ignore_errors=True)
+shutil.rmtree(Path("dist"), ignore_errors=True)
 
 compagny_name = "Tioneb Nadous"
 application_title = "Report Tool"
 main_python_file = "main.py"
-current_dir = os.getcwd()
+current_dir: Path = Path.cwd()
 base = None
 
 # if sys.platform == "win32":
@@ -48,24 +48,24 @@ includes = [
 
 # packages = ["credentials.txt", "favorite_markets.txt"]
 
-cert_file = requests.certs.where()  # get SSL certificats
+cert_file = certifi.where()  # get SSL certificates
 includesfiles = [
     cert_file,
-    current_dir + "\\credentials.json",
-    current_dir + "\\comments.json",
-    current_dir + "\\config.json",
-    current_dir + "\\ig_config.json",
-    current_dir + "\\logging.ini",
-    current_dir + "\\icons",
-    current_dir + "\\georges.png",
-    current_dir + "\\changelog.txt",
+    current_dir / "credentials.json",
+    current_dir / "comments.json",
+    current_dir / "config.json",
+    current_dir / "ig_config.json",
+    current_dir / "logging.ini",
+    current_dir / "icons",
+    current_dir / "georges.png",
+    current_dir / "changelog.txt",
 ]
 
 excludes = ["tkinter"]
 
 bdist_msi_options = {
     "add_to_path": False,
-    "initial_target_dir": r"[ProgramFilesFolder]\\%s" % application_title,
+    "initial_target_dir": rf"[ProgramFilesFolder]\\{application_title}",
 }
 
 build_exe_options = {
@@ -87,7 +87,7 @@ setup(
         Executable(
             main_python_file,
             base=base,
-            icon=current_dir + "\icons\main32.ico",
+            icon=current_dir / "icons" / "main32.ico",
             shortcutDir="DesktopFolder",
         )
     ],
