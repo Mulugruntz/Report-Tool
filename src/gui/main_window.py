@@ -24,7 +24,7 @@ from src.gui.equity_chart import EquityChart
 import classRestCom
 from src.gui.ls_event import LsEvent
 import classResults
-import classExport
+from src.exports.classExport import ExportToExcel
 
 import funcMisc
 import igls
@@ -916,7 +916,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
                 # init dict that will hold results received
                 self.local_transactions = OrderedDict()
                 self.filtered_dict = OrderedDict()
-                self.export_data = classExport.ExportToExcel()
+                self.export_data = ExportToExcel()
 
                 self.set_gui_enabled(True)  # enable interactions
                 self.update_options(None)
