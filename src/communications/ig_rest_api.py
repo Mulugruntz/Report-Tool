@@ -107,7 +107,7 @@ class IGAPI(object):
 
             # try to see if ig as send a clear error msg
             try:
-                response_text = json.loads(response.text, encoding="utf-8")
+                response_text = json.loads(response.text)
 
                 error_msg = base_msg + response_text["errorCode"]
                 error_obj = APIError()
@@ -154,7 +154,7 @@ class IGAPI(object):
 
         # request is successfull
         else:
-            r_text = json.loads(r_connect.text, encoding="utf-8")
+            r_text = json.loads(r_connect.text)
             token = r_connect.headers["x-security-token"]
             cst = r_connect.headers["cst"]
 
@@ -228,7 +228,7 @@ class IGAPI(object):
 
         # request is successfull, return accounts
         else:
-            r_text = json.loads(r_account.text, encoding="utf-8")
+            r_text = json.loads(r_account.text)
 
             dict_account = OrderedDict()
 
@@ -352,7 +352,7 @@ class IGAPI(object):
 
         # request is successfull
         else:
-            r_text = json.loads(r_switch.text, encoding="utf-8")
+            r_text = json.loads(r_switch.text)
 
             # when switch to another account
             # a new token is provided
