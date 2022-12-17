@@ -2,7 +2,7 @@ import json
 from datetime import datetime, date, time
 from decimal import Decimal
 import logging
-from typing import Any, TypedDict, Mapping, TypeVar
+from typing import Any, TypedDict, Mapping, TypeVar, Callable
 
 DATE_FORMAT = "%Y-%m-%d"
 TIME_FORMAT = "%H:%M:%S.%f"
@@ -41,18 +41,38 @@ class RoundTripEncoder(json.JSONEncoder):
                 "_type": "decimal.Decimal",
                 "value": str(obj),
             }
-        return super().default(obj)
+        raise TypeError(
+            f"Object of type {obj.__class__.__name__} " f"is not JSON serializable"
+        )
 
 
 InputT = TypeVar("InputT", bound=Mapping[str, Any])
 
 
 class RoundTripDecoder(json.JSONDecoder):
-    def __init__(self, *args, **kwargs):
-        json.JSONDecoder.__init__(self, object_hook=self.object_hook, *args, **kwargs)
+    def __init__(
+        self,
+        *,
+        object_hook: Callable[[dict[str, Any]], Any | None] | None = None,
+        parse_float: Callable[[str], Any | None] | None = None,
+        parse_int: Callable[[str], Any | None] | None = None,
+        parse_constant: Callable[[str], Any | None] | None = None,
+        strict: bool = True,
+        object_pairs_hook: Callable[[list[tuple[str, Any]]], Any | None] | None = None,
+    ) -> None:
+        if object_hook is None:
+            object_hook = self.object_hook
+        super().__init__(
+            object_hook=object_hook,
+            parse_float=parse_float,
+            parse_int=parse_int,
+            parse_constant=parse_constant,
+            strict=strict,
+            object_pairs_hook=object_pairs_hook,
+        )
 
     @staticmethod
-    def object_hook(obj: InputT) -> InputT | datetime | date | time | Decimal:
+    def object_hook(obj: InputT) -> InputT | datetime | date | time | Decimal | None:
         if "_type" not in obj:
             return obj
         type_ = obj["_type"]
