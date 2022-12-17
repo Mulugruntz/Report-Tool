@@ -13,7 +13,13 @@ import logging
 import traceback
 
 from src.communications.ig_rest_api import APIError
-from src.gui.funcMisc import read_ig_config, read_config, format_market_name, read_comment, write_comments
+from src.gui.functions import (
+    read_ig_config,
+    read_config,
+    format_market_name,
+    read_comment,
+    write_comments,
+)
 
 RE_FLOAT = re.compile(r"[+-]? *(?:\d+(?:\.|,\d*)?\.*\d+)(?:[eE][+-]?\d+)?")
 RE_DATE = re.compile(r"/(.*?)$")

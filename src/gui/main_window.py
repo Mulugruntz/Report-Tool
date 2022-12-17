@@ -23,8 +23,15 @@ from src.gui.dialog_box import (
     AboutWindow,
     ExportWindow,
 )
-from src.gui.funcMisc import read_config, create_status_icons, create_graph_args, write_config, create_dates_list, \
-    read_ig_config, read_credentials
+from src.gui.functions import (
+    read_config,
+    create_status_icons,
+    create_graph_args,
+    write_config,
+    create_dates_list,
+    read_ig_config,
+    read_credentials,
+)
 from src.gui.widgets import CustomLabel, CustomLineEdit, CustomDockWidget
 
 from src.gui.equity_chart import EquityChart

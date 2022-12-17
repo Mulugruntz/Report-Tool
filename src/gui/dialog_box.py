@@ -10,7 +10,7 @@ import random
 
 from copy import deepcopy
 
-from src.gui.funcMisc import (
+from src.gui.functions import (
     read_credentials,
     read_config,
     write_credentials,
