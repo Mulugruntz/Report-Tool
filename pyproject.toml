@@ -2,7 +2,7 @@
 name = "report-tool"
 version = "3.0.0"
 description = "Report Tool is an application that uses IG Rest API to show basic statistics about past trades."
-authors = ["Samuel Giffard <samuel@giffard.co>", "Tioneb Nadous"]
+authors = ["Samuel Giffard <samuel@giffard.co>", "Tioneb Nadous <benoit.soudan@gmail.com>"]
 license = "MIT"
 readme = "README.md"
 packages = [

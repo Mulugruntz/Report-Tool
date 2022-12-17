@@ -4,7 +4,6 @@ from typing import Text, List, Dict
 from PyQt5 import QtCore
 
 import re
-import os
 import time
 
 from collections import OrderedDict, defaultdict
@@ -473,7 +472,6 @@ class UpdateCommentsThread(QtCore.QThread):
         update comments. see in line comments below
         """
 
-        comment_path = os.getcwd() + "/comments.json"
         config = read_config()
         last_usr = config["last_usr"]
 

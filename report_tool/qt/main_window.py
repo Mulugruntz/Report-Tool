@@ -56,7 +56,8 @@ from PyQt5 import QtCore
 from PyQt5 import QtGui, QtWidgets
 
 from report_tool.qt.thread import TransactionThread, UpdateCommentsThread
-
+from report_tool.utils.constants import get_icons_dir
+from report_tool.utils.fs_utils import get_icon_path
 
 RE_TEXT_BETWEEN_TAGS = re.compile(r">(.*?)<")
 RE_FLOAT = re.compile(r"[+-]? *(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?")
@@ -76,8 +77,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         """Init UI"""
 
         super(ReportToolGUI, self).__init__()
-
-        icons_path = os.getcwd() + "/icons"
 
         config = read_config()
 
@@ -102,7 +101,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
         self.setWindowTitle(title)
         self.statusBar().showMessage("Not connected")
-        self.setWindowIcon(QtGui.QIcon(icons_path + "/main.png"))
+        self.setWindowIcon(QtGui.QIcon(str(get_icon_path("main"))))
 
         self.restoreState(state)
         self.resize(size)
@@ -129,17 +128,15 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         -- One menu for an about window
         """
 
-        icons_path = os.getcwd() + "/icons/"
-
         # create icons
-        icon_disconnect = QtGui.QIcon(icons_path + "disconnect.png")
-        icon_connect = QtGui.QIcon(icons_path + "connect.png")
-        icon_infos = QtGui.QIcon(icons_path + "info.png")
-        icon_options = QtGui.QIcon(icons_path + "options.png")
-        icon_switch = QtGui.QIcon(icons_path + "switch.png")
-        icon_refresh = QtGui.QPixmap(icons_path + "refresh.png")
-        icon_screenshot = QtGui.QPixmap(icons_path + "photo16.png")
-        icon_export = QtGui.QPixmap(icons_path + "export.png")
+        icon_disconnect = QtGui.QIcon(str(get_icon_path("disconnect")))
+        icon_connect = QtGui.QIcon(str(get_icon_path("connect")))
+        icon_infos = QtGui.QIcon(str(get_icon_path("info")))
+        icon_options = QtGui.QIcon(str(get_icon_path("options")))
+        icon_switch = QtGui.QIcon(str(get_icon_path("switch")))
+        icon_refresh = QtGui.QPixmap(str(get_icon_path("refresh")))
+        icon_screenshot = QtGui.QPixmap(str(get_icon_path("photo16")))
+        icon_export = QtGui.QPixmap(str(get_icon_path("export")))
 
         # create menus
         self.menu_switch = QtWidgets.QMenu("Switch account")
@@ -418,8 +415,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
         config = read_config()  # load config file
 
-        icons_path = os.getcwd() + "/icons/"
-        icon_filter = QtGui.QPixmap(icons_path + "filter.png")
+        icon_filter = QtGui.QPixmap(str(get_icon_path("filter")))
 
         capital = config["start_capital"]
         currency_symbol = config["currency_symbol"]
@@ -582,7 +578,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         result_in = config["result_in"]
         include = config["include"]
         agregate = config["agregate"]
-        icons_path = os.getcwd() + "/icons"
 
         dock_summary = QtWidgets.QDockWidget("Summary")
 

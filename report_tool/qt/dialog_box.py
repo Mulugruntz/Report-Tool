@@ -3,8 +3,6 @@
 from PyQt5 import QtCore
 from PyQt5 import QtGui, QtWidgets
 
-import os
-
 import json
 import random
 
@@ -25,6 +23,7 @@ from report_tool.qt.widgets import (
     CustomShortcutLineEdit,
     CustomCloseButton,
 )
+from report_tool.utils.fs_utils import get_icon_path
 
 
 class ConnectWindow(QtWidgets.QDialog):
@@ -35,8 +34,6 @@ class ConnectWindow(QtWidgets.QDialog):
 
         super(ConnectWindow, self).__init__(parent=parent)
         self._connect_dict = {}
-
-        icons_path = os.getcwd() + "/icons"
 
         # configure QDialog
         self.setModal(True)
@@ -67,7 +64,7 @@ class ConnectWindow(QtWidgets.QDialog):
         self.line_edit_pwd.setEchoMode(QtWidgets.QLineEdit.Password)
 
         self.btn_trash.set_default_style("transparent", "transparent", "transparent")
-        self.btn_trash.setPixmap(QtGui.QPixmap(icons_path + "/trash.png"))
+        self.btn_trash.setPixmap(QtGui.QPixmap(str(get_icon_path("trash"))))
 
         list_widgets_login = [
             QtWidgets.QLabel("Username: "),
@@ -247,7 +244,6 @@ class ConnectWindow(QtWidgets.QDialog):
         """User is editing account via inputs widgets."""
 
         saved_accounts = read_credentials()
-        credentials_path = os.getcwd() + "/credentials.txt"
         list_type = ["Live", "Demo"]
 
         # get user modifications
@@ -424,11 +420,8 @@ class OptionsWindow(QtWidgets.QDialog):
     options_signal = QtCore.pyqtSignal(object)  # signal send when options changes
 
     def __init__(self, parent):
-
-        icons_path = os.getcwd() + "/icons"
-
         super(OptionsWindow, self).__init__(parent=parent)
-        self.setWindowIcon(QtGui.QIcon(icons_path + "/main.png"))
+        self.setWindowIcon(QtGui.QIcon(str(get_icon_path("main"))))
         self.setWindowTitle("Options")
         self.setModal(True)
 
@@ -1008,11 +1001,8 @@ class ExportWindow(QtWidgets.QDialog):
     """
 
     def __init__(self, parent, *args, **kwargs):
-
-        icons_path = os.getcwd() + "/icons"
-
         super(ExportWindow, self).__init__(parent=parent)
-        self.setWindowIcon(QtGui.QIcon(icons_path + "/main.png"))
+        self.setWindowIcon(QtGui.QIcon(str(get_icon_path("main"))))
         self.setWindowTitle("Export options")
         self.setModal(True)
 
@@ -1145,13 +1135,12 @@ class AboutWindow(QtWidgets.QDialog):
 
         self._initial_pos = None
 
-        icons_path = os.getcwd() + "/icons"
-        self.setWindowIcon(QtGui.QIcon(icons_path + "/main.png"))
+        self.setWindowIcon(QtGui.QIcon(str(get_icon_path("main"))))
 
         layout = QtWidgets.QGridLayout()
 
         # labels for basics infos
-        pixmap = QtGui.QPixmap(icons_path + "/georges.png")
+        pixmap = QtGui.QPixmap(str(get_icon_path("georges")))
 
         label_dev = QtWidgets.QLabel("Developed by Benoit Soudan")
         label_contact = QtWidgets.QLabel("benoit.soudan@gmail.com")
@@ -1221,7 +1210,7 @@ class AboutWindow(QtWidgets.QDialog):
             self._set_initial_pos(initial_pos)  # save initial position
 
             # stupid gif
-            gif = QtGui.QMovie(os.getcwd() + "/icons/cat.gif")
+            gif = QtGui.QMovie(str(get_icon_path("cat", ext="gif")))
             gif.start()
             self.stupid_label.setMovie(gif)
 
@@ -1262,9 +1251,8 @@ class FilterWindow(QtWidgets.QDialog):
     def __init__(self, parent):
 
         super(FilterWindow, self).__init__(parent=parent)
-        icons_path = os.getcwd() + "/icons"
 
-        self.setWindowIcon(QtGui.QIcon(icons_path + "/main.png"))
+        self.setWindowIcon(QtGui.QIcon(str(get_icon_path("main"))))
         self.setWindowTitle("Filter")
         self.setModal(True)
 
