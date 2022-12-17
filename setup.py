@@ -32,7 +32,7 @@ includes = [
     "base64",
     "pyqtgraph",
     "numpy",
-    "numpy.lib.format",
+    "numpy.utils.format",
     "threading",
     "Queue",
     "time",
@@ -70,6 +70,7 @@ bdist_msi_options = {
 
 build_exe_options = {
     "includes": includes,
+    "excludes": excludes,
     "include_files": includesfiles,
     "include_msvcr": True,
     "compressed": True,

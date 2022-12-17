@@ -12,8 +12,8 @@ from classMainWindow import ReportToolGUI
 if getattr(sys, "frozen", False):
     os.environ["REQUESTS_CA_BUNDLE"] = os.path.join(os.getcwd(), "cacert.pem")
 
-if __name__ == "__main__":
 
+def main():
     # lancement de l'app
     app = QtWidgets.QApplication(sys.argv)
     app.setApplicationName("Report Tool")
@@ -24,7 +24,11 @@ if __name__ == "__main__":
     gui = ReportToolGUI("Report Tool")
     # gui.show()
 
-    sys.exit(app.exec_())
+    sys.exit(app.exec())
+
+
+if __name__ == "__main__":
+    main()
 
 """
 ---> prob with dates in report, because of interest
