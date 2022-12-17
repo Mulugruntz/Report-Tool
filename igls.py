@@ -29,7 +29,7 @@ import requests
 
 import os
 
-from src.logging.classCustomHandler import CustomTimedRotatingFileHandler
+from src.logging.handlers import CustomTimedRotatingFileHandler
 
 day = time.strftime("%d")
 month = time.strftime("%m")
