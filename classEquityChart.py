@@ -6,7 +6,7 @@ import weakref
 import numpy as np
 import pyqtgraph as pg
 
-import classCustomGraphicsItems
+from src.gui import classCustomGraphicsItems
 
 
 class EquityChart(pg.PlotWidget):
