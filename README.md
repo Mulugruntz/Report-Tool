@@ -11,7 +11,7 @@ Report Tool is an application coded in Python 3.8 / PyQt5 using IG Rest API to s
 * Trades comment,
 * Market filter.
 
-![Main interface](main.png)
+![Main interface](docs/main.png)
 
 ## Installation
 
@@ -44,7 +44,7 @@ poetry run python -m report_tool
 ```
 * Enter your credentials, via the menu "Connect"
 
-![Connect menu](connect.png)
+![Connect menu](docs/connect.png)
 
 * Have fun !
 
