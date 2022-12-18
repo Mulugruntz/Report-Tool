@@ -1,10 +1,8 @@
-from PyQt5 import QtCore
-from PyQt5 import QtGui
-
 import weakref
 
 import numpy as np
 import pyqtgraph as pg
+from PyQt5 import QtCore, QtGui
 
 from report_tool.qt.graphics_items import CustomLinearRegion, DateAxis
 

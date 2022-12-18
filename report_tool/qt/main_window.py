@@ -1,62 +1,48 @@
-import re
-import os
 import datetime
 import json
-
 import logging
-import traceback
-
+import os
 import queue as queue
+import re
+import traceback
 import warnings
+from collections import OrderedDict
+from copy import deepcopy
 from decimal import Decimal
 
 import numpy as np
 import pyqtgraph as pg
+from PyQt5 import QtCore, QtGui, QtWidgets
 
-from collections import OrderedDict
-from copy import deepcopy
-
-from report_tool.qt.dialog_box import (
-    ConnectWindow,
-    OptionsWindow,
-    FilterWindow,
-    AboutWindow,
-    ExportWindow,
-)
-from report_tool.qt.functions import (
-    read_config,
-    create_status_icons,
-    create_graph_args,
-    write_config,
-    create_dates_list,
-    read_ig_config,
-    read_credentials,
-)
-from report_tool.qt.widgets import (
-    CustomLabel,
-    CustomLineEdit,
-    CustomDockWidget,
-)
-
-from report_tool.qt.equity_chart import EquityChart
-
-from report_tool.communications.ig_rest_api import IGAPI, APIError
-from report_tool.qt.ls_event import LsEvent
 from report_tool.calculate.trades import TradesResults
-from report_tool.exports.excel import ExportToExcel
-
 from report_tool.communications.ig_lightstreamer import (
-    LsClient,
-    Table,
     MODE_DISTINCT,
     MODE_MERGE,
+    LsClient,
+    Table,
 )
-
-from PyQt5 import QtCore
-from PyQt5 import QtGui, QtWidgets
-
+from report_tool.communications.ig_rest_api import IGAPI, APIError
+from report_tool.exports.excel import ExportToExcel
+from report_tool.qt.dialog_box import (
+    AboutWindow,
+    ConnectWindow,
+    ExportWindow,
+    FilterWindow,
+    OptionsWindow,
+)
+from report_tool.qt.equity_chart import EquityChart
+from report_tool.qt.functions import (
+    create_dates_list,
+    create_graph_args,
+    create_status_icons,
+    read_config,
+    read_credentials,
+    read_ig_config,
+    write_config,
+)
+from report_tool.qt.ls_event import LsEvent
 from report_tool.qt.thread import TransactionThread, UpdateCommentsThread
-from report_tool.utils.constants import get_icons_dir
+from report_tool.qt.widgets import CustomDockWidget, CustomLabel, CustomLineEdit
 from report_tool.utils.fs_utils import get_icon_path
 
 RE_TEXT_BETWEEN_TAGS = re.compile(r">(.*?)<")

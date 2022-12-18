@@ -4,17 +4,16 @@ from dataclasses import astuple
 from datetime import date, datetime
 from decimal import Decimal
 from pathlib import Path
-
-from typing import Final, TypeVar, Literal, Iterable, overload, cast
+from typing import Final, Iterable, Literal, TypeVar, cast, overload
 
 from PyQt5.QtWidgets import QTableWidget
 
 from report_tool.exports.formats import (
-    DataToExport,
-    Transaction,
-    ExportableTransaction,
-    ExportableSummary,
     AccountInfo,
+    DataToExport,
+    ExportableSummary,
+    ExportableTransaction,
+    Transaction,
 )
 from report_tool.qt.functions import read_config
 from report_tool.utils.constants import get_export_dir

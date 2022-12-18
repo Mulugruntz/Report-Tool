@@ -1,12 +1,10 @@
 """ This module holds classes to custom base QtWidgets"""
+import datetime
+import re
 import warnings
 from decimal import Decimal
 
-from PyQt5 import QtCore
-from PyQt5 import QtGui, QtWidgets
-
-import re
-import datetime
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 from report_tool.qt.functions import read_config
 

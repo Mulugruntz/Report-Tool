@@ -1,13 +1,11 @@
 """Module with classes to interact with IG Rest API"""
-import logging
-import requests
-
 import json
-
+import logging
 import traceback
-
 from collections import OrderedDict
 from copy import deepcopy
+
+import requests
 
 from report_tool.qt.functions import read_config, write_config
 

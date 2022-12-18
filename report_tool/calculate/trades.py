@@ -1,9 +1,8 @@
+from collections import OrderedDict
 from decimal import Decimal, DivisionByZero
 from typing import Dict, List, Tuple
 
 import numpy as np
-
-from collections import OrderedDict
 
 from report_tool.qt.functions import read_config, read_ig_config
 

@@ -1,27 +1,24 @@
 """Module for holding simple functions"""
-import copy
-from decimal import Decimal
-
-from PyQt5 import QtCore
-from PyQt5 import QtGui
-
-import re
-import json
-import math
-
 import base64
+import copy
+import json
 import logging
 import logging.config
+import math
+import re
+from decimal import Decimal
+
+from PyQt5 import QtCore, QtGui
 
 from report_tool.utils.constants import (
-    get_root_project_dir,
-    get_credentials_file,
     get_comments_file,
-    get_screenshots_dir,
-    get_export_dir,
     get_config_file,
+    get_credentials_file,
+    get_export_dir,
+    get_root_project_dir,
+    get_screenshots_dir,
 )
-from report_tool.utils.json_utils import RoundTripEncoder, RoundTripDecoder
+from report_tool.utils.json_utils import RoundTripDecoder, RoundTripEncoder
 
 RE_CONVERT = re.compile(r"^(.*)converted")
 

@@ -1,22 +1,19 @@
+import logging
+import re
+import time
+import traceback
+from collections import OrderedDict, defaultdict
 from decimal import Decimal, DivisionByZero
-from typing import Text, List, Dict
+from typing import Dict, List, Text
 
 from PyQt5 import QtCore
 
-import re
-import time
-
-from collections import OrderedDict, defaultdict
-
-import logging
-import traceback
-
 from report_tool.communications.ig_rest_api import APIError
 from report_tool.qt.functions import (
-    read_ig_config,
-    read_config,
     format_market_name,
     read_comment,
+    read_config,
+    read_ig_config,
     write_comments,
 )
 

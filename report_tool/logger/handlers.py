@@ -3,9 +3,8 @@ Module with class for custom logger
 Could be used by many of IG API related app
 """
 
-import re
-
 import logging.handlers
+import re
 from datetime import time
 from pathlib import Path
 from typing import Literal

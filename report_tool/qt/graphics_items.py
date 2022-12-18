@@ -1,10 +1,8 @@
 """ This module holds classes to custom pyqtgraph base graphics items"""
 
-from PyQt5 import QtCore
-from PyQt5 import QtWidgets
-
-import pyqtgraph as pg
 import numpy as np
+import pyqtgraph as pg
+from PyQt5 import QtCore, QtWidgets
 
 
 class CustomLinearRegion(pg.LinearRegionItem):

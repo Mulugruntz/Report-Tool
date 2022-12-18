@@ -1,27 +1,25 @@
 """Module to create custom QDialog"""
 
-from PyQt5 import QtCore
-from PyQt5 import QtGui, QtWidgets
-
 import json
 import random
-
 from copy import deepcopy
 
+from PyQt5 import QtCore, QtGui, QtWidgets
+
 from report_tool.qt.functions import (
-    read_credentials,
-    read_config,
-    write_credentials,
-    write_config,
-    read_ig_config,
     create_icons,
+    read_config,
+    read_credentials,
+    read_ig_config,
+    write_config,
+    write_credentials,
 )
 from report_tool.qt.widgets import (
+    CustomCloseButton,
     CustomComboBox,
     CustomLabel,
     CustomPushButton,
     CustomShortcutLineEdit,
-    CustomCloseButton,
 )
 from report_tool.utils.fs_utils import get_icon_path
 
