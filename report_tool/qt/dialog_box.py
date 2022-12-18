@@ -1031,7 +1031,7 @@ class ExportWindow(QtWidgets.QDialog):
         combobox_sep = QtWidgets.QComboBox()
 
         btn_dir_export = QtWidgets.QPushButton()
-        btn_close = QtWidgets.QPushButton("OK")
+        btn_ok = QtWidgets.QPushButton("OK")
 
         # add separator to comboboxbox
         for count, key in enumerate(dict_sep.keys()):
@@ -1045,7 +1045,7 @@ class ExportWindow(QtWidgets.QDialog):
 
         btn_dir_export.setIcon(file_ico)
         btn_dir_export.clicked.connect(self.set_export_path)
-        btn_close.clicked.connect(self.on_close)
+        btn_ok.clicked.connect(self.on_ok)
 
         # set previous configuration and connect signals
         index_sep = combobox_sep.findData(separator)
@@ -1071,10 +1071,9 @@ class ExportWindow(QtWidgets.QDialog):
         layout_export.addWidget(QtWidgets.QLabel("Select folder: "), 2, 0)
         layout_export.addWidget(btn_dir_export, 2, 1)
 
-        layout_export.addWidget(btn_close, 4, 0, 1, 2)
+        layout_export.addWidget(btn_ok, 4, 0, 1, 2)
 
         self.setLayout(layout_export)
-        self.exec_()
 
     def update_options(self, *args, **kwargs):
 
@@ -1087,7 +1086,7 @@ class ExportWindow(QtWidgets.QDialog):
         # separator or what_to_export has changed
         if type(self.sender()) == QtWidgets.QComboBox:
             idx_data = self.sender().currentIndex()
-            data = str(self.sender().itemData(idx_data).toString())
+            data = str(self.sender().itemData(idx_data))
 
         config[key] = data  # FIXME
 
@@ -1112,11 +1111,10 @@ class ExportWindow(QtWidgets.QDialog):
 
         write_config(config)
 
-    def on_close(self, *args, **kwargs):
+    def on_ok(self, *args, **kwargs):
 
         """Close window and export data (see classMainWindow)"""
-
-        self.close()
+        self.accept()
 
 
 class AboutWindow(QtWidgets.QDialog):

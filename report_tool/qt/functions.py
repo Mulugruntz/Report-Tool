@@ -170,7 +170,7 @@ def write_comments(comments):
         json.dump(comments, f, cls=RoundTripEncoder)  # write dict (default or not)
 
 
-def read_config(*args, **kwargs):
+def read_config() -> dict:
 
     """
     Simple function to read config file and manages moslty

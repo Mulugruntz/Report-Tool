@@ -78,6 +78,8 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
         super(ReportToolGUI, self).__init__()
 
+        self.data_exporter: ExportToExcel | None = None
+
         config = read_config()
 
         # load size and state of window
@@ -932,7 +934,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
                 # init dict that will hold results received
                 self.local_transactions = OrderedDict()
                 self.filtered_dict = OrderedDict()
-                self.export_data = ExportToExcel()
 
                 self.set_gui_enabled(True)  # enable interactions
                 self.update_options(None)
@@ -1624,7 +1625,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         }
 
         # update data to export
-        self.export_data._set_data_to_export(data_to_save)
+        self.data_exporter = ExportToExcel(data_to_save)
 
         # hide capital info if user choose to
         if (
@@ -2679,16 +2680,17 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             os.makedirs("Export")
 
         export_diag = ExportWindow(self)
+        result = export_diag.exec()
 
-        try:
-            self.export_data.organize_data(self.widget_pos)
-            self.export_data.save_txt()
-            self.statusBar().showMessage("Data successfully exported")
+        if result == 1:
+            try:
+                self.data_exporter.export(self.widget_pos)
+                self.statusBar().showMessage("Data successfully exported")
 
-        except Exception as e:
-            msg = "An error occured, see log file"
-            self.statusBar().showMessage(msg)
-            self.logger_debug.log(logging.ERROR, traceback.format_exc())
+            except Exception as e:
+                msg = "An error occured, see log file"
+                self.statusBar().showMessage(msg)
+                self.logger_debug.log(logging.ERROR, traceback.format_exc())
 
         state_details = config["what_to_show"]["state_details"]
 

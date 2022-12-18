@@ -2,6 +2,7 @@ import json
 from datetime import datetime, date, time
 from decimal import Decimal
 import logging
+from pathlib import PosixPath, Path
 from typing import Any, TypedDict, Mapping, TypeVar, Callable
 
 DATE_FORMAT = "%Y-%m-%d"
@@ -21,6 +22,11 @@ class EncodedValue(TypedDict):
 
 class RoundTripEncoder(json.JSONEncoder):
     def default(self, obj: Any) -> EncodedValue:
+        if isinstance(obj, PosixPath):
+            return {
+                "_type": "path",
+                "value": str(obj),
+            }
         if isinstance(obj, datetime):
             return {
                 "_type": "datetime.datetime",
@@ -72,7 +78,9 @@ class RoundTripDecoder(json.JSONDecoder):
         )
 
     @staticmethod
-    def object_hook(obj: InputT) -> InputT | datetime | date | time | Decimal | None:
+    def object_hook(
+        obj: InputT,
+    ) -> InputT | datetime | date | time | Decimal | Path | None:
         if "_type" not in obj:
             return obj
         type_ = obj["_type"]
@@ -84,6 +92,8 @@ class RoundTripDecoder(json.JSONDecoder):
             return datetime.strptime(obj["value"], TIME_FORMAT).time()
         if type_ == "decimal.Decimal":
             return Decimal(obj["value"])
+        if type_ == "path":
+            return Path(obj["value"])
         logger.warning(f"Unknown type for Json Decoded: {type_}.")
         return obj
 
