@@ -8,10 +8,8 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 from report_tool.qt.functions import (
     create_icons,
-    read_config,
     read_credentials,
     read_ig_config,
-    write_config,
     write_credentials,
 )
 from report_tool.qt.widgets import (
@@ -22,6 +20,7 @@ from report_tool.qt.widgets import (
     CustomShortcutLineEdit,
 )
 from report_tool.utils.fs_utils import get_icon_path
+from report_tool.utils.settings import read_config, write_config
 
 
 class ConnectWindow(QtWidgets.QDialog):
@@ -911,7 +910,7 @@ class OptionsWindow(QtWidgets.QDialog):
         # style modified
         elif type(self.sender()) == QtWidgets.QComboBox:
             idx_data = self.sender().currentIndex()
-            data = self.sender().itemData(idx_data).toString()
+            data = self.sender().itemData(idx_data)
             which_data = str(self.sender().objectName())
 
             if "_style" in which_data:  # sender concerns ec style

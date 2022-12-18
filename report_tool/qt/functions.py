@@ -1,22 +1,17 @@
 """Module for holding simple functions"""
 import base64
-import copy
 import json
 import logging
 import logging.config
 import math
 import re
-from decimal import Decimal
 
 from PyQt5 import QtCore, QtGui
 
 from report_tool.utils.constants import (
     get_comments_file,
-    get_config_file,
     get_credentials_file,
-    get_export_dir,
     get_root_project_dir,
-    get_screenshots_dir,
 )
 from report_tool.utils.json_utils import RoundTripDecoder, RoundTripEncoder
 
@@ -165,136 +160,6 @@ def write_comments(comments):
 
     with comment_path.open("w") as f:
         json.dump(comments, f, cls=RoundTripEncoder)  # write dict (default or not)
-
-
-def read_config() -> dict:
-
-    """
-    Simple function to read config file and manages moslty
-    common errors. In case of errors returns a default dict
-    I may used QSettings instead of custom config file
-    """
-    # TODO: call read_config less often!
-
-    default_dict = {
-        "ec_size": 3,
-        "ec_style": "Solid",
-        "ec_color": "#000000",
-        "dd_size": 11,
-        "maxdd_style": "o",
-        "maxdd_color": "#ff0000",
-        "high_style": "o",
-        "high_color": "#00ff00",
-        "depth_style": "o",
-        "depth_color": "#ffaa00",
-        "profit_color": "#32CD32",
-        "flat_color": "#000000",
-        "loss_color": "#E62309",
-        "currency_symbol": "\u20ac",
-        "what_to_print": "All window",
-        "result_in": "Points",
-        "last_usr": "",
-        "dir_out": get_screenshots_dir(),
-        "shortcut": "Enter shorcut",
-        "start_capital": 0,
-        "auto_calculate": 2,
-        "what_to_show": {
-            "state_infos": "Only for screenshot",
-            "state_size": "Only for screenshot",
-            "state_details": 0,
-            "state_dates": 0,
-            "high": 2,
-            "depth": 2,
-            "maxdd": 2,
-        },
-        "include": 2,
-        "all": 2,
-        "auto_connect": 0,
-        "aggregate": 0,
-        "gui_state": QtCore.QByteArray(b""),
-        "gui_size": (800, 600),
-        "gui_pos": (0, 0),
-        "dir_export": get_export_dir(),
-        "what_to_export": "All",
-        "separator": ";",
-    }
-
-    config = {}
-    config_path = get_config_file()
-
-    with config_path.open("r") as f:
-
-        try:
-            data_read = json.load(f, cls=RoundTripDecoder)
-
-            for key in default_dict.keys():
-
-                if key == "start_capital":
-
-                    start_capital = data_read["start_capital"]
-
-                    # no capital set
-                    if start_capital == "":
-                        start_capital = 0
-                    else:
-                        start_capital = Decimal(data_read["start_capital"])
-
-                    config["start_capital"] = start_capital
-
-                # no dir for screenchots saved
-                elif key == "dir_out":
-
-                    dir_out = data_read["dir_out"]
-
-                    if dir_out == "":
-                        dir_out = default_dict["dir_out"]
-                    else:
-                        dir_out = data_read["dir_out"]
-
-                    config["dir_out"] = dir_out
-
-                elif key == "dir_export":
-
-                    dir_export = data_read["dir_export"]
-
-                    if dir_export == "":
-                        dir_export = default_dict["dir_export"]
-                    else:
-                        dir_export = data_read["dir_export"]
-
-                    config["dir_export"] = dir_export
-                elif key == "gui_state":
-                    config["gui_state"] = QtCore.QByteArray.fromBase64(
-                        data_read["gui_state"].encode()
-                    )
-                else:
-                    config[key] = data_read[key]
-
-        except Exception as e:
-            msg = "Error while loading configuration, use default one"
-            logger_debug.log(logging.ERROR, msg)
-
-            for key in default_dict:
-                config[key] = default_dict[key]
-            write_config(config)
-
-    return config
-
-
-def write_config(config):
-
-    """
-    Write config file
-
-    :param: config: dict of config to save
-    """
-
-    config_file = get_config_file()
-    out_config = copy.deepcopy(config)
-    out_config["gui_state"] = out_config["gui_state"].toBase64().data().decode()
-    with config_file.open("w") as f:
-        # write dict (default or not)
-        json.dump(out_config, f, cls=RoundTripEncoder, indent=4)
 
 
 def create_dates_list(state_dates, dates_string, key, start_capital):

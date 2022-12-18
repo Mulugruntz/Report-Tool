@@ -35,15 +35,14 @@ from report_tool.qt.functions import (
     create_dates_list,
     create_graph_args,
     create_status_icons,
-    read_config,
     read_credentials,
     read_ig_config,
-    write_config,
 )
 from report_tool.qt.ls_event import LsEvent
 from report_tool.qt.thread import TransactionThread, UpdateCommentsThread
 from report_tool.qt.widgets import CustomDockWidget, CustomLabel, CustomLineEdit
 from report_tool.utils.fs_utils import get_icon_path
+from report_tool.utils.settings import read_config, write_config
 
 RE_TEXT_BETWEEN_TAGS = re.compile(r">(.*?)<")
 RE_FLOAT = re.compile(r"[+-]? *(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?")

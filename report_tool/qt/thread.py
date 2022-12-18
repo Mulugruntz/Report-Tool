@@ -12,10 +12,10 @@ from report_tool.communications.ig_rest_api import APIError
 from report_tool.qt.functions import (
     format_market_name,
     read_comment,
-    read_config,
     read_ig_config,
     write_comments,
 )
+from report_tool.utils.settings import read_config
 
 RE_FLOAT = re.compile(r"[+-]? *(?:\d+(?:\.|,\d*)?\.*\d+)(?:[eE][+-]?\d+)?")
 RE_DATE = re.compile(r"/(.*?)$")

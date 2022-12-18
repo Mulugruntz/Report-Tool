@@ -5,6 +5,8 @@ from decimal import Decimal
 from pathlib import Path, PosixPath
 from typing import Any, Callable, Mapping, TypedDict, TypeVar
 
+from PyQt5.QtCore import QByteArray
+
 DATE_FORMAT = "%Y-%m-%d"
 TIME_FORMAT = "%H:%M:%S.%f"
 DATETIME_FORMAT = f"{DATE_FORMAT} {TIME_FORMAT}"
@@ -46,6 +48,11 @@ class RoundTripEncoder(json.JSONEncoder):
             return {
                 "_type": "decimal.Decimal",
                 "value": str(obj),
+            }
+        if isinstance(obj, QByteArray):
+            return {
+                "_type": "PyQt5.QtCore.QByteArray",
+                "value": obj.toBase64().data().decode(),
             }
         raise TypeError(
             f"Object of type {obj.__class__.__name__} " f"is not JSON serializable"
@@ -94,6 +101,8 @@ class RoundTripDecoder(json.JSONDecoder):
             return Decimal(obj["value"])
         if type_ == "path":
             return Path(obj["value"])
+        if type_ == "PyQt5.QtCore.QByteArray":
+            return QByteArray.fromBase64(obj["value"].encode())
         logger.warning(f"Unknown type for Json Decoded: {type_}.")
         return obj
 

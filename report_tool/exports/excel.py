@@ -15,8 +15,8 @@ from report_tool.exports.formats import (
     ExportableTransaction,
     Transaction,
 )
-from report_tool.qt.functions import read_config
 from report_tool.utils.constants import get_export_dir
+from report_tool.utils.settings import read_config
 
 RE_TEXT_BETWEEN_TAGS: Final[re.Pattern[str]] = re.compile(r">(.*?)<")
 

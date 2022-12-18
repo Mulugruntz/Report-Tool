@@ -7,7 +7,7 @@ from copy import deepcopy
 
 import requests
 
-from report_tool.qt.functions import read_config, write_config
+from report_tool.utils.settings import read_config, write_config
 
 
 class APIError(Exception):

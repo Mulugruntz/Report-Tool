@@ -4,7 +4,8 @@ from typing import Dict, List, Tuple
 
 import numpy as np
 
-from report_tool.qt.functions import read_config, read_ig_config
+from report_tool.qt.functions import read_ig_config
+from report_tool.utils.settings import read_config
 
 
 # TODO: is it needed to subclass dict? Especially for one huge method!
