@@ -210,7 +210,7 @@ def read_config() -> dict:
         "include": 2,
         "all": 2,
         "auto_connect": 0,
-        "agregate": 0,
+        "aggregate": 0,
         "gui_state": QtCore.QByteArray(b""),
         "gui_size": (800, 600),
         "gui_pos": (0, 0),

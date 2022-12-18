@@ -129,7 +129,7 @@ class TransactionThread(QtCore.QThread):
         start_capital = Decimal(config["start_capital"])
         symbol = config["currency_symbol"]
         auto_calculate = config["auto_calculate"]
-        agregate = config["agregate"]
+        aggregate = config["aggregate"]
         capital = start_capital
 
         ig_config = read_ig_config()
@@ -223,8 +223,8 @@ class TransactionThread(QtCore.QThread):
                         open_level, close_level, size, direction, market_name
                     )
 
-                    # if agregate cumulate size, points, pnl
-                    if agregate == 2:  # FIXME: Nani???
+                    # if aggregate cumulate size, points, pnl
+                    if aggregate == 2:  # FIXME: Nani???
                         total_points += points
                         total_pnl += pnl
                         total_size += size
@@ -346,13 +346,13 @@ class TransactionThread(QtCore.QThread):
                 ]
 
                 """
-                if not agregate, for each transactions add a index
+                if not aggregate, for each transactions add a index
                 of transaction to the deal_ref this is done to simulate
                 a different key. Therefore the results dict will contains
                 a key for each transaction even if it concerns the same trade.
                 """
 
-                if agregate != 2:
+                if aggregate != 2:
                     deal_ref_nb = deal_ref + "_" + str(count)
                     result_dict.setdefault(deal_ref_nb, {})
 

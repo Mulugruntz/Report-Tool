@@ -394,7 +394,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         -->combobox to choose "units" of result (point, %, €...)
         -->line edit to manually enter start capital,
         -->checkbox to auto calculated or not capital,
-        -->checkbox to agregate or not positions,
+        -->checkbox to aggregate or not positions,
         -->checkbox to include or not interest/fees,
         -->custom clickable label to set a filter
         """
@@ -408,7 +408,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         auto_calculate = config["auto_calculate"]
         result_in = config["result_in"]
         include = config["include"]
-        agregate = config["agregate"]
+        aggregate = config["aggregate"]
 
         # init widgets and layout for dates
         dock_options = QtWidgets.QDockWidget("Report options")
@@ -459,7 +459,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         self.combobox_options = QtWidgets.QComboBox()
         self.checkbox_auto = QtWidgets.QCheckBox()
         self.checkbox_include = QtWidgets.QCheckBox()
-        self.checkbox_agregate = QtWidgets.QCheckBox()
+        self.checkbox_aggregate = QtWidgets.QCheckBox()
 
         list_options = ["Points", "Points/lot", currency_symbol, "%"]
         option_idx = list_options.index(result_in)
@@ -476,7 +476,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
         self.checkbox_auto.setCheckState(auto_calculate)
         self.checkbox_include.setCheckState(include)
-        self.checkbox_agregate.setCheckState(agregate)
+        self.checkbox_aggregate.setCheckState(aggregate)
 
         """
         create a mapper to identify sender when option
@@ -488,13 +488,13 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         # set object name to identify checkbox
         self.checkbox_auto.setObjectName("auto_calculate")
         self.checkbox_include.setObjectName("include")
-        self.checkbox_agregate.setObjectName("agregate")
+        self.checkbox_aggregate.setObjectName("aggregate")
 
         self.checkbox_auto.stateChanged.connect(self.options_mapper.map)
         self.options_mapper.setMapping(self.checkbox_auto, "auto_calculate")
 
-        self.checkbox_agregate.stateChanged.connect(self.options_mapper.map)
-        self.options_mapper.setMapping(self.checkbox_agregate, "agregate")
+        self.checkbox_aggregate.stateChanged.connect(self.options_mapper.map)
+        self.options_mapper.setMapping(self.checkbox_aggregate, "aggregate")
 
         self.checkbox_include.stateChanged.connect(self.options_mapper.map)
         self.options_mapper.setMapping(self.checkbox_include, "include")
@@ -520,7 +520,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         layout_options.addWidget(self.checkbox_include, 3, 1, QtCore.Qt.AlignLeft)
 
         layout_options.addWidget(LABEL_AGREGATE, 4, 0, QtCore.Qt.AlignLeft)
-        layout_options.addWidget(self.checkbox_agregate, 4, 1, QtCore.Qt.AlignLeft)
+        layout_options.addWidget(self.checkbox_aggregate, 4, 1, QtCore.Qt.AlignLeft)
 
         layout_options.addWidget(LABEL_FILTER, 5, 0, QtCore.Qt.AlignLeft)
         layout_options.addWidget(self.btn_filter, 5, 1, QtCore.Qt.AlignLeft)
@@ -563,7 +563,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         currency_symbol = config["currency_symbol"]
         result_in = config["result_in"]
         include = config["include"]
-        agregate = config["agregate"]
+        aggregate = config["aggregate"]
 
         dock_summary = QtWidgets.QDockWidget("Summary")
 
@@ -1166,7 +1166,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         auto_calculate = self.checkbox_auto.checkState()
         result_in = self.combobox_options.currentText()
         include = self.checkbox_include.checkState()
-        agregate = self.checkbox_agregate.checkState()
+        aggregate = self.checkbox_aggregate.checkState()
 
         currency_symbol = config["currency_symbol"]
         start_capital = config["start_capital"]
@@ -1177,7 +1177,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         config["auto_calculate"] = auto_calculate
         config["result_in"] = result_in
         config["include"] = include
-        config["agregate"] = agregate
+        config["aggregate"] = aggregate
 
         write_config(config)
 
@@ -1266,7 +1266,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         """
 
         if (
-            sender == "agregate"
+            sender == "aggregate"
             or sender == "auto_calculate"
             or sender == "include"
             or sender is None

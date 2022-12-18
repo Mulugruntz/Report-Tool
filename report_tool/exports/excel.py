@@ -235,7 +235,7 @@ class ExportToExcel:
     ) -> None:
         """Write a comment about the summary."""
         comment = self.make_comment_summary(
-            is_aggregated=config["agregate"] == 2,
+            is_aggregated=config["aggregate"] == 2,
             currency_symbol=config["currency_symbol"],
             is_included=config["include"],
             result_type=config["result_in"],
