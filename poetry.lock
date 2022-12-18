@@ -147,29 +147,29 @@ docs = ["furo (>=2022.9.29)", "proselint (>=0.13)", "sphinx (>=5.3)", "sphinx-au
 test = ["appdirs (==1.4.4)", "pytest (>=7.2)", "pytest-cov (>=4)", "pytest-mock (>=3.10)"]
 
 [[package]]
-name = "PyQt5"
-version = "5.15.7"
+name = "PyQt6"
+version = "6.4.0"
 description = "Python bindings for the Qt cross platform application toolkit"
 category = "main"
 optional = false
 python-versions = ">=3.7"
 
 [package.dependencies]
-PyQt5-Qt5 = ">=5.15.0"
-PyQt5-sip = ">=12.11,<13"
+PyQt6-Qt6 = ">=6.4.0"
+PyQt6-sip = ">=13.1.0"
 
 [[package]]
-name = "PyQt5-Qt5"
-version = "5.15.2"
-description = "The subset of a Qt installation needed by PyQt5."
+name = "PyQt6-Qt6"
+version = "6.4.1"
+description = "The subset of a Qt installation needed by PyQt6."
 category = "main"
 optional = false
 python-versions = "*"
 
 [[package]]
-name = "PyQt5-sip"
-version = "12.11.0"
-description = "The sip module support for PyQt5"
+name = "PyQt6-sip"
+version = "13.4.0"
+description = "The sip module support for PyQt6"
 category = "main"
 optional = false
 python-versions = ">=3.7"

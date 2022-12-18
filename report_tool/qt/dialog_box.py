@@ -1,7 +1,7 @@
 """Module to create custom QDialog"""
 
-from PyQt5 import QtCore
-from PyQt5 import QtGui, QtWidgets
+from PyQt6 import QtCore
+from PyQt6 import QtGui, QtWidgets
 
 import json
 import random

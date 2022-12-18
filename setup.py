@@ -69,14 +69,18 @@ bdist_msi_options = {
 }
 
 
-options = {"build_exe": {"includes": includes,
-                         "excludes": excludes,
-                         "include_files": includesfiles,
-                         "include_msvcr": True,
-                         "compressed": True,
-                         "copy_dependent_files": True,
-                         "create_shared_zip": True,
-                         "include_in_shared_zip": True,}}
+options = {
+    "build_exe": {
+        "includes": includes,
+        "excludes": excludes,
+        "include_files": includesfiles,
+        "include_msvcr": True,
+        "compressed": True,
+        "copy_dependent_files": True,
+        "create_shared_zip": True,
+        "include_in_shared_zip": True,
+    }
+}
 
 
 setup(

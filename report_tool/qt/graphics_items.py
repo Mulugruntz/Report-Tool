@@ -1,7 +1,7 @@
 """ This module holds classes to custom pyqtgraph base graphics items"""
 
-from PyQt5 import QtCore
-from PyQt5 import QtWidgets
+from PyQt6 import QtCore
+from PyQt6 import QtWidgets
 
 import pyqtgraph as pg
 import numpy as np

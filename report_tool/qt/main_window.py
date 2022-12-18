@@ -52,8 +52,8 @@ from report_tool.communications.ig_lightstreamer import (
     MODE_MERGE,
 )
 
-from PyQt5 import QtCore
-from PyQt5 import QtGui, QtWidgets
+from PyQt6 import QtCore
+from PyQt6 import QtGui, QtWidgets
 
 from report_tool.qt.thread import TransactionThread, UpdateCommentsThread
 from report_tool.utils.constants import get_icons_dir

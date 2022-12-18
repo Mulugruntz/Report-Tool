@@ -2,8 +2,8 @@
 import warnings
 from decimal import Decimal
 
-from PyQt5 import QtCore
-from PyQt5 import QtGui, QtWidgets
+from PyQt6 import QtCore
+from PyQt6 import QtGui, QtWidgets
 
 import re
 import datetime
