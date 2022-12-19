@@ -1,7 +1,7 @@
 from decimal import Decimal, DivisionByZero
 from typing import Text, List, Dict
 
-from PyQt5 import QtCore
+from PyQt6 import QtCore
 
 import re
 import time

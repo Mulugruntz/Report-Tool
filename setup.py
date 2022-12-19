@@ -18,10 +18,10 @@ base = None
 #       base = "Win32GUI"
 
 includes = [
-    "PyQt5.QtCore",
-    "PyQt5.QtGui",
-    "PyQt5.QtWidgets",
-    "PyQt5.QtNetwork",
+    "PyQt6.QtCore",
+    "PyQt6.QtGui",
+    "PyQt6.QtWidgets",
+    "PyQt6.QtNetwork",
     "atexit",  # TODO: QtNetwork?
     "re",
     "os",
@@ -68,22 +68,26 @@ bdist_msi_options = {
     "initial_target_dir": rf"[ProgramFilesFolder]\\{application_title}",
 }
 
-build_exe_options = {
-    "includes": includes,
-    "excludes": excludes,
-    "include_files": includesfiles,
-    "include_msvcr": True,
-    "compressed": True,
-    "copy_dependent_files": True,
-    "create_shared_zip": True,
-    "include_in_shared_zip": True,
+
+options = {
+    "build_exe": {
+        "includes": includes,
+        "excludes": excludes,
+        "include_files": includesfiles,
+        "include_msvcr": True,
+        "compressed": True,
+        "copy_dependent_files": True,
+        "create_shared_zip": True,
+        "include_in_shared_zip": True,
+    }
 }
+
 
 setup(
     name=application_title,
     version="2.2",
     description="Report Tool",
-    options={"build_exe": build_exe_options, "bdist_msi": bdist_msi_options},
+    options={"build_exe": options, "bdist_msi": bdist_msi_options},
     executables=[
         Executable(
             main_python_file,

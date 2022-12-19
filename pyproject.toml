@@ -12,7 +12,7 @@ packages = [
 [tool.poetry.dependencies]
 python = "^3.11"
 numpy = "^1.23.5"
-PyQt5 = "^5.15.7"
+PyQt6 = "^6.4.0"
 pyqtgraph = "^0.13.1"
 requests = "^2.28.1"
 

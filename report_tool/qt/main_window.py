@@ -52,8 +52,8 @@ from report_tool.communications.ig_lightstreamer import (
     MODE_MERGE,
 )
 
-from PyQt5 import QtCore
-from PyQt5 import QtGui, QtWidgets
+from PyQt6 import QtCore
+from PyQt6 import QtGui, QtWidgets
 
 from report_tool.qt.thread import TransactionThread, UpdateCommentsThread
 from report_tool.utils.constants import get_icons_dir
@@ -2655,7 +2655,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         elif self.dock_pos_details.isHidden() == False:
             self.dock_pos_details.hide()
 
-        self.diag_options.exec_()
+        self.diag_options.exec()
 
         config = read_config()
         state_details = config["what_to_show"]["state_details"]
@@ -2739,7 +2739,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             self.dock_pos_details.hide()
 
         about_window = AboutWindow(self)
-        about_window.exec_()
+        about_window.exec()
 
         config = read_config()
         state_details = config["what_to_show"]["state_details"]

@@ -1,6 +1,6 @@
 # !/usr/bin/env python3
 
-from PyQt5 import QtWidgets
+from PyQt6 import QtWidgets
 
 import os
 import sys

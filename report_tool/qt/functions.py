@@ -2,8 +2,8 @@
 import copy
 from decimal import Decimal
 
-from PyQt5 import QtCore
-from PyQt5 import QtGui
+from PyQt6 import QtCore
+from PyQt6 import QtGui
 
 import re
 import json
