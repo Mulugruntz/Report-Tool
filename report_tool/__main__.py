@@ -1,4 +1,4 @@
-# !/usr/bin/env python3
+"""Main file."""
 
 import os
 import sys
@@ -15,16 +15,14 @@ if getattr(sys, "frozen", False):
     os.environ["REQUESTS_CA_BUNDLE"] = str(ROOT / "cacert.pem")
 
 
-def main():
-    # lancement de l'app
+def main() -> None:
     app = QtWidgets.QApplication(sys.argv)
     app.setApplicationName("Report Tool")
 
     fileConfig(ROOT / "logging.ini")
 
-    # app.setStyle(QtWidgets.QStyleFactory.create('Cleanlooks'))
     gui = ReportToolGUI("Report Tool")
-    # gui.show()
+    gui.show()
 
     sys.exit(app.exec())
 

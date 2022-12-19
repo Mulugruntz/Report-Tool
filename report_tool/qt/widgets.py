@@ -46,29 +46,6 @@ class CustomPushButton(QtWidgets.QPushButton):
         )
 
 
-class CustomCloseButton(QtWidgets.QPushButton):
-
-    """
-    Class to create a custom pushbutton. Used only in aboutWindow.
-    It reimplement the enterEvent, so when the user wants
-    to click on it, move the window (easter egg)
-    """
-
-    enter_signal = QtCore.pyqtSignal(object, int)  # signal emited when enter event
-
-    def __init__(self, *args, **kwargs):
-
-        QtWidgets.QPushButton.__init__(self, *args, **kwargs)
-        self.entry_nb = 0
-
-    def enterEvent(self, event):
-
-        """Reimplement enterEvent and count numbers of events"""
-
-        self.entry_nb += 1
-        self.enter_signal.emit(event, self.entry_nb)
-
-
 class CustomLineEdit(QtWidgets.QLineEdit):
 
     """

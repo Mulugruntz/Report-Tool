@@ -94,8 +94,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         self.resize(size)
         self.move(pos_point)
 
-        self.show()
-
         # init loggers
         self.logger_debug = logging.getLogger("ReportTool_debug.IGAPI")
         self.logger_info = logging.getLogger("ReportTool_info.IGAPI")
@@ -129,7 +127,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         self.menu_switch = QtWidgets.QMenu("Switch account")
         self.menu_connect = self.menuBar().addMenu("Connect")
         self.menu_options = self.menuBar().addMenu("&Options")
-        self.menu_about = self.menuBar().addMenu("&About")
+        self.menu_help = self.menuBar().addMenu("&Help")
 
         # create actions
         self.act_connect = QtWidgets.QAction(icon_connect, "Connect", self)
@@ -143,7 +141,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
         self.act_about = QtWidgets.QAction(icon_infos, "About", self)
         self.act_about.triggered.connect(self.show_about)
-        self.act_about.setEnabled(False)
+        self.act_about.setEnabled(True)
         self.act_about.setCheckable(False)
 
         self.act_options = QtWidgets.QAction(icon_options, "Options", self)
@@ -164,7 +162,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
         # configure menus
         self.menu_options.addAction(self.act_options)
-        self.menu_about.addAction(self.act_about)
+        self.menu_help.addAction(self.act_about)
         self.menu_switch.setIcon(icon_switch)
         self.menu_switch.setEnabled(False)
 
@@ -2717,12 +2715,12 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
     def show_about(self):
 
-        """Show an about window. Close event is connected to an easter egg"""
+        """Show an "About" window."""
 
-        if self.dock_pos_details.isFloating() == False:
+        if not self.dock_pos_details.isFloating():
             pass
 
-        elif self.dock_pos_details.isHidden() == False:
+        elif not self.dock_pos_details.isHidden():
             self.dock_pos_details.hide()
 
         about_window = AboutWindow(self)
@@ -2731,7 +2729,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         config = read_config()
         state_details = config["what_to_show"]["state_details"]
 
-        if self.dock_pos_details.isHidden() == True and state_details == 2:
+        if self.dock_pos_details.isHidden() and state_details == 2:
             self.dock_pos_details.show()
 
     def take_screenshot(self):
@@ -2913,7 +2911,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
         self.act_options.setEnabled(state)
         self.act_disconnect.setEnabled(state)
-        self.act_about.setEnabled(state)
 
         self.btn_screenshot.setEnabled(state)
         self.btn_refresh.setEnabled(state)

@@ -1,7 +1,6 @@
 """Module to create custom QDialog"""
 
 import json
-import random
 from copy import deepcopy
 
 from PyQt5 import QtCore, QtGui, QtWidgets
@@ -13,7 +12,6 @@ from report_tool.qt.functions import (
     write_credentials,
 )
 from report_tool.qt.widgets import (
-    CustomCloseButton,
     CustomComboBox,
     CustomLabel,
     CustomPushButton,
@@ -21,6 +19,7 @@ from report_tool.qt.widgets import (
 )
 from report_tool.utils.fs_utils import get_icon_path
 from report_tool.utils.settings import read_config, write_config
+from report_tool import __version__
 
 
 class ConnectWindow(QtWidgets.QDialog):
@@ -1125,97 +1124,62 @@ class AboutWindow(QtWidgets.QDialog):
 
         super(AboutWindow, self).__init__(parent=parent)
 
-        self.setWindowTitle("Ouiche lorraine")
+        self.setWindowTitle("About Report Tool")
         self.setModal(True)
 
         self._initial_pos = None
 
         self.setWindowIcon(QtGui.QIcon(str(get_icon_path("main"))))
 
-        layout = QtWidgets.QGridLayout()
-
         # labels for basics infos
-        pixmap = QtGui.QPixmap(str(get_icon_path("georges")))
+        github_link = "https://github.com/Mulugruntz/Report-Tool"
 
-        label_dev = QtWidgets.QLabel("Developed by Benoit Soudan")
-        label_contact = QtWidgets.QLabel("benoit.soudan@gmail.com")
-        label_version = QtWidgets.QLabel("Version 2.2" + "\n" + "Andlil 2016")
-        label_dev.setAlignment(QtCore.Qt.AlignCenter)
-
-        label_contact.setToolTip("Si tu veux me parler envoie moi un fax !")
-        label_contact.setAlignment(QtCore.Qt.AlignCenter)
-        label_version.setAlignment(QtCore.Qt.AlignCenter)
-
-        self.stupid_label = QtWidgets.QLabel()
-        self.stupid_label.setPixmap(pixmap)
-        self.stupid_label.setAlignment(QtCore.Qt.AlignCenter)
-
-        self.ok_btn = CustomCloseButton("Rosebud !")
-        self.ok_btn.setToolTip("Don't do it ! You can break the internet")
-        self.ok_btn.setMaximumWidth(200)
-        self.ok_btn.clicked.connect(self.close)
-        self.ok_btn.enter_signal.connect(self.move_window)
+        label_contact = QtWidgets.QLabel(f"<a href='{github_link}'>{github_link}</a>")
+        label_contact.setOpenExternalLinks(True)
+        label_contact.setTextInteractionFlags(QtCore.Qt.TextBrowserInteraction)
 
         # place labels
-        layout.addWidget(label_dev, 0, 0)
-        layout.addWidget(label_contact, 1, 0)
-        layout.addWidget(label_version, 2, 0)
-        layout.addWidget(self.stupid_label, 3, 0)
-        layout.addWidget(self.ok_btn, 4, 0, alignment=QtCore.Qt.AlignCenter)
+        layout = QtWidgets.QGridLayout()
+        lines = [
+            QtWidgets.QLabel(f"<b>Report Tool {__version__}</b>"),
+            QtWidgets.QLabel(),
+            QtWidgets.QLabel("Developed by Benoit Soudan until 2.2."),
+            self._get_label_github(),
+            self._get_image_about(),
+        ]
+
+        for count, line in enumerate(lines):
+            layout.addWidget(line, count, 0)
+
+        layout.addWidget(self._get_close_button(), layout.rowCount(), 0, alignment=QtCore.Qt.AlignCenter)
 
         self.setLayout(layout)
         self._initial_pos = self.pos()
 
-    def move_window(self, event, nb_entry):
+    @staticmethod
+    def _get_label_github() -> QtWidgets.QLabel:
+        github_link = "https://github.com/Mulugruntz/Report-Tool"
 
-        """
-        Called when mouse enters the close button. Move the
-        window randomly to avoid user to click the close button
+        label = QtWidgets.QLabel(f"<a href='{github_link}'>{github_link}</a>")
+        label.setOpenExternalLinks(True)
+        label.setTextInteractionFlags(QtCore.Qt.TextBrowserInteraction)
 
-        :param nb_entry: int, numbers of moue has entered close buttons
-                         See classCustomWidgets.CustomCloseButton
-        """
+        return label
 
-        # close button geometry
-        ok_btn_height = self.ok_btn.height()
-        ok_btn_width = self.ok_btn.width()
+    @staticmethod
+    def _get_image_about() -> QtWidgets.QLabel:
+        label = QtWidgets.QLabel()
+        label.setPixmap(QtGui.QPixmap(str(get_icon_path("georges"))))
+        label.setAlignment(QtCore.Qt.AlignCenter)
 
-        window_center = self.mapToGlobal(
-            QtCore.QPoint(self.rect().x() // 2, self.rect().y() // 2)
-        )
+        return label
 
-        # calc new positon randomly
-        random_x_shift = random.randint(-ok_btn_width * 2, ok_btn_width * 2)
-        random_y_shift = random.randint(-ok_btn_height * 2, ok_btn_height)
+    def _get_close_button(self) -> QtWidgets.QPushButton:
+        button = QtWidgets.QPushButton("Close")
+        button.setMaximumWidth(200)
+        button.clicked.connect(self.close)
 
-        # constructs a random position
-        if nb_entry % 2 == 0:
-            new_pos = QtCore.QPoint(
-                window_center.x() + random_x_shift, window_center.y() + random_y_shift
-            )
-        else:
-            new_pos = QtCore.QPoint(
-                window_center.x() - random_x_shift, window_center.y() + random_y_shift
-            )
-
-        if nb_entry == 1:
-            initial_pos = self.mapToGlobal(
-                QtCore.QPoint(self.rect().x(), self.rect().y())
-            )
-            self._set_initial_pos(initial_pos)  # save initial position
-
-            # stupid gif
-            gif = QtGui.QMovie(str(get_icon_path("cat", ext="gif")))
-            gif.start()
-            self.stupid_label.setMovie(gif)
-
-        if nb_entry < 10:  # move window while attempt to close is <10
-            self.move(new_pos)
-        elif nb_entry == 10:  # stop being stupid
-            initial_pos = self._get_initial_pos()
-            self.move(initial_pos)
-        else:
-            pass
+        return button
 
     def _get_initial_pos(self):
 
