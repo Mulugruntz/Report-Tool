@@ -1,63 +1,48 @@
-import re
-import os
 import datetime
 import json
-
 import logging
-import traceback
-
+import os
 import queue as queue
+import re
+import traceback
 import warnings
+from collections import OrderedDict
+from copy import deepcopy
 from decimal import Decimal
 
 import numpy as np
 import pyqtgraph as pg
+from PyQt5 import QtCore, QtGui, QtWidgets
 
-from collections import OrderedDict
-from copy import deepcopy
-
-from report_tool.qt.dialog_box import (
-    ConnectWindow,
-    OptionsWindow,
-    FilterWindow,
-    AboutWindow,
-    ExportWindow,
-)
-from report_tool.qt.functions import (
-    read_config,
-    create_status_icons,
-    create_graph_args,
-    write_config,
-    create_dates_list,
-    read_ig_config,
-    read_credentials,
-)
-from report_tool.qt.widgets import (
-    CustomLabel,
-    CustomLineEdit,
-    CustomDockWidget,
-)
-
-from report_tool.qt.equity_chart import EquityChart
-
-from report_tool.communications.ig_rest_api import IGAPI, APIError
-from report_tool.qt.ls_event import LsEvent
 from report_tool.calculate.trades import TradesResults
-from report_tool.exports.excel import ExportToExcel
-
 from report_tool.communications.ig_lightstreamer import (
-    LsClient,
-    Table,
     MODE_DISTINCT,
     MODE_MERGE,
+    LsClient,
+    Table,
 )
-
-from PyQt5 import QtCore
-from PyQt5 import QtGui, QtWidgets
-
+from report_tool.communications.ig_rest_api import IGAPI, APIError
+from report_tool.exports.excel import ExportToExcel
+from report_tool.qt.dialog_box import (
+    AboutWindow,
+    ConnectWindow,
+    ExportWindow,
+    FilterWindow,
+    OptionsWindow,
+)
+from report_tool.qt.equity_chart import EquityChart
+from report_tool.qt.functions import (
+    create_dates_list,
+    create_graph_args,
+    create_status_icons,
+    read_credentials,
+    read_ig_config,
+)
+from report_tool.qt.ls_event import LsEvent
 from report_tool.qt.thread import TransactionThread, UpdateCommentsThread
-from report_tool.utils.constants import get_icons_dir
+from report_tool.qt.widgets import CustomDockWidget, CustomLabel, CustomLineEdit
 from report_tool.utils.fs_utils import get_icon_path
+from report_tool.utils.settings import read_config, write_config
 
 RE_TEXT_BETWEEN_TAGS = re.compile(r">(.*?)<")
 RE_FLOAT = re.compile(r"[+-]? *(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?")
@@ -77,6 +62,8 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         """Init UI"""
 
         super(ReportToolGUI, self).__init__()
+
+        self.data_exporter: ExportToExcel | None = None
 
         config = read_config()
 
@@ -406,7 +393,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         -->combobox to choose "units" of result (point, %, €...)
         -->line edit to manually enter start capital,
         -->checkbox to auto calculated or not capital,
-        -->checkbox to agregate or not positions,
+        -->checkbox to aggregate or not positions,
         -->checkbox to include or not interest/fees,
         -->custom clickable label to set a filter
         """
@@ -420,7 +407,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         auto_calculate = config["auto_calculate"]
         result_in = config["result_in"]
         include = config["include"]
-        agregate = config["agregate"]
+        aggregate = config["aggregate"]
 
         # init widgets and layout for dates
         dock_options = QtWidgets.QDockWidget("Report options")
@@ -471,7 +458,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         self.combobox_options = QtWidgets.QComboBox()
         self.checkbox_auto = QtWidgets.QCheckBox()
         self.checkbox_include = QtWidgets.QCheckBox()
-        self.checkbox_agregate = QtWidgets.QCheckBox()
+        self.checkbox_aggregate = QtWidgets.QCheckBox()
 
         list_options = ["Points", "Points/lot", currency_symbol, "%"]
         option_idx = list_options.index(result_in)
@@ -488,7 +475,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
         self.checkbox_auto.setCheckState(auto_calculate)
         self.checkbox_include.setCheckState(include)
-        self.checkbox_agregate.setCheckState(agregate)
+        self.checkbox_aggregate.setCheckState(aggregate)
 
         """
         create a mapper to identify sender when option
@@ -500,13 +487,13 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         # set object name to identify checkbox
         self.checkbox_auto.setObjectName("auto_calculate")
         self.checkbox_include.setObjectName("include")
-        self.checkbox_agregate.setObjectName("agregate")
+        self.checkbox_aggregate.setObjectName("aggregate")
 
         self.checkbox_auto.stateChanged.connect(self.options_mapper.map)
         self.options_mapper.setMapping(self.checkbox_auto, "auto_calculate")
 
-        self.checkbox_agregate.stateChanged.connect(self.options_mapper.map)
-        self.options_mapper.setMapping(self.checkbox_agregate, "agregate")
+        self.checkbox_aggregate.stateChanged.connect(self.options_mapper.map)
+        self.options_mapper.setMapping(self.checkbox_aggregate, "aggregate")
 
         self.checkbox_include.stateChanged.connect(self.options_mapper.map)
         self.options_mapper.setMapping(self.checkbox_include, "include")
@@ -532,7 +519,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         layout_options.addWidget(self.checkbox_include, 3, 1, QtCore.Qt.AlignLeft)
 
         layout_options.addWidget(LABEL_AGREGATE, 4, 0, QtCore.Qt.AlignLeft)
-        layout_options.addWidget(self.checkbox_agregate, 4, 1, QtCore.Qt.AlignLeft)
+        layout_options.addWidget(self.checkbox_aggregate, 4, 1, QtCore.Qt.AlignLeft)
 
         layout_options.addWidget(LABEL_FILTER, 5, 0, QtCore.Qt.AlignLeft)
         layout_options.addWidget(self.btn_filter, 5, 1, QtCore.Qt.AlignLeft)
@@ -575,7 +562,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         currency_symbol = config["currency_symbol"]
         result_in = config["result_in"]
         include = config["include"]
-        agregate = config["agregate"]
+        aggregate = config["aggregate"]
 
         dock_summary = QtWidgets.QDockWidget("Summary")
 
@@ -932,7 +919,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
                 # init dict that will hold results received
                 self.local_transactions = OrderedDict()
                 self.filtered_dict = OrderedDict()
-                self.export_data = ExportToExcel()
 
                 self.set_gui_enabled(True)  # enable interactions
                 self.update_options(None)
@@ -1179,7 +1165,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         auto_calculate = self.checkbox_auto.checkState()
         result_in = self.combobox_options.currentText()
         include = self.checkbox_include.checkState()
-        agregate = self.checkbox_agregate.checkState()
+        aggregate = self.checkbox_aggregate.checkState()
 
         currency_symbol = config["currency_symbol"]
         start_capital = config["start_capital"]
@@ -1190,7 +1176,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         config["auto_calculate"] = auto_calculate
         config["result_in"] = result_in
         config["include"] = include
-        config["agregate"] = agregate
+        config["aggregate"] = aggregate
 
         write_config(config)
 
@@ -1279,7 +1265,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         """
 
         if (
-            sender == "agregate"
+            sender == "aggregate"
             or sender == "auto_calculate"
             or sender == "include"
             or sender is None
@@ -1624,7 +1610,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         }
 
         # update data to export
-        self.export_data._set_data_to_export(data_to_save)
+        self.data_exporter = ExportToExcel(data_to_save)
 
         # hide capital info if user choose to
         if (
@@ -2679,16 +2665,17 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             os.makedirs("Export")
 
         export_diag = ExportWindow(self)
+        result = export_diag.exec()
 
-        try:
-            self.export_data.organize_data(self.widget_pos)
-            self.export_data.save_txt()
-            self.statusBar().showMessage("Data successfully exported")
+        if result == 1:
+            try:
+                self.data_exporter.export(self.widget_pos)
+                self.statusBar().showMessage("Data successfully exported")
 
-        except Exception as e:
-            msg = "An error occured, see log file"
-            self.statusBar().showMessage(msg)
-            self.logger_debug.log(logging.ERROR, traceback.format_exc())
+            except Exception as e:
+                msg = "An error occured, see log file"
+                self.statusBar().showMessage(msg)
+                self.logger_debug.log(logging.ERROR, traceback.format_exc())
 
         state_details = config["what_to_show"]["state_details"]
 

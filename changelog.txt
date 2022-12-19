@@ -55,7 +55,7 @@
 
 ####version 1.5####
 - Add possibility to auto-connect on startup,
-- Add possibility to agregate or not positions,
+- Add possibility to aggregate or not positions,
 - Add possibility to comment positions,
 - Add possibility to show dates on x axis,
 - Add an overview plot to select range to observe on main plot,

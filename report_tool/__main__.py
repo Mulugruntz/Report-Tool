@@ -1,11 +1,10 @@
 # !/usr/bin/env python3
 
-from PyQt5 import QtWidgets
-
 import os
 import sys
-
 from logging.config import fileConfig
+
+from PyQt5 import QtWidgets
 
 from report_tool.qt.main_window import ReportToolGUI
 from report_tool.utils.constants import get_root_project_dir

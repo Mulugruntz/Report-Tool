@@ -1,8 +1,8 @@
-from cx_Freeze import setup, Executable
-
 import shutil
 from pathlib import Path
+
 import certifi
+from cx_Freeze import Executable, setup
 
 # Remove the build folder
 shutil.rmtree(Path("build"), ignore_errors=True)

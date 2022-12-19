@@ -1,15 +1,13 @@
 """Module with classes to interact with IG Rest API"""
-import logging
-import requests
-
 import json
-
+import logging
 import traceback
-
 from collections import OrderedDict
 from copy import deepcopy
 
-from report_tool.qt.functions import read_config, write_config
+import requests
+
+from report_tool.utils.settings import read_config, write_config
 
 
 class APIError(Exception):

@@ -17,13 +17,15 @@
 """
 
 
-import queue
 import collections
 import logging
+import queue
 import socket
 import threading
 import time
-import urllib.request, urllib.parse, urllib.error
+import urllib.error
+import urllib.parse
+import urllib.request
 from typing import Generator
 
 import requests
