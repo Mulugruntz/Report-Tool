@@ -3,6 +3,7 @@
 from datetime import date, datetime, time
 from decimal import Decimal
 from enum import StrEnum
+from json import JSONDecodeError
 from pathlib import Path
 from typing import Any, Literal
 
@@ -140,7 +141,10 @@ class Settings(BaseModel):
 
 def read_config() -> dict[str, Any]:
     """Read the config file."""
-    return Settings.parse_file(get_config_file()).dict()
+    try:
+        return Settings.parse_file(get_config_file()).dict()
+    except (JSONDecodeError, FileNotFoundError):
+        return Settings().dict()
 
 
 def write_config(config: dict[str, Any]) -> None:
