@@ -80,9 +80,9 @@ class Settings(BaseModel):
     depth_color: str = Field("#ffaa00", description="Drawdowns color")
 
     # ------------------ Transactions options ------------------
-    profit_color: str = "#32CD32"
-    flat_color: str = "#000000"
-    loss_color: str = "#E62309"
+    profit_color: str = Field("#32CD32", description="Profit color")
+    flat_color: str = Field("#000000", description="Flat color")
+    loss_color: str = Field("#E62309", description="Loss color")
 
     currency_symbol: str = "\u20ac"
     what_to_print: ScreenshotPrintOptions = Field(
