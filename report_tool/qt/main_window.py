@@ -2765,8 +2765,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         if not os.path.exists(base_dir_out):
             os.makedirs(base_dir_out)  # create dir if not exists
 
-        today = datetime.datetime.now().strftime("%d-%m-%Y %H:%M:%S")
-
         dock_widget_list = self.findChildren(QtWidgets.QDockWidget)  # get all qdock
         active_tab = self.widget_tab.currentIndex()
         active_tab_name = str(self.widget_tab.tabText(active_tab)).replace("&", "")
@@ -2835,24 +2833,24 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
         if what_to_print == "All window":
 
-            pixmap = QtGui.QPixmap().grabWidget(self)  # get pix map of all window
+            pixmap = QtWidgets.QWidget.grab(self)  # get pix map of all window
             pixmap_dict["Summary + " + active_tab_name + " "] = pixmap
 
-            pixmap = QtGui.QPixmap().grabWidget(self.widget_pos, self.widget_pos.rect())
+            pixmap = QtWidgets.QWidget.grab(self.widget_pos, self.widget_pos.rect())
 
             # the key will be used to construct file name
             pixmap_dict["Transactions "] = pixmap
 
             for key in self.graph_dict.keys():  # get pixmap of all graphs
                 graph = self.graph_dict[key]["equity_plot"]
-                pixmap_graph = QtGui.QPixmap().grabWidget(graph)
+                pixmap_graph = QtWidgets.QWidget.grab(graph)
 
                 # the key will be used to construct file name
                 pixmap_dict[key + " EC "] = pixmap_graph
 
         elif what_to_print == "Transactions":  # get pixmap of transactions table
 
-            pixmap = QtGui.QPixmap().grabWidget(self.widget_pos, self.widget_pos.rect())
+            pixmap = QtWidgets.QWidget.grab(self.widget_pos, self.widget_pos.rect())
 
             # the key will be used to construct file name
             pixmap_dict["Transactions "] = pixmap
@@ -2861,7 +2859,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
             for key in self.graph_dict.keys():  # take pixmap of all graph
                 graph = self.graph_dict[key]["equity_plot"]
-                pixmap_graph = QtGui.QPixmap().grabWidget(graph)
+                pixmap_graph = QtWidgets.QWidget.grab(graph)
 
                 # the key will be used to construct file name
                 pixmap_dict[key + " EC "] = pixmap_graph
@@ -2873,17 +2871,17 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             idx_dock_summary = dock_widget_names.index("Summary")
             dock_summary = dock_widget_list[idx_dock_summary]
 
-            pixmap = QtGui.QPixmap().grabWidget(dock_summary)
+            pixmap = QtWidgets.QWidget.grab(dock_summary)
 
             # the key will be used to construct file name
             pixmap_dict["Summary "] = pixmap
 
         # save the pixmap as a png file
-        cleaner_date = "(" + today.replace(":", "h") + ")"
+        now_for_human = datetime.datetime.now().strftime("(%d-%m-%Y %Hh%Mh%S)")
 
         for key in pixmap_dict.keys():
-            dir_out = base_dir_out + "/" + key + cleaner_date + ".png"
-            pixmap_dict[key].save(dir_out, "png")
+            file_out = str((base_dir_out / f"{key}{now_for_human}.png").absolute())
+            pixmap_dict[key].save(file_out, "png")
 
         # restore previous results
         if config["all"] == 0:
