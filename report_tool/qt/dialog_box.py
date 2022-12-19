@@ -113,7 +113,7 @@ class ConnectWindow(QtWidgets.QDialog):
         self.setLayout(layout_login)
         self.resize(300, 150)
         self.load_accounts()
-        self.exec_()
+        self.exec()
 
     def load_accounts(self):
 
@@ -446,7 +446,7 @@ class OptionsWindow(QtWidgets.QDialog):
 
         self.setLayout(layout_main)
         self.update_options()
-        # self.exec_()
+        # self.exec()
 
     def create_screenshot_options(self):
 
@@ -1074,7 +1074,7 @@ class ExportWindow(QtWidgets.QDialog):
         layout_export.addWidget(btn_close, 4, 0, 1, 2)
 
         self.setLayout(layout_export)
-        self.exec_()
+        self.exec()
 
     def update_options(self, *args, **kwargs):
 
@@ -1359,7 +1359,7 @@ class FilterWindow(QtWidgets.QDialog):
         layout_main.addWidget(scroll_area, 0, 0)
 
         self.setLayout(layout_main)
-        self.exec_()
+        self.exec()
 
     def selection_changed(self):
 
@@ -1427,4 +1427,4 @@ class FilterWindow(QtWidgets.QDialog):
 #     a=OptionsWindow(parent=None)
 # #   # a.build_window(dummy_result_dict, [])
 #     a.show()
-#     sys.exit(app.exec_())
+#     sys.exit(app.exec())
