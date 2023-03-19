@@ -71,7 +71,7 @@ build_exe_options = {
 
 setup(
     name=application_title,
-    version="3.0",
+    version="3.0.0-alpha1",
     description="Report Tool",
     options={"build_exe": build_exe_options, "bdist_msi": bdist_msi_options},
     executables=[
