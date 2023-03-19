@@ -152,6 +152,7 @@ class IGAPI(object):
 
         # request is successfull
         else:
+            self._req_args.pop("data")
             r_text = json.loads(r_connect.text)
             token = r_connect.headers["x-security-token"]
             cst = r_connect.headers["cst"]

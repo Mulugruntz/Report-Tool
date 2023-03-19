@@ -48,6 +48,13 @@ poetry run python -m report_tool
 
 * Have fun !
 
+## Building the msi installer
+
+```shell script
+cd Report-Tool
+poetry run setup.py bdist_msi
+```
+
 ## Disclaimer
 
 This tool was originally created by user **beniSo**, but he's no longer on GitHub.

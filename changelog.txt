@@ -92,11 +92,23 @@
 - Increase performance (decrease between v1.5 and 2.0 was due to an error in signal management),
 - Add possibilty to take screenshot using a configurable shortcut.
 
-####version 3.0.0####
-- Changed from Python 2.7 to Python 3.8
+####version 3.0.0-alpha1####
+- Changed from Python 2.7 to Python 3.11
 - Changed from PyQt4 to PyQt5
-- Cleaner code formatting (Black)
-- Cleaner imports
+- Uses `poetry` for dependency management
+- Code conventions:
+    - Cleaner code formatting (Black)
+    - Cleaner imports
+    - Type hints (in progress)
+- Code structure
+    - Move all source files to ./report_tool
+    - Move docs images to ./docs.
+    - Centralize icons handling.
+    - Centralize path handling.
 - Performances: Precompiled regex
-- More reliable installation with pipenv
-- Bugfix: Float are handled correclty now
+- Bugfix: float are handled correclty now
+- Bugfix: plotting was done twice
+- Bugfix: json does not need `encoding` param in Python 3.
+- Bugfix: logging, custom handler was heavy and broken.
+- Bugfix: namespacing issues
+- Bugfix: unicode issues
