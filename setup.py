@@ -32,9 +32,8 @@ includes = [
     "base64",
     "pyqtgraph",
     "numpy",
-    "numpy.utils.format",
     "threading",
-    "Queue",
+    "queue",
     "time",
     "datetime",
     "collections",
@@ -43,7 +42,6 @@ includes = [
     "socket",
     "urllib",
     "urllib3",
-    "urlparse",
 ]  # include needed library
 
 # packages = ["credentials.txt", "favorite_markets.txt"]
@@ -51,13 +49,9 @@ includes = [
 cert_file = certifi.where()  # get SSL certificates
 includesfiles = [
     cert_file,
-    current_dir / "credentials.json",
-    current_dir / "comments.json",
-    current_dir / "config.json",
     current_dir / "ig_config.json",
     current_dir / "logging.ini",
     current_dir / "icons",
-    current_dir / "georges.png",
     current_dir / "changelog.txt",
 ]
 
@@ -73,23 +67,20 @@ build_exe_options = {
     "excludes": excludes,
     "include_files": includesfiles,
     "include_msvcr": True,
-    "compressed": True,
-    "copy_dependent_files": True,
-    "create_shared_zip": True,
-    "include_in_shared_zip": True,
 }
 
 setup(
     name=application_title,
-    version="2.2",
+    version="3.0",
     description="Report Tool",
     options={"build_exe": build_exe_options, "bdist_msi": bdist_msi_options},
     executables=[
         Executable(
             main_python_file,
             base=base,
+            target_name=application_title,
             icon=current_dir / "icons" / "main32.ico",
-            shortcutDir="DesktopFolder",
+            shortcut_dir="DesktopFolder",
         )
     ],
 )
