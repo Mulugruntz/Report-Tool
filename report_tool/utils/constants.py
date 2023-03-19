@@ -2,6 +2,24 @@
 
 from functools import lru_cache
 from pathlib import Path
+from typing import Final, TypedDict
+
+
+class Proxies(TypedDict):
+    """Proxies for an account."""
+    https: str
+
+
+class Account(TypedDict):
+    """Account, as stored in the credentials file."""
+    pwd: str
+    api_key: str
+    type: str
+    proxies: Proxies
+
+
+APPLICATION_TITLE: Final[str] = "Report Tool"
+EMPTY_ACCOUNT: Final[Account] = {"pwd": "", "api_key": "", "type": "Live", "proxies": {"https": ""}}
 
 
 @lru_cache()
@@ -11,7 +29,7 @@ def get_root_project_dir() -> Path:
     Go one directory up, until the root project is found (name is "Report-Tool").
     """
     current_dir = Path(__file__).parent
-    while current_dir.name != "Report-Tool":
+    while current_dir.name not in ["Report-Tool", APPLICATION_TITLE]:
         current_dir = current_dir.parent
         if current_dir.name == "":
             raise FileNotFoundError("Root project directory not found.")

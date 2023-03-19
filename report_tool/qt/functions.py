@@ -5,10 +5,12 @@ import logging
 import logging.config
 import math
 import re
+from copy import deepcopy
 
 from PyQt5 import QtCore, QtGui
 
 from report_tool.utils.constants import (
+    EMPTY_ACCOUNT,
     get_comments_file,
     get_credentials_file,
     get_root_project_dir,
@@ -74,7 +76,8 @@ def read_credentials(*args, **kwargs):
     """Reads credentials files"""
 
     credentials_path = get_credentials_file()
-    empty_account = {"pwd": "", "api_key": "", "type": "Live", "proxies": {"https": ""}}
+    if not credentials_path.is_file():
+        initialize_credentials()
 
     saved_accounts = {}
 
@@ -92,15 +95,19 @@ def read_credentials(*args, **kwargs):
                 saved_accounts[key]["pwd"] = decoded_pwd
 
             if saved_accounts == {}:
-                saved_accounts[""] = empty_account
+                saved_accounts[""] = deepcopy(EMPTY_ACCOUNT)
 
         # log error and returns empty account
         except Exception as e:
             msg = "No users save"
             logger_debug.log(logging.ERROR, msg)
-            saved_accounts[""] = empty_account
+            saved_accounts[""] = deepcopy(EMPTY_ACCOUNT)
 
     return saved_accounts
+
+
+def initialize_credentials() -> None:
+    get_credentials_file().write_text(json.dumps({"user": EMPTY_ACCOUNT}))
 
 
 def write_credentials(credentials):
