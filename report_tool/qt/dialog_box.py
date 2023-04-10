@@ -5,6 +5,7 @@ from copy import deepcopy
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+from report_tool import __version__
 from report_tool.qt.functions import (
     create_icons,
     read_credentials,
@@ -19,7 +20,6 @@ from report_tool.qt.widgets import (
 )
 from report_tool.utils.fs_utils import get_icon_path
 from report_tool.utils.settings import read_config, write_config
-from report_tool import __version__
 
 
 class ConnectWindow(QtWidgets.QDialog):

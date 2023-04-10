@@ -1,8 +1,10 @@
 import shutil
 from pathlib import Path
-from report_tool import __version__
+
 import certifi
 from cx_Freeze import Executable, setup
+
+from report_tool import __version__
 
 # Remove the build folder
 shutil.rmtree(Path("build"), ignore_errors=True)
