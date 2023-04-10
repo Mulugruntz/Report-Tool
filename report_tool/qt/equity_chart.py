@@ -15,7 +15,6 @@ class EquityChart(pg.PlotWidget):
     """
 
     def __init__(self, *args, **kwargs):
-
         """
         Init function. Inherits from pg.PlotWidget.
         Set a title and axes label, using HTML formatting
@@ -54,7 +53,6 @@ class EquityChart(pg.PlotWidget):
         self.setMouseTracking(True)
 
     def plot_curve(self, ec_color, ec_size, ec_style, *args, **kwargs):
-
         """
         creates the curve
 
@@ -90,7 +88,6 @@ class EquityChart(pg.PlotWidget):
         return curve
 
     def update_curve(self, curve, values, dates, *args, **kwargs):
-
         """
         Called when the main loops receives an activity
         update or when the user changes curve apperance
@@ -130,7 +127,6 @@ class EquityChart(pg.PlotWidget):
         curve.setData(x=dates, y=values)
 
     def update_curve_style(self, curve, *args, **kwargs):
-
         """
         Update only style of equity curve
         Called hen user changes options
@@ -166,7 +162,6 @@ class EquityChart(pg.PlotWidget):
         curve.setPen(equity_pen)  # update pen
 
     def plot_scatter(self, color, symbol, size, *args, **kwargs):
-
         """
         Creates a scatter plot item
 
@@ -186,7 +181,6 @@ class EquityChart(pg.PlotWidget):
         return scatter_plot
 
     def update_scatter(self, scatter, x_data, y_data, *args, **kwargs):
-
         """
         Update scatter plot
 
@@ -205,7 +199,6 @@ class EquityChart(pg.PlotWidget):
             return
 
         except KeyError:
-
             for arg in kwargs.keys():
                 if "style" in arg:
                     dd_symbol = kwargs[arg]
@@ -223,7 +216,6 @@ class EquityChart(pg.PlotWidget):
             self.autoRange()
 
     def update_scatter_style(self, scatter, *args, **kwargs):
-
         """
         Update only style of scatter plot.Called hen user changes options
 
@@ -243,7 +235,6 @@ class EquityChart(pg.PlotWidget):
                 state = kwargs["state"]
 
                 if state == 0:  # don"t show scatter
-
                     # set a transparant color rather than empty array
                     dd_color = QtGui.QColor(255, 255, 255, 0)
 
@@ -261,7 +252,6 @@ class EquityChart(pg.PlotWidget):
         scatter.setBrush(dd_brush)
 
     def show_vline(self):
-
         """Show vertical line"""
 
         items_on_graph = self.plotItem.items  # not the cleanest to get vline
@@ -272,7 +262,6 @@ class EquityChart(pg.PlotWidget):
             return
 
     def hide_vline(self):
-
         """Hide vertical line"""
 
         items_on_graph = self.plotItem.items  # not the cleanest to get vline
@@ -283,7 +272,6 @@ class EquityChart(pg.PlotWidget):
             self.removeItem(self.vline)  # remove line if not done yet
 
     def update_vline(self, x_pos, curve):
-
         """
         Update vertical line position. If new position is outside
         the view, update Xrange to be sure that line will be always
@@ -314,7 +302,6 @@ class EquityChart(pg.PlotWidget):
                         x_max = x_range[1] + 0.5
 
                     if x_min < 1:  # no useful values if x min < 1
-
                         # get y values from 1 to x_max
                         data_in_range = data_plotted[1][0 : x_max + 1]
 
@@ -337,17 +324,14 @@ class EquityChart(pg.PlotWidget):
                         x_min = -0.5
 
                     try:
-
                         # line pos is greater than the last x plotted
                         if x_max >= max(data_plotted[0]):
-
                             # get y values from x min to last x plotted
                             data_in_range = data_plotted[1][
                                 x_min : max(data_plotted[0]) + 1
                             ]
 
                         else:
-
                             # get y values from x min to x max
                             data_in_range = data_plotted[1][x_min : x_max + 1]
 
@@ -361,7 +345,6 @@ class EquityChart(pg.PlotWidget):
                     return
 
     def get_vline_pos(self):
-
         """Get the actual vline position"""
 
         items_on_graph = self.plotItem.items
@@ -373,7 +356,6 @@ class EquityChart(pg.PlotWidget):
             return vline_pos
 
     def update_range(self, equity_curve, range_to_set, *args, **kwargs):
-
         """
         Update range on equity_plot (graph on top) x_min and x_max
         are set according to the region bounds. y_min and y_max
@@ -393,7 +375,6 @@ class EquityChart(pg.PlotWidget):
         if data_plotted[0] is None:  # no data plotted
             return
         else:
-
             # means user has selected all trades
             if x_min == 0 and x_max >= len(data_plotted[0]):
                 self.autoRange()
@@ -453,7 +434,6 @@ class EquityChart(pg.PlotWidget):
             ################################################################
 
     def update_region(self, equity_curve, range_to_set, *args, **kwargs):
-
         """
         Update region on overview_plot (graph on bottom) according
         to x_range selected on equity_plot (graph on top)
@@ -473,7 +453,6 @@ class EquityChart(pg.PlotWidget):
             # self.update_text_item(equity_curve)
 
     def add_text_item(self, curve, comment, deal_id, graph):
-
         """
         add a new text item with an arrow pointing the clicked trade.
 
@@ -508,7 +487,6 @@ class EquityChart(pg.PlotWidget):
 
         # create a new text item
         if deal_id not in comments_items and text != "":
-
             # create and configure a arrow item
             arrow = classCustomGraphicsItems.CustomCurveArrow(curve)
             head_len = 25
@@ -567,7 +545,6 @@ class EquityChart(pg.PlotWidget):
         self.update_text_item(curve, **text_args)
 
     def remove_text_item(self, deal_id, all_comments=False):
-
         """
         Function called when text is empty or when the user chooses to hide a
         comment. remove the arrow and text_item and update dict_comments_items.
@@ -579,7 +556,6 @@ class EquityChart(pg.PlotWidget):
         comments_items = self._get_comments_items()
 
         if all_comments == True:
-
             for deal_id in comments_items.keys():  # remove all items
                 text_item = comments_items[deal_id]["text_item"]
                 arrow = comments_items[deal_id]["arrow"]
@@ -589,7 +565,6 @@ class EquityChart(pg.PlotWidget):
             comments_items = {}  # reset dict
 
         else:
-
             try:  # remove clicked comment
                 text_item = comments_items[deal_id]["text_item"]
                 arrow = comments_items[deal_id]["arrow"]
@@ -606,7 +581,6 @@ class EquityChart(pg.PlotWidget):
         self._set_comments_items(comments_items)  # update dict_comments_items
 
     def update_text_item(self, curve, *args, **kwargs):
-
         """
         Update text_item and position. Called when we add a new comment
         or when the user change existing comment. In this case kwargs are used.
@@ -729,13 +703,11 @@ class EquityChart(pg.PlotWidget):
         self._set_comments_items(comments_items)  # update dict_comments_items
 
     def _get_comments_items(self):
-
         """Getter method for dict_comments_items"""
 
         return self._dict_comments_items
 
     def _set_comments_items(self, dict_comments_items):
-
         """
         Setter method for dict_comments_items
 
@@ -745,13 +717,11 @@ class EquityChart(pg.PlotWidget):
         self._dict_comments_items = dict_comments_items
 
     def _get_deal_id_plotted(self):
-
         """Getter method for deal_id_plotted"""
 
         return self._deal_id_plotted
 
     def _set_deal_id_plotted(self, deal_id_plotted):
-
         """
         Setter method for deal_id_plotted
 

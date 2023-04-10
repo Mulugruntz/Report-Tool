@@ -1,11 +1,11 @@
 """Module to create custom QDialog"""
 
 import json
-import random
 from copy import deepcopy
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+from report_tool import __version__
 from report_tool.qt.functions import (
     create_icons,
     read_credentials,
@@ -13,7 +13,6 @@ from report_tool.qt.functions import (
     write_credentials,
 )
 from report_tool.qt.widgets import (
-    CustomCloseButton,
     CustomComboBox,
     CustomLabel,
     CustomPushButton,
@@ -28,7 +27,6 @@ class ConnectWindow(QtWidgets.QDialog):
     """Create a simple dialog to add/delete and configure user"s account"""
 
     def __init__(self, parent):
-
         super(ConnectWindow, self).__init__(parent=parent)
         self._connect_dict = {}
 
@@ -92,7 +90,6 @@ class ConnectWindow(QtWidgets.QDialog):
 
         # place widget on layout
         for count, widget in enumerate(list_widgets_login):
-
             if count % 2 == 0:
                 row = count + 1
                 col = 0
@@ -113,7 +110,6 @@ class ConnectWindow(QtWidgets.QDialog):
         self.exec_()
 
     def load_accounts(self):
-
         """Load saved accounts in credentials.json"""
 
         # read config file and credentials
@@ -163,7 +159,6 @@ class ConnectWindow(QtWidgets.QDialog):
             self.btn_connect.setEnabled(True)
 
     def add_account(self):
-
         """
         Add a new account to combobox and a new key to
         credentials file. called when combobox user loses focus
@@ -193,7 +188,6 @@ class ConnectWindow(QtWidgets.QDialog):
 
         # if a new user is created
         if idx_usr == -1:
-
             # sort alphabetically users
             saved_users = list(saved_accounts.keys())
             saved_users.append(str(usr))
@@ -221,7 +215,6 @@ class ConnectWindow(QtWidgets.QDialog):
         write_credentials(saved_accounts)
 
     def delete_account(self):
-
         """When user clicks on button trash deletes selected account"""
 
         saved_accounts = read_credentials()
@@ -237,7 +230,6 @@ class ConnectWindow(QtWidgets.QDialog):
         write_credentials(saved_accounts)
 
     def user_edition(self):
-
         """User is editing account via inputs widgets."""
 
         saved_accounts = read_credentials()
@@ -252,10 +244,8 @@ class ConnectWindow(QtWidgets.QDialog):
 
         # user editing name in combobox
         if self.sender().objectName() == "user_choice":
-
             # new username not saved yet
             if usr not in saved_accounts:
-
                 # clear pwd, api key and proxies widgets
                 self.line_edit_pwd.setText("")
                 self.line_edit_key.setText("")
@@ -277,7 +267,6 @@ class ConnectWindow(QtWidgets.QDialog):
                 self.btn_trash.setEnabled(True)
 
         else:
-
             # if pwd and api key and user are not
             # correctly set disable connection
             if usr == "" or pwd == "" or api_key == "":
@@ -295,7 +284,6 @@ class ConnectWindow(QtWidgets.QDialog):
             self.btn_trash.setEnabled(True)
 
     def create_connection_dict(self):
-
         """
         Set connection info, username/pwd and urls.Creates a dict
         with headers correctly setfor connection request, usr and
@@ -360,13 +348,11 @@ class ConnectWindow(QtWidgets.QDialog):
         self.on_close()
 
     def _get_connect_dict(self):
-
         """Getter method"""
 
         return self._connect_dict
 
     def _set_connect_dict(self, *args, **kwargs):
-
         """
         Setter method. Build a connect_dict with infos
         needed for API connection see API documentation
@@ -401,7 +387,6 @@ class ConnectWindow(QtWidgets.QDialog):
         self._connect_dict = connect_dict
 
     def on_close(self):
-
         """close window"""
 
         self.close()
@@ -446,7 +431,6 @@ class OptionsWindow(QtWidgets.QDialog):
         # self.exec_()
 
     def create_screenshot_options(self):
-
         """
         Create widget for screenshot options. User can
         chose what to print, where and what to hide
@@ -552,7 +536,6 @@ class OptionsWindow(QtWidgets.QDialog):
         return widget_screenshot
 
     def create_chart_options(self, ec_icons):
-
         """
         Create chart options widget. User can
         changes curve style, color and thickness
@@ -634,7 +617,6 @@ class OptionsWindow(QtWidgets.QDialog):
         return widget_equity_curves
 
     def create_dd_options(self, dd_icons):
-
         """
         Create dd options widget. User can changes point symbol, color
         and size for each scatterplot. He can choose which scatter
@@ -798,7 +780,6 @@ class OptionsWindow(QtWidgets.QDialog):
         # place widgets and connect signals
         j = 0
         for i in range(len(label_list)):  # add widget to layout using loop
-
             label_to_set = label_list[i]
             btn_to_set = buttons_list[i]
 
@@ -837,7 +818,6 @@ class OptionsWindow(QtWidgets.QDialog):
         return widget_dd_options
 
     def create_transactions_options(self):
-
         """
         Create widget for transactions options.
         User can change flat, profit and loss colors
@@ -888,7 +868,6 @@ class OptionsWindow(QtWidgets.QDialog):
         return widget_transactions_options
 
     def update_options(self):
-
         """
         Generic function to update options
         Options are saved each time function is called
@@ -962,7 +941,6 @@ class OptionsWindow(QtWidgets.QDialog):
             pass
 
     def set_screenshot_path(self):
-
         """
         Show a pop up window to select the
         directory where to save screenshot
@@ -980,7 +958,6 @@ class OptionsWindow(QtWidgets.QDialog):
         write_config(config)
 
     def on_close(self):
-
         """Save config file and close"""
 
         # config_path = os.getcwd() + "/config.json"
@@ -1073,7 +1050,6 @@ class ExportWindow(QtWidgets.QDialog):
         self.setLayout(layout_export)
 
     def update_options(self, *args, **kwargs):
-
         """Write config file with new options"""
 
         config = read_config()
@@ -1090,7 +1066,6 @@ class ExportWindow(QtWidgets.QDialog):
         write_config(config)  # write config
 
     def set_export_path(self, *args, **kwargs):
-
         """
         Show a pop up window to select the
         directory where to save exported data
@@ -1109,7 +1084,6 @@ class ExportWindow(QtWidgets.QDialog):
         write_config(config)
 
     def on_ok(self, *args, **kwargs):
-
         """Close window and export data (see classMainWindow)"""
         self.accept()
 
@@ -1122,109 +1096,76 @@ class AboutWindow(QtWidgets.QDialog):
     """
 
     def __init__(self, parent):
-
         super(AboutWindow, self).__init__(parent=parent)
 
-        self.setWindowTitle("Ouiche lorraine")
+        self.setWindowTitle("About Report Tool")
         self.setModal(True)
 
         self._initial_pos = None
 
         self.setWindowIcon(QtGui.QIcon(str(get_icon_path("main"))))
 
-        layout = QtWidgets.QGridLayout()
-
         # labels for basics infos
-        pixmap = QtGui.QPixmap(str(get_icon_path("georges")))
+        github_link = "https://github.com/Mulugruntz/Report-Tool"
 
-        label_dev = QtWidgets.QLabel("Developed by Benoit Soudan")
-        label_contact = QtWidgets.QLabel("benoit.soudan@gmail.com")
-        label_version = QtWidgets.QLabel("Version 2.2" + "\n" + "Andlil 2016")
-        label_dev.setAlignment(QtCore.Qt.AlignCenter)
-
-        label_contact.setToolTip("Si tu veux me parler envoie moi un fax !")
-        label_contact.setAlignment(QtCore.Qt.AlignCenter)
-        label_version.setAlignment(QtCore.Qt.AlignCenter)
-
-        self.stupid_label = QtWidgets.QLabel()
-        self.stupid_label.setPixmap(pixmap)
-        self.stupid_label.setAlignment(QtCore.Qt.AlignCenter)
-
-        self.ok_btn = CustomCloseButton("Rosebud !")
-        self.ok_btn.setToolTip("Don't do it ! You can break the internet")
-        self.ok_btn.setMaximumWidth(200)
-        self.ok_btn.clicked.connect(self.close)
-        self.ok_btn.enter_signal.connect(self.move_window)
+        label_contact = QtWidgets.QLabel(f"<a href='{github_link}'>{github_link}</a>")
+        label_contact.setOpenExternalLinks(True)
+        label_contact.setTextInteractionFlags(QtCore.Qt.TextBrowserInteraction)
 
         # place labels
-        layout.addWidget(label_dev, 0, 0)
-        layout.addWidget(label_contact, 1, 0)
-        layout.addWidget(label_version, 2, 0)
-        layout.addWidget(self.stupid_label, 3, 0)
-        layout.addWidget(self.ok_btn, 4, 0, alignment=QtCore.Qt.AlignCenter)
+        layout = QtWidgets.QGridLayout()
+        lines = [
+            QtWidgets.QLabel(f"<b>Report Tool {__version__}</b>"),
+            QtWidgets.QLabel(),
+            QtWidgets.QLabel("Developed by Benoit Soudan until 2.2."),
+            self._get_label_github(),
+            self._get_image_about(),
+        ]
+
+        for count, line in enumerate(lines):
+            layout.addWidget(line, count, 0)
+
+        layout.addWidget(
+            self._get_close_button(),
+            layout.rowCount(),
+            0,
+            alignment=QtCore.Qt.AlignCenter,
+        )
 
         self.setLayout(layout)
         self._initial_pos = self.pos()
 
-    def move_window(self, event, nb_entry):
+    @staticmethod
+    def _get_label_github() -> QtWidgets.QLabel:
+        github_link = "https://github.com/Mulugruntz/Report-Tool"
 
-        """
-        Called when mouse enters the close button. Move the
-        window randomly to avoid user to click the close button
+        label = QtWidgets.QLabel(f"<a href='{github_link}'>{github_link}</a>")
+        label.setOpenExternalLinks(True)
+        label.setTextInteractionFlags(QtCore.Qt.TextBrowserInteraction)
 
-        :param nb_entry: int, numbers of moue has entered close buttons
-                         See classCustomWidgets.CustomCloseButton
-        """
+        return label
 
-        # close button geometry
-        ok_btn_height = self.ok_btn.height()
-        ok_btn_width = self.ok_btn.width()
+    @staticmethod
+    def _get_image_about() -> QtWidgets.QLabel:
+        label = QtWidgets.QLabel()
+        label.setPixmap(QtGui.QPixmap(str(get_icon_path("georges"))))
+        label.setAlignment(QtCore.Qt.AlignCenter)
 
-        window_center = self.mapToGlobal(
-            QtCore.QPoint(self.rect().x() // 2, self.rect().y() // 2)
-        )
+        return label
 
-        # calc new positon randomly
-        random_x_shift = random.randint(-ok_btn_width * 2, ok_btn_width * 2)
-        random_y_shift = random.randint(-ok_btn_height * 2, ok_btn_height)
+    def _get_close_button(self) -> QtWidgets.QPushButton:
+        button = QtWidgets.QPushButton("Close")
+        button.setMaximumWidth(200)
+        button.clicked.connect(self.close)
 
-        # constructs a random position
-        if nb_entry % 2 == 0:
-            new_pos = QtCore.QPoint(
-                window_center.x() + random_x_shift, window_center.y() + random_y_shift
-            )
-        else:
-            new_pos = QtCore.QPoint(
-                window_center.x() - random_x_shift, window_center.y() + random_y_shift
-            )
-
-        if nb_entry == 1:
-            initial_pos = self.mapToGlobal(
-                QtCore.QPoint(self.rect().x(), self.rect().y())
-            )
-            self._set_initial_pos(initial_pos)  # save initial position
-
-            # stupid gif
-            gif = QtGui.QMovie(str(get_icon_path("cat", ext="gif")))
-            gif.start()
-            self.stupid_label.setMovie(gif)
-
-        if nb_entry < 10:  # move window while attempt to close is <10
-            self.move(new_pos)
-        elif nb_entry == 10:  # stop being stupid
-            initial_pos = self._get_initial_pos()
-            self.move(initial_pos)
-        else:
-            pass
+        return button
 
     def _get_initial_pos(self):
-
         """Getter method for initial position"""
 
         return self._initial_pos
 
     def _set_initial_pos(self, initial_pos):
-
         """
         Setter method for initial position
 
@@ -1244,7 +1185,6 @@ class FilterWindow(QtWidgets.QDialog):
     filter_signal = QtCore.pyqtSignal(object)  # signal send when filter changes
 
     def __init__(self, parent):
-
         super(FilterWindow, self).__init__(parent=parent)
 
         self.setWindowIcon(QtGui.QIcon(str(get_icon_path("main"))))
@@ -1252,7 +1192,6 @@ class FilterWindow(QtWidgets.QDialog):
         self.setModal(True)
 
     def build_window(self, result_dict, previous_filter):
-
         """
         :param result_dict: OrderedDIct() with trades
         :param previous filter: list of previoulsy selected markets
@@ -1306,14 +1245,12 @@ class FilterWindow(QtWidgets.QDialog):
         self.dict_filter_checkbox = {}
 
         for count, market_name in enumerate(market_list):
-
             ascci_name = market_name.encode(
                 "ascii", "ignore"
             )  # TODO: check encode/decode still needed?
             label_market = QtWidgets.QLabel(market_name)
 
             if ascci_name not in self.dict_filter_checkbox:
-
                 # creates a checkbox and complete dict
                 market_checkbox = QtWidgets.QCheckBox()
                 self.dict_filter_checkbox[ascci_name] = market_checkbox
@@ -1357,7 +1294,6 @@ class FilterWindow(QtWidgets.QDialog):
         self.exec_()
 
     def selection_changed(self):
-
         """
         Called when a checkbox is checked/unckecked It created a
         result_dict called filtered_dict without the selected markets
@@ -1384,7 +1320,6 @@ class FilterWindow(QtWidgets.QDialog):
                 checkbox.setEnabled(True)
 
                 for deal_id in self.unchanged_dict.keys():
-
                     # get market_name for each trade
                     market_name = self.unchanged_dict[deal_id]["market_name"].encode(
                         "ascii", "ignore"
@@ -1399,7 +1334,6 @@ class FilterWindow(QtWidgets.QDialog):
         self.filter_signal.emit(filtered_dict)  # send dict to main window
 
     def on_close(self):
-
         """Close function"""
 
         config = read_config()

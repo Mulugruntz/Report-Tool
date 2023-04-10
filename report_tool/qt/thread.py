@@ -28,7 +28,6 @@ class TransactionThread(QtCore.QThread):
     transaction_received = QtCore.pyqtSignal(object)  # create a finish signal
 
     def __init__(self, session, transaction_queue, result_handler, parent=None):
-
         """
         :param session: :any:`IGAPI` instance
         :param transaction_queue: Queue
@@ -47,14 +46,12 @@ class TransactionThread(QtCore.QThread):
         self.logger_info = logging.getLogger("ReportTool_info.IGAPI")
 
     def run(self):
-
         """
         Send a request for the choosen dates in transactions dict.
         If request successfull call trea_data, else emit an error msg
         """
 
         while not self.transaction_queue.empty():  # consumes every element in queue
-
             date_range = self.transaction_queue.get()  # get element in queue
 
             # TODO: Use datetime.datetime.strptime() instead?
@@ -90,7 +87,6 @@ class TransactionThread(QtCore.QThread):
         return
 
     def treat_data(self, transactions_result):
-
         """
         Treat the dict received from IG and build a more
         comprehensive nested OrderedDict(). Deal id
@@ -158,7 +154,6 @@ class TransactionThread(QtCore.QThread):
 
         transactions_dict = OrderedDict()
         for transaction in transactions_result["transactions"]:
-
             deal_ref = transaction["reference"]
 
             if deal_ref not in transactions_dict:
@@ -179,7 +174,6 @@ class TransactionThread(QtCore.QThread):
 
             # iterate over each event that concerns deal_ref
             for count, deal_transaction in enumerate(transactions_dict[deal_ref]):
-
                 # get the transaction type (order, fees...)
                 transaction_type = transactions_dict[deal_ref][count]["transactionType"]
 
@@ -235,7 +229,6 @@ class TransactionThread(QtCore.QThread):
                         total_size = size
 
                 elif transaction_type in kw_fees:  # TODO: create sub-methods
-
                     """
                     depending of market name change
                     transaction type for a clearer one
@@ -383,7 +376,6 @@ class TransactionThread(QtCore.QThread):
         direction: str,
         market_name: str,
     ) -> Decimal:
-
         """
         Calculate profit loss in point and currency
 
@@ -395,10 +387,8 @@ class TransactionThread(QtCore.QThread):
         """
 
         if direction == "BUY":
-
             # means market is Forex
             if "/" in market_name.lower():
-
                 # TODO: is round() still necessary with Decimal()??
                 # means cross is with Yen
                 if "jpy" in market_name.lower():
@@ -410,10 +400,8 @@ class TransactionThread(QtCore.QThread):
                 points = round((close_level - open_level) * abs(size), 2)
 
         elif direction == "SELL":
-
             # means market is Forex
             if "/" in market_name.lower():
-
                 # means cross is with Yen
                 if "jpy" in market_name.lower():
                     points = round((open_level - close_level) * abs(size), 5) * 100
@@ -451,7 +439,6 @@ class UpdateCommentsThread(QtCore.QThread):
     comment_found = QtCore.pyqtSignal(object)  # signal use to send comment
 
     def __init__(self, queue, result_handler, parent=None):
-
         """
         :param transaction_queue: Queue
         :param result_handler: classMainWindow.update_comments
@@ -462,7 +449,6 @@ class UpdateCommentsThread(QtCore.QThread):
         self.comment_found.connect(result_handler)
 
     def run(self):
-
         """
         Thread is continuously running. maybe set it as deamon
         Waiting element in queue and depending of type received
@@ -494,7 +480,6 @@ class UpdateCommentsThread(QtCore.QThread):
                 object_in_queue = self.comments_queue.get()  # get item in queue
 
                 if isinstance(object_in_queue, Text):  # means it a deal_id
-
                     """
                     when thread reveives a string it means the user
                     has clicked on graph. We know which deal_id is
@@ -511,7 +496,6 @@ class UpdateCommentsThread(QtCore.QThread):
 
                 # means new data plotted, show all comments found
                 elif isinstance(object_in_queue, List):
-
                     """
                     When thread reveives a list it means result has
                     been updated, so for each deal id plotted try to
@@ -540,7 +524,6 @@ class UpdateCommentsThread(QtCore.QThread):
 
                 # means a new comment has to be saved
                 elif isinstance(object_in_queue, Dict):
-
                     """
                     When thread received a dict, user is
                     editing a comment or creating a new one

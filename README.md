@@ -1,6 +1,9 @@
-# Report Tool
+# Report Tool 3.0.0-alpha3
 
-Report Tool is an application coded in Python 3.8 / PyQt5 using IG Rest API to show basics statistics about past trades.
+[![Latest GitHub release][latest-release]][latest-release-url]
+![Latest GitHub pre-release][latest-prerelease]
+
+Report Tool is an application coded in Python 3.11 / PyQt5 using IG Rest API to show basics statistics about past trades.
 
 ## Features
 
@@ -11,7 +14,7 @@ Report Tool is an application coded in Python 3.8 / PyQt5 using IG Rest API to s
 * Trades comment,
 * Market filter.
 
-![Main interface](docs/main.png)
+![Main interface][gui-main-window]
 
 ## Installation
 
@@ -44,7 +47,7 @@ poetry run python -m report_tool
 ```
 * Enter your credentials, via the menu "Connect"
 
-![Connect menu](docs/connect.png)
+![Connect menu][gui-connect-menu]
 
 * Have fun !
 
@@ -52,9 +55,17 @@ poetry run python -m report_tool
 
 ```shell script
 cd Report-Tool
-poetry run setup.py bdist_msi
+poetry run python setup.py bdist_msi
 ```
 
 ## Disclaimer
 
 This tool was originally created by user **beniSo**, but he's no longer on GitHub.
+
+
+[latest-prerelease]: https://img.shields.io/github/v/release/Mulugruntz/Report-Tool?include_prereleases&label=Report%20Tool
+[latest-release]: https://img.shields.io/github/v/release/Mulugruntz/Report-Tool?label=Report%20Tool
+[latest-release-url]: https://github.com/Mulugruntz/Report-Tool/releases/latest
+
+[gui-main-window]: https://github.com/Mulugruntz/Report-Tool/raw/master/docs/main.png
+[gui-connect-menu]: https://github.com/Mulugruntz/Report-Tool/raw/master/docs/connect.png

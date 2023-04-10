@@ -58,7 +58,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
     """Main class for ReportTool"""
 
     def __init__(self, title):
-
         """Init UI"""
 
         super(ReportToolGUI, self).__init__()
@@ -94,8 +93,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         self.resize(size)
         self.move(pos_point)
 
-        self.show()
-
         # init loggers
         self.logger_debug = logging.getLogger("ReportTool_debug.IGAPI")
         self.logger_info = logging.getLogger("ReportTool_info.IGAPI")
@@ -106,7 +103,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             self.connect_to_api(True)
 
     def create_menus(self):
-
         """
         Create menus
         -- One menu to connect/disconnect and switching
@@ -129,7 +125,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         self.menu_switch = QtWidgets.QMenu("Switch account")
         self.menu_connect = self.menuBar().addMenu("Connect")
         self.menu_options = self.menuBar().addMenu("&Options")
-        self.menu_about = self.menuBar().addMenu("&About")
+        self.menu_help = self.menuBar().addMenu("&Help")
 
         # create actions
         self.act_connect = QtWidgets.QAction(icon_connect, "Connect", self)
@@ -143,7 +139,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
         self.act_about = QtWidgets.QAction(icon_infos, "About", self)
         self.act_about.triggered.connect(self.show_about)
-        self.act_about.setEnabled(False)
+        self.act_about.setEnabled(True)
         self.act_about.setCheckable(False)
 
         self.act_options = QtWidgets.QAction(icon_options, "Options", self)
@@ -164,7 +160,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
         # configure menus
         self.menu_options.addAction(self.act_options)
-        self.menu_about.addAction(self.act_about)
+        self.menu_help.addAction(self.act_about)
         self.menu_switch.setIcon(icon_switch)
         self.menu_switch.setEnabled(False)
 
@@ -219,7 +215,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         self.statusBar().addPermanentWidget(self.lbl_status)
 
     def create_central_widget(self):
-
         """
         Creates a central tabbed widget (4 tabs).
         One tab contains a QTableWidget with all past positions.
@@ -386,7 +381,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         self.setCentralWidget(self.widget_tab)  # set widget as central widget
 
     def create_dock_options(self):
-
         """
         Creates a dock widget with:
         -->QDateEdit to choose period of analyse,
@@ -553,7 +547,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         self.addDockWidget(QtCore.Qt.LeftDockWidgetArea, dock_options)
 
     def create_dock_summary(self):
-
         """Creates a QDockWidget with qlabel to show stat about trades."""
 
         # load config
@@ -640,7 +633,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         self.addDockWidget(QtCore.Qt.LeftDockWidgetArea, dock_summary)
 
     def create_dock_account(self):
-
         """
         Create a QDockWidget to display account
         informations (Balance, cash, profit...)
@@ -679,7 +671,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         """
 
         for count, static_text in enumerate(list_account_labels):
-
             # create and place horizontal line
             if count == 3:
                 h_line = QtWidgets.QFrame()
@@ -714,7 +705,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         self.addDockWidget(QtCore.Qt.LeftDockWidgetArea, dock_account)
 
     def create_dock_details(self):
-
         """
         Create a dock that summarizes a clicked position
         Depending of state details can be shown or not
@@ -760,7 +750,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             self.dock_pos_details.hide()
 
     def connect_to_api(self, auto_connect=True, *args, **kwargs):
-
         """
         Connect to API. If sender is the menu "Connect"
         show a dialog box to select/edit accounts.
@@ -808,7 +797,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
         # auto connect do not show connect window
         if auto_connect == True:
-
             last_usr = config["last_usr"]
             acc_type = credentials[last_usr]["type"]
             pwd = credentials[last_usr]["pwd"]
@@ -924,7 +912,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
                 self.update_options(None)
 
     def connect_to_ls(self, ls_endpoint, *args, **kwargs):
-
         """
         Connect to LighStreamer. Suscribe to positions
         and balance table. See online doc for schema
@@ -937,7 +924,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
         # get name of current account
         for action in self.menu_switch.actions():
-
             if action.isChecked() == True:
                 action_name = action.text().replace("&", "")
                 break
@@ -1003,7 +989,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         self.lbl_status.setPixmap(status_icon)
 
     def switch_account(self):
-
         """Switch to account selected by user"""
 
         config = read_config()
@@ -1087,7 +1072,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             self.lbl_status.setPixmap(status_icon)
 
     def update_menu_switch(self):
-
         """
         Populate the switch menu with name of
         each user"s account associated to a Qaction
@@ -1115,7 +1099,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             self.menu_switch.addAction(new_account)
 
     def update_dock_account(self, account_info):
-
         """
         Update dock_account with info of current account
 
@@ -1141,7 +1124,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             lbl_to_update.setText(acc_info)
 
     def update_options(self, sender):
-
         """
         Simple function to write options
         in config file. called when user changes
@@ -1216,7 +1198,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
         # hide account infos if user choose to
         if state_infos == "Always":
-
             for count, key in enumerate(self.dict_account_labels.keys()):
                 label = self.dict_account_labels[key]
                 old_text = label.text()  # retrieve account infos
@@ -1236,7 +1217,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
                 else:
                     label.setText("xxxx")
         else:
-
             # find the name of current account
             for action in self.menu_switch.actions():
                 action_name = action.text().replace("&", "")
@@ -1295,7 +1275,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             self.line_edit_capital.setEnabled(True)
 
     def update_capital(self):
-
         """
         Test the capital entered by the user.
         Set a empty string if it's not a float
@@ -1323,7 +1302,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         write_config(config)
 
     def update_account(self, myUpdateField):
-
         """
         Update Profit/Loss label on dock_account
         Call when lightstreamer sends an update
@@ -1363,7 +1341,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         )
 
     def update_positions(self, myUpdateField):
-
         """
         Called when lightstreamer sends
         notification about positions.
@@ -1373,7 +1350,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
         try:
             if myUpdateField[0] is not None:
-
                 pos_report = json.loads(myUpdateField[0])
                 deal_status = pos_report["dealStatus"]
                 reason = pos_report["reason"]
@@ -1424,7 +1400,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             self.logger_debug.log(logging.ERROR, traceback.format_exc())
 
     def update_status(self, state):
-
         """
         Update status bar label according to state received
 
@@ -1442,7 +1417,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             self.lbl_status.setPixmap(status_icon)
 
     def update_transactions(self):
-
         """
         Send a request for transactions. Calledwhen user changes dates
         or when optionsare changed (e.g: start capital changed)
@@ -1495,7 +1469,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         self.transaction_thread.start()
 
     def update_results(self, transactions, *args, **kwargs):
-
         """
         Update the GUI with results emit by transactions_thread
         or with a saved result dict if the users modifies options
@@ -1620,7 +1593,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             and screenshot == True
             and result_in != currency_symbol
         ):
-
             self.line_edit_capital.blockSignals(True)
 
             # hide initial capital
@@ -1635,7 +1607,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             self.dock_pos_details.hide_profit_loss(currency_symbol)
 
         else:
-
             self.line_edit_capital.blockSignals(True)
 
             # show initial capital
@@ -1721,7 +1692,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
                 continue  # account transaction are never showed
 
             else:
-
                 nb_row = self.widget_pos.rowCount()
                 self.widget_pos.insertRow(nb_row)
 
@@ -1742,12 +1712,10 @@ class ReportToolGUI(QtWidgets.QMainWindow):
                 # self.widget_pos.setItem(nb_row, 0, item)
 
                 for idx, header in enumerate(pos_transaction_headers):
-
                     item = QtWidgets.QTableWidgetItem()
                     item.setTextAlignment(QtCore.Qt.AlignCenter)
 
                     if header == "pnl":
-
                         if (
                             state_infos == "Always"
                             and result_in != currency_symbol
@@ -1762,7 +1730,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
                             )  # show profit/loss
 
                     elif header == "open_size":
-
                         if (
                             state_size == "Always"
                             or state_size == "Only for screenshot"
@@ -1823,7 +1790,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             return
 
         elif sender == "state_infos" or sender == "state_size":
-
             """
             Sender concerns options on what to hide when taking
             screenshot, callupdate_trade_details to update pnl sring
@@ -1858,14 +1824,12 @@ class ReportToolGUI(QtWidgets.QMainWindow):
                     self.logger_debug.log(logging.ERROR, traceback.format_exc())
 
         elif "ec_" in sender:
-
             """
             Sender concerns options of equity curvestyle,
             call apropriate function with new style
             """
 
             for key in self.graph_dict.keys():
-
                 ec_args = {
                     "ec_color": config["ec_color"],
                     "ec_style": config["ec_style"],
@@ -1884,7 +1848,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
                 overview_plot.update_curve_style(overview_curve, **ec_args)
 
         elif "maxdd" in sender or "depth" in sender or "high" in sender:
-
             """
             Sender concerns scatter plot style. Call appropriate
             function with new style Update only concerned scatter.
@@ -1899,7 +1862,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             scatter_args = {}
 
             for key in self.graph_dict.keys():
-
                 equity_plot = self.graph_dict[key]["equity_plot"]
 
                 # get items to update
@@ -1922,18 +1884,15 @@ class ReportToolGUI(QtWidgets.QMainWindow):
                 equity_plot.update_scatter_style(scatter_item, **scatter_args)
 
         elif sender == "dd_size":
-
             # Sender concerns symbol size.Need to update all scatter
 
             for key in self.graph_dict.keys():
-
                 # select curve items
                 equity_plot = self.graph_dict[key]["equity_plot"]
                 equity_curve = self.graph_dict[key]["curve"]["equity_curve"]
 
                 # loop over each scatter plotted
                 for scatter_type in ["high", "depth", "maxdd"]:
-
                     scatter_args = {}
 
                     # get scatter plot to update
@@ -1958,7 +1917,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
                     equity_plot.update_scatter_style(scatter_item, **scatter_args)
 
         else:
-
             """
             Sender directly concerns data plotted. need agraph update.
             Called when user changes start_capital,checkbox states
@@ -1999,7 +1957,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
                 self.btn_export.setStatusTip("Export data")
 
     def update_graph(self, *args, **kwargs):
-
         """Update equity curves and scatter plot for all graphs."""
 
         config = kwargs["config"]
@@ -2076,13 +2033,11 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
         # update chart
         for i, key in enumerate(self.graph_dict.keys()):
-
             # get the plot to update
             equity_plot = self.graph_dict[key]["equity_plot"]
             overview_plot = self.graph_dict[key]["overview_plot"]
 
             if key == "Points":  # points graph never show interest/dividend
-
                 # update list of deal id plotte (attribute of the plot objects)
                 overview_plot._set_deal_id_plotted(trades_plotted)
                 equity_plot._set_deal_id_plotted(trades_plotted)
@@ -2093,7 +2048,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
             else:
                 if config["include"] == 2:  # plot interest/dividend
-
                     # update list of deal id plotted (attribute of the plot objects)
                     overview_plot._set_deal_id_plotted(deal_id_plotted)
                     equity_plot._set_deal_id_plotted(deal_id_plotted)
@@ -2121,10 +2075,8 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             overview_plot.getAxis("bottom").update_axis(xaxis_dict)
 
             for scatter_type in curves_dict[key].keys():
-
                 # Scatter type can be equity_curve dd, maxdd or depth
                 if scatter_type == "equity_curve":
-
                     ec_args = {
                         "ec_color": config["ec_color"],
                         "ec_style": config["ec_style"],
@@ -2163,7 +2115,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
                         )
 
                     else:
-
                         # create list with keys corresponding to scatter to update
                         keys_config = [
                             key_config
@@ -2228,7 +2179,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
                 self.dock_pos_details.hide()  # hide dock
 
     def update_comments(self, object_send):
-
         """
         Update comments on dock_pos_details
         and items on graph (arrow and text_item)
@@ -2237,7 +2187,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         """
 
         if type(object_send) == dict:
-
             """
             If object received is a dict means new data
             has been plotted. the dict contains all comment found
@@ -2245,7 +2194,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             """
 
             for deal_id in object_send.keys():  # iterate over deal
-
                 comment = object_send[deal_id]  # get comment
                 comment_str = str(comment[0])
                 comment[0] = comment_str
@@ -2269,7 +2217,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
                     overview_plot._set_comments_items(comments_items)
 
         elif type(object_send) == list:
-
             """
             If object received is a list thread has
             been sollicited for a particular deal_id.
@@ -2303,7 +2250,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
                 overview_plot._set_comments_items(comments_items)
 
     def update_overview_graph(self, plot, plot_range):
-
         """
         Called when range on equity_plot (graph on top)
         is changed. Update region on overview_plot
@@ -2338,7 +2284,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         )  # update region
 
     def update_equity_graph(self, region):
-
         """
         Called when region on overview_plot (graph on bottom)
         is changed. Update x and y range on equity_plot (gaph on top)
@@ -2365,7 +2310,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         )
 
     def update_trade_details(self, *args, **kwargs):
-
         """
         Called when mouse is clicked and is over plot widget.
         Creates a floating dock that show trade details. This
@@ -2422,7 +2366,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         dict_to_search = OrderedDict()
 
         if state_details != 2:
-
             # hide line if users does not want trade overview
             for key in self.graph_dict.keys():
                 pg_widget = self.graph_dict[key]["equity_plot"]
@@ -2430,7 +2373,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             return
 
         else:
-
             # show line if users want trade overview
             for key in self.graph_dict.keys():
                 pg_widget = self.graph_dict[key]["equity_plot"]
@@ -2459,7 +2401,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
                     or dict_to_search[key]["type"] == "CASHOUT"
                     or dict_to_search[key]["type"] == "TRANSFER"
                 ):
-
                     dict_to_search.pop(key, None)
 
                 else:
@@ -2473,17 +2414,14 @@ class ReportToolGUI(QtWidgets.QMainWindow):
                     or dict_to_search[key]["type"] == "TRANSFER"
                     or dict_to_search[key]["type"] == "TRANSFER"
                 ):
-
                     dict_to_search.pop(key, None)
 
                 else:
                     continue
 
         if not dict_to_search:  # no trades found
-
             # update vertical line pos for each plot
             for key in self.graph_dict.keys():
-
                 # set a default vline position
                 pg_widget = self.graph_dict[key]["equity_plot"]
                 curve = self.graph_dict[key]["curve"]["equity_curve"]
@@ -2493,7 +2431,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             return
 
         else:
-
             # create a list all trade number available
             list_count_pos = [i + 1 for i in range(len(dict_to_search))]
 
@@ -2506,7 +2443,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             x_value_clicked = kwargs["vline_pos"]
 
         except KeyError:
-
             # x value (trade number) under mouse click
             x_value_clicked = plot_widget.plotItem.vb.mapSceneToView(mouse_pos).x()
 
@@ -2562,7 +2498,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             self.logger_debug.log(logging.ERROR, traceback.format_exc())
 
     def write_comments(self, *args, **kwargs):
-
         """
         Called when user edit comments. Build a dict whith deal_id
         to comment as key and comment to save as value and put it
@@ -2607,7 +2542,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             self.comments_queue.put(dict_to_save)
 
     def update_filter(self, filtered_dict):
-
         """
         Update results when filter is changed.
         See DialogBox.FilterWindow for more details
@@ -2632,7 +2566,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             self.logger_debug.log(logging.ERROR, traceback.format_exc())
 
     def show_options(self):
-
         """Show options dialog"""
 
         if self.dock_pos_details.isFloating() == False:
@@ -2650,7 +2583,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             self.dock_pos_details.show()
 
     def show_export(self, *args, **kwargs):
-
         """Show a Qdialog to configure export"""
 
         config = read_config()
@@ -2683,7 +2615,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             self.dock_pos_details.show()
 
     def show_filter(self):
-
         """
         Show filter window. display a Qdialog
         that allow users to filter markets
@@ -2716,13 +2647,12 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             self.dock_pos_details.show()
 
     def show_about(self):
+        """Show an "About" window."""
 
-        """Show an about window. Close event is connected to an easter egg"""
-
-        if self.dock_pos_details.isFloating() == False:
+        if not self.dock_pos_details.isFloating():
             pass
 
-        elif self.dock_pos_details.isHidden() == False:
+        elif not self.dock_pos_details.isHidden():
             self.dock_pos_details.hide()
 
         about_window = AboutWindow(self)
@@ -2731,11 +2661,10 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         config = read_config()
         state_details = config["what_to_show"]["state_details"]
 
-        if self.dock_pos_details.isHidden() == True and state_details == 2:
+        if self.dock_pos_details.isHidden() and state_details == 2:
             self.dock_pos_details.show()
 
     def take_screenshot(self):
-
         """
         Take a screenshot of what user choosed in option window.
         Called when user clicks on screenshot buttons.
@@ -2776,7 +2705,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
                 old_labels[key] = old_text
 
                 if key == "Account type: ":
-
                     if "demo" in base_url:
                         label.setText("Demo-xxxx")
                     else:
@@ -2819,7 +2747,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         pixmap_dict = {}
 
         if what_to_print == "All window":
-
             pixmap = QtWidgets.QWidget.grab(self)  # get pix map of all window
             pixmap_dict["Summary + " + active_tab_name + " "] = pixmap
 
@@ -2836,14 +2763,12 @@ class ReportToolGUI(QtWidgets.QMainWindow):
                 pixmap_dict[key + " EC "] = pixmap_graph
 
         elif what_to_print == "Transactions":  # get pixmap of transactions table
-
             pixmap = QtWidgets.QWidget.grab(self.widget_pos, self.widget_pos.rect())
 
             # the key will be used to construct file name
             pixmap_dict["Transactions "] = pixmap
 
         elif what_to_print == "Graph":
-
             for key in self.graph_dict.keys():  # take pixmap of all graph
                 graph = self.graph_dict[key]["equity_plot"]
                 pixmap_graph = QtWidgets.QWidget.grab(graph)
@@ -2852,7 +2777,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
                 pixmap_dict[key + " EC "] = pixmap_graph
 
         elif what_to_print == "Summary":  # get pixmap of Summary dock
-
             # build a list with all name of qdock ans get Summary dock
             dock_widget_names = [dock.objectName() for dock in dock_widget_list]
             idx_dock_summary = dock_widget_names.index("Summary")
@@ -2897,7 +2821,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         self.statusBar().showMessage(msg)
 
     def set_gui_enabled(self, state):
-
         """
         Enable/disable  all user's interactions.
 
@@ -2913,7 +2836,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
         self.act_options.setEnabled(state)
         self.act_disconnect.setEnabled(state)
-        self.act_about.setEnabled(state)
 
         self.btn_screenshot.setEnabled(state)
         self.btn_refresh.setEnabled(state)
@@ -2923,7 +2845,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         self.statusBar().setEnabled(state)
 
     def keyPressEvent(self, event):
-
         """
         Reimplement keyPressEvent. Allow the user to
         naviguate throught graph using arrow keys and to
@@ -2979,9 +2900,7 @@ class ReportToolGUI(QtWidgets.QMainWindow):
 
         # if key is not the shorcut naviguate on graph
         if state_details == 2:
-
             if event.key() == QtCore.Qt.Key_Right:  # right arrow
-
                 # retrieve active plot widget
                 active_tab = self.widget_tab.currentIndex()
                 active_tab_name = str(self.widget_tab.tabText(active_tab)).replace(
@@ -3038,7 +2957,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
                 event.accept()
 
             elif event.key() == QtCore.Qt.Key_Left:
-
                 # retrieve active plot widget
                 active_tab = self.widget_tab.currentIndex()
                 active_tab_name = str(self.widget_tab.tabText(active_tab)).replace(
@@ -3102,7 +3020,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             event.accept()
 
     def mousePressEvent(self, event):
-
         """
         Reimplement mousePressEvent. If left click and user want to see trade
         details update floating dock with infos about trade under mouse click.
@@ -3114,7 +3031,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         state_details = config["what_to_show"]["state_details"]
 
         if event.button() == QtCore.Qt.LeftButton:
-
             # retrieve active plot widget
             active_tab = self.widget_tab.currentIndex()
             active_tab_name = str(self.widget_tab.tabText(active_tab)).replace("&", "")
@@ -3137,7 +3053,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
                 return
 
             else:
-
                 if self.dock_pos_details.isHidden() == True and state_details == 2:
                     self.dock_pos_details.show()
 
@@ -3170,7 +3085,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             event.accept()
 
     def resizeEvent(self, event):
-
         """Reimplement resizeEvent to update comment pos"""
 
         for key in self.graph_dict.keys():
@@ -3179,7 +3093,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             equity_plot.update_text_item(equity_curve)
 
     def closeEvent(self, event):
-
         """User closes window"""
 
         config = read_config()
@@ -3194,7 +3107,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
         self.close()
 
     def disconnect_from_api(self):
-
         """
         Disconnect from API. Unsuscribe to ls
         table and clear GUI and disable interaction
@@ -3226,7 +3138,6 @@ class ReportToolGUI(QtWidgets.QMainWindow):
             return
 
         else:
-
             # display and log a msg
             msg = "Not connected"
             self.logger_info.log(logging.INFO, msg)

@@ -25,7 +25,6 @@ logger_info = logging.getLogger("ReportTool_info.IGAPI")
 
 
 def create_graph_args(title="", x_label="", y_label="", *args, **kwargs):
-
     """
     Create html string for classEquityChart.EquityChart initialization
 
@@ -50,7 +49,6 @@ def create_graph_args(title="", x_label="", y_label="", *args, **kwargs):
 
 
 def format_market_name(market_name, *args, **kwargs):
-
     """
     Format market names received to a cleaner one as market
     can be e.g DAX au comptant (converted at xxx) It is use
@@ -72,7 +70,6 @@ def read_ig_config(*args, **kwargs):
 
 
 def read_credentials(*args, **kwargs):
-
     """Reads credentials files"""
 
     credentials_path = get_credentials_file()
@@ -86,7 +83,6 @@ def read_credentials(*args, **kwargs):
             saved_accounts = json.load(f, cls=RoundTripDecoder)
 
             for key in saved_accounts.keys():
-
                 # decode pwd and api key
                 decoded_pwd = base64.b64decode(saved_accounts[key]["pwd"]).decode()
                 decoded_key = base64.b64decode(saved_accounts[key]["api_key"]).decode()
@@ -111,7 +107,6 @@ def initialize_credentials() -> None:
 
 
 def write_credentials(credentials):
-
     """
     Write credentials
 
@@ -122,7 +117,6 @@ def write_credentials(credentials):
 
     with credentials_path.open("w") as f:
         for key in credentials.keys():
-
             # encode pwd and api key
             encoded_pwd = base64.b64encode(credentials[key]["pwd"].encode()).decode()
             encoded_key = base64.b64encode(
@@ -137,7 +131,6 @@ def write_credentials(credentials):
 
 
 def read_comment(*args, **kwargs):
-
     """Reads comments files"""
 
     comment_path = get_comments_file()
@@ -156,7 +149,6 @@ def read_comment(*args, **kwargs):
 
 
 def write_comments(comments):
-
     """
     Write credentials
 
@@ -170,7 +162,6 @@ def write_comments(comments):
 
 
 def create_dates_list(state_dates, dates_string, key, start_capital):
-
     """
     Create a dict used to update x_axis values and string.
 
@@ -195,7 +186,6 @@ def create_dates_list(state_dates, dates_string, key, start_capital):
 
 
 def create_icons():
-
     """
     Function to create icons set in combobox of options windows.
     Icons correspond to avalaible style for curves and scatter plot.
@@ -337,7 +327,6 @@ def create_icons():
 
 
 def create_status_icons(color):
-
     """
     Create a circle icons for status bar
 

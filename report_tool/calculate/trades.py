@@ -17,7 +17,6 @@ class TradesResults(dict):
     """
 
     def __init__(self):
-
         self.dict_results = dict
 
     @staticmethod
@@ -40,7 +39,6 @@ class TradesResults(dict):
         cash_available: Decimal,
         screenshot: bool,
     ) -> Dict:
-
         """
         Calculate summary about trades. For infos calculated
         see summary_headers. Summary can be in points,
@@ -155,7 +153,6 @@ class TradesResults(dict):
                 )
 
         else:  # no data returns empy dict
-
             for count, header in enumerate(summary_headers):
                 summary_dict[header] = ""
 
@@ -185,7 +182,6 @@ class TradesResults(dict):
 
         # calculate growth according to start capital
         for count, deal_id in enumerate(transactions.keys()):
-
             # add nothing if trade is fund transfer
             if transactions[deal_id]["type"] not in ["TRANSFER", "CASHIN", "CASHOUT"]:
                 # substract every pnl to cash available
@@ -258,7 +254,6 @@ class TradesResults(dict):
                 money_lost = round(money_lost + total_interest + total_fee, 2)
 
         else:
-
             # calculate totals in currency
             total_pnl_currency = round((money_won + money_lost), 2)
             money_won = round(money_won, 2)
@@ -297,7 +292,6 @@ class TradesResults(dict):
                 break
 
             if pnl > 0:
-
                 try:
                     while pnl > 0:
                         conseq_won += 1  # increment conseq wons
@@ -311,7 +305,6 @@ class TradesResults(dict):
                     i = j - 1
 
             elif pnl < 0:
-
                 try:
                     while pnl < 0:
                         conseq_loss += 1  # increment conseq losses
@@ -389,7 +382,6 @@ class TradesResults(dict):
             result_in = "pts"  # prettier string for result_in
 
         elif result_in == "Points/lot":
-
             try:
                 total_in = round(total_pnl_lot / nb_trades, 2)
             except DivisionByZero:
@@ -648,7 +640,6 @@ class TradesResults(dict):
         return dict_results
 
     def create_curves(*args, **kwargs):
-
         """
         Function to build scatterplot representing
         max dd, depth and high and equity curves
@@ -710,7 +701,6 @@ class TradesResults(dict):
         graph_name = ["Points", "Capital", "Growth"]  # tab names
 
         for index, scatter in enumerate(scatter_type):
-
             if not transactions:  # returns empty curves if no data
                 scatter_data = {
                     "equity_curve": np.array([]),
@@ -721,10 +711,8 @@ class TradesResults(dict):
                 scatter_dict[graph_name[index]] = scatter_data
 
             else:
-
                 # means we have to care about fees/interest
                 if graph_name[index] != "Points":
-
                     if include == 2:
                         pnl_list = [
                             Decimal(transactions[trade][scatter])
@@ -744,7 +732,6 @@ class TradesResults(dict):
                     # pnl_list = [0,-10, 5,2,3,8,-25,54]    #dummy curves to test
 
                     if graph_name[index] == "Capital":
-
                         # insert start capital
                         if len(pnl_list) != 0:
                             pnl_list.insert(0, start_capital)
@@ -803,7 +790,6 @@ class TradesResults(dict):
                 """
 
                 for dd in dd_array:
-
                     try:
                         dd = dd_array[j]
                     except IndexError:  # reach end of the array
@@ -815,11 +801,9 @@ class TradesResults(dict):
                     # when equity curve is descending (dd != 0) find the
                     # ext dd == 0, meaning a new high has been made
                     else:
-
                         try:
                             i = 1
                             while dd != 0:
-
                                 # get next dd starting from last high
                                 dd = dd_array[j + i]
                                 i += 1

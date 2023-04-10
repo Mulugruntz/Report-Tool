@@ -4,11 +4,12 @@ from pathlib import Path
 import certifi
 from cx_Freeze import Executable, setup
 
+from report_tool import __version__
+
 # Remove the build folder
 shutil.rmtree(Path("build"), ignore_errors=True)
 shutil.rmtree(Path("dist"), ignore_errors=True)
 
-compagny_name = "Tioneb Nadous"
 application_title = "Report Tool"
 main_python_file = "report_tool/__main__.py"
 current_dir: Path = Path.cwd()
@@ -71,7 +72,7 @@ build_exe_options = {
 
 setup(
     name=application_title,
-    version="3.0.0-alpha1",
+    version=__version__,
     description="Report Tool",
     options={"build_exe": build_exe_options, "bdist_msi": bdist_msi_options},
     executables=[

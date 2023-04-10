@@ -615,7 +615,6 @@ class LsClient(object):
         assert self._session, "Session parse failure"
 
     def _create_session_impl(self, dct):
-
         """Worker for create_session()."""
         assert self._state == STATE_DISCONNECTED
         self._set_state(STATE_CONNECTING)

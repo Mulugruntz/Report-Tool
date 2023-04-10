@@ -20,7 +20,6 @@ class CustomPushButton(QtWidgets.QPushButton):
     """
 
     def __init__(self, object_name):
-
         """
         :param object_name: string
         """
@@ -29,7 +28,6 @@ class CustomPushButton(QtWidgets.QPushButton):
         self.setObjectName(object_name)
 
     def set_default_style(self, color):
-
         """
         Set color according to user choice's
 
@@ -46,29 +44,6 @@ class CustomPushButton(QtWidgets.QPushButton):
         )
 
 
-class CustomCloseButton(QtWidgets.QPushButton):
-
-    """
-    Class to create a custom pushbutton. Used only in aboutWindow.
-    It reimplement the enterEvent, so when the user wants
-    to click on it, move the window (easter egg)
-    """
-
-    enter_signal = QtCore.pyqtSignal(object, int)  # signal emited when enter event
-
-    def __init__(self, *args, **kwargs):
-
-        QtWidgets.QPushButton.__init__(self, *args, **kwargs)
-        self.entry_nb = 0
-
-    def enterEvent(self, event):
-
-        """Reimplement enterEvent and count numbers of events"""
-
-        self.entry_nb += 1
-        self.enter_signal.emit(event, self.entry_nb)
-
-
 class CustomLineEdit(QtWidgets.QLineEdit):
 
     """
@@ -80,11 +55,9 @@ class CustomLineEdit(QtWidgets.QLineEdit):
     finish_signal = QtCore.pyqtSignal(object)  # signal emited when edition is finished
 
     def __init__(self, *args, **kwargs):
-
         super(CustomLineEdit, self).__init__(*args, **kwargs)
 
     def focusOutEvent(self, event):
-
         """
         Emit a string clearly identifying widget that
         has called update_options in main window
@@ -93,7 +66,6 @@ class CustomLineEdit(QtWidgets.QLineEdit):
         self.finish_signal.emit("start_capital")
 
     def keyPressEvent(self, event):
-
         """
         Emit a string clearly identifying widget that has called
         update_options in main window. Send when user presses ENTER
@@ -115,7 +87,6 @@ class CustomLabel(QtWidgets.QLabel):
     clicked_signal = QtCore.pyqtSignal()  # emit when user clicks on widget
 
     def __init__(self, object_name):
-
         """
         :param object_name: string
         """
@@ -124,7 +95,6 @@ class CustomLabel(QtWidgets.QLabel):
         self.setObjectName(object_name)
 
     def set_default_style(self, background_color, hover_color, border_color):
-
         """
         Set different color for events
 
@@ -153,7 +123,6 @@ class CustomLabel(QtWidgets.QLabel):
         )
 
     def mousePressEvent(self, event):
-
         """Override mussePressEvent to emit a click signal"""
 
         self.clicked_signal.emit()
@@ -170,7 +139,6 @@ class CustomComboBox(QtWidgets.QComboBox):
     focus_out_signal = QtCore.pyqtSignal()  # emit when focus out
 
     def __init__(self, object_name):
-
         """
         :param object_name: string
         """
@@ -180,7 +148,6 @@ class CustomComboBox(QtWidgets.QComboBox):
         self.setFocusPolicy(QtCore.Qt.StrongFocus)
 
     def focusOutEvent(self, event):
-
         """Reimplement focus out event to emit a signal"""
 
         self.focus_out_signal.emit()
@@ -196,7 +163,6 @@ class CustomDockWidget(QtWidgets.QDockWidget):
     """
 
     def __init__(self, parent, pos_details_headers):
-
         """
         :param pos_details_headers: OrderedDict with same keys of result_dict
                                     as dict and a clearer description of these
@@ -216,7 +182,6 @@ class CustomDockWidget(QtWidgets.QDockWidget):
         self.pnl_str = "Profit: "
 
     def init_dock(self, pos_details_headers):
-
         """
         Create a non-closable QDockWidget. Contains labels with
         infos about a clicked trade and a QPlainText to comments the
@@ -249,7 +214,6 @@ class CustomDockWidget(QtWidgets.QDockWidget):
 
         # created and place labels
         for count, header in enumerate(pos_details_headers.keys()):
-
             if header == "h_line" or header == "h_line_2":  # add horizontal line
                 h_line = QtWidgets.QFrame()
                 h_line.setFrameShape(QtWidgets.QFrame.HLine)
@@ -318,7 +282,6 @@ class CustomDockWidget(QtWidgets.QDockWidget):
         self._set_labels(dict_details_labels)
 
     def change_title(self):
-
         """Function to manage dock title when it is floatain or not"""
 
         if self.isFloating() == True:
@@ -327,7 +290,6 @@ class CustomDockWidget(QtWidgets.QDockWidget):
             self.setWindowTitle("Trade details")
 
     def empty_labels(self, pos_details_headers):
-
         """
         Called when no trades received. Set empty string for each labels
 
@@ -357,7 +319,6 @@ class CustomDockWidget(QtWidgets.QDockWidget):
         self.text_edit_comment.setPlainText("")
 
     def change_content(self, *args, **kwargs):
-
         """
         Set label text with info about the clicked trade
 
@@ -432,7 +393,6 @@ class CustomDockWidget(QtWidgets.QDockWidget):
                         data = str(self.lot_size)
 
                 elif key == "Profit":
-
                     # create a list from string in pos_details_headers dict
                     pnl_info = pos_details_headers[key].split(",")
 
@@ -444,7 +404,6 @@ class CustomDockWidget(QtWidgets.QDockWidget):
                         pnl = Decimal(dict_to_search[deal_id_clicked][info])
 
                         try:
-
                             pnl_color = (
                                 profit_color
                                 if pnl > 0
@@ -492,7 +451,6 @@ class CustomDockWidget(QtWidgets.QDockWidget):
         self._set_labels(dict_details_labels)
 
     def hide_profit_loss(self, currency_symbol):
-
         """
         Hide profit in currency in profit string. Called when a
         screenshot is taken or if the user wants to always hide
@@ -518,7 +476,6 @@ class CustomDockWidget(QtWidgets.QDockWidget):
         pnl_label.setText(pnl_hidden)  # set text
 
     def show_profit_loss(self):
-
         """
         Show profit in currency. Celled after
         screenshot or if user changes options
@@ -529,7 +486,6 @@ class CustomDockWidget(QtWidgets.QDockWidget):
         pnl_label.setText(self.pnl_str)  # set old string
 
     def hide_lot_size(self):
-
         """
         Hide lot size if user takes a screenshot or when
         "Hide lot size" is set to "Always".
@@ -540,7 +496,6 @@ class CustomDockWidget(QtWidgets.QDockWidget):
         size_label.setText("Size: --")  # set text
 
     def show_lot_size(self):
-
         """
         Show lot size after a screenshot has been taken or
         when "Hide lot size" is changed from "Always" to
@@ -552,7 +507,6 @@ class CustomDockWidget(QtWidgets.QDockWidget):
         size_label.setText("Size: " + str(self.lot_size))  # set old string
 
     def keyPressEvent(self, event):
-
         """
         Custom keyPressEvent. The event is passed to the main
         window so the user can keep navigate throught the trades
@@ -568,13 +522,11 @@ class CustomDockWidget(QtWidgets.QDockWidget):
             super(CustomDockWidget, self).keyPressEvent(event)  # normal behavior
 
     def _dict_details_labels(self):
-
         """Getter method maybe useless"""
 
         return self._dict_details_labels
 
     def _set_labels(self, new_dict_labels):
-
         """
         Setter methods maybe useless
 
@@ -593,7 +545,6 @@ class CustomPlainTextEdit(QtWidgets.QPlainTextEdit):
     """
 
     def __init__(self, parent):
-
         """
         :param parent: obj, parent of widget, CustomDockWidget
         """
@@ -602,7 +553,6 @@ class CustomPlainTextEdit(QtWidgets.QPlainTextEdit):
         self.plain_text_edit_parent = parent
 
     def keyPressEvent(self, event):
-
         """Custom keyPressEvent function"""
 
         if (
@@ -622,7 +572,6 @@ class CustomCheckBox(QtWidgets.QCheckBox):
     """
 
     def __init__(self, parent):
-
         """
         :param parent: obj, parent of widget, CustomDockWidget
         """
@@ -631,7 +580,6 @@ class CustomCheckBox(QtWidgets.QCheckBox):
         self.checkbox_parent = parent
 
     def keyPressEvent(self, event):
-
         """Custom keyPressEvent function"""
 
         if (
@@ -652,7 +600,6 @@ class CustomShortcutLineEdit(QtWidgets.QLineEdit):
     text_changed = QtCore.pyqtSignal(object, object)
 
     def __init__(self, object_name, *args, **kwargs):
-
         super(CustomShortcutLineEdit, self).__init__()
         self.setObjectName(object_name)
         self.setAlignment(QtCore.Qt.AlignCenter)
@@ -661,7 +608,6 @@ class CustomShortcutLineEdit(QtWidgets.QLineEdit):
         self.textChanged.connect(self.on_text_changed)
 
     def set_italic(self, is_italic, *args, **kwargs):
-
         """
         Set or not an italic font
 
@@ -674,25 +620,21 @@ class CustomShortcutLineEdit(QtWidgets.QLineEdit):
         self.setFont(font)
 
     def focusInEvent(self, event):
-
         """Select all text when widget get focus"""
 
         self.selectAll()
 
     def mousePressEvent(self, event):
-
         """Select all text when widget get click event"""
 
         self.selectAll()
 
     def on_text_changed(self, event):
-
         """Emit object name and text set"""
 
         self.text_changed.emit(self.objectName(), self.text())
 
     def set_keysequence(self, keysequence):
-
         """Set text of key sequence entered"""
 
         self.keysequence = keysequence
@@ -700,7 +642,6 @@ class CustomShortcutLineEdit(QtWidgets.QLineEdit):
         self.setText(human_keysequence)
 
     def keyPressEvent(self, event):
-
         """Reimplement base method to capture key sequence"""
 
         if event.type() == QtCore.QEvent.KeyPress:

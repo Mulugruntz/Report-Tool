@@ -20,7 +20,6 @@ class LsEvent(QtCore.QObject):
         super(LsEvent, self).__init__()
 
     def on_state(self, state):
-
         """
         Print the LS connection state
 
@@ -30,7 +29,6 @@ class LsEvent(QtCore.QObject):
         self.status_signal.emit(state)
 
     def acc_update_event(self, item, myUpdateField):
-
         """
         Emit a signal when an account update is received
 
@@ -41,7 +39,6 @@ class LsEvent(QtCore.QObject):
         self.acc_signal.emit(myUpdateField)
 
     def pos_update_event(self, item, myUpdateField):
-
         """
         Emits a signal when a position update is received
 
