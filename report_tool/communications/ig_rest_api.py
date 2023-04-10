@@ -19,19 +19,16 @@ class APIError(Exception):
     """
 
     def __init__(self, msg=None):
-
         super(APIError, self).__init__()
 
         self._error_msg = msg
 
     def _get_error_msg(self):
-
         """Getter method"""
 
         return self._error_msg
 
     def _set_error_msg(self, msg):
-
         """
         Setter method
 
@@ -46,7 +43,6 @@ class IGAPI(object):
     """This class provides methods to interacts with IG Rest API"""
 
     def __init__(self, connect_dict):
-
         """
         Constructor method
 
@@ -70,7 +66,6 @@ class IGAPI(object):
         self._req_args = {"headers": headers, "data": payload, "proxies": proxies}
 
     def send_request(self, url, req_type, base_msg, *args, **kwargs):
-
         """
         Generic function to send request to API. It logs any exceptions.
         Returns ig response is successull otherwise an APIError object
@@ -82,7 +77,6 @@ class IGAPI(object):
         """
 
         try:
-
             # select type of request
             if req_type == "get":
                 response = requests.get(url, **kwargs)
@@ -102,7 +96,6 @@ class IGAPI(object):
 
         # catch every requests exceptions
         except requests.exceptions.RequestException as e:
-
             # try to see if ig as send a clear error msg
             try:
                 response_text = json.loads(response.text)
@@ -117,7 +110,6 @@ class IGAPI(object):
 
             # else, unknow error, build a generic msg
             except Exception:
-
                 # format request error
                 formatted_error = traceback.format_exception_only(
                     requests.exceptions.RequestException, e
@@ -132,7 +124,6 @@ class IGAPI(object):
                 return error_obj  # return error obj
 
     def create_session(self):
-
         """
         Send a POST request to connect to API.
         If successfull return None else an APIError object
@@ -169,7 +160,6 @@ class IGAPI(object):
             return
 
     def get_user_accounts(self):
-
         """
         Get user's account.
         Returns a nested dict with number of accounts as
@@ -295,7 +285,6 @@ class IGAPI(object):
             return dict_account
 
     def get_transactions(self, date_range):
-
         """
         Get transactions within the range of dates selected by user.
         Returns transactions received or an APIError object
@@ -324,7 +313,6 @@ class IGAPI(object):
             return transaction_received
 
     def switch_account(self, acc_id, acc_name):
-
         """
         Switch to account selected by user.
         Returns a None or an APIError object
@@ -365,7 +353,6 @@ class IGAPI(object):
             return
 
     def logout(self, *args, **kwargs):
-
         """Send a request to logout"""
 
         # set up url see online doc
@@ -385,13 +372,11 @@ class IGAPI(object):
             return
 
     def _get_ls_endpoint(self):
-
         """Getter method"""
 
         return self._ls_endpoint
 
     def _set_ls_endpoint(self, endpoint):
-
         """
         Setter method
 
@@ -401,13 +386,11 @@ class IGAPI(object):
         self._ls_endpoint = endpoint
 
     def _get_req_args(self):
-
         """Getter method"""
 
         return self._req_args
 
     def _set_req_args(self, req_args):
-
         """
         Setter method
 
@@ -417,13 +400,11 @@ class IGAPI(object):
         self._req_args = req_args
 
     def _get_connect_dict(self):
-
         """Getter method"""
 
         return self._connect_dict
 
     def _set_connect_dict(self, connect_dict):
-
         """
         Setter method
 
@@ -433,13 +414,11 @@ class IGAPI(object):
         self._connect_dict = connect_dict
 
     def _get_cash_available(self):
-
         """Getter method"""
 
         return self._cash_available  # TODO: change to Decimal + property
 
     def _set_cash_available(self, cash_available):
-
         """
         Setter method. Delete currency symbol
         to avoid float conversion error

@@ -7,11 +7,13 @@ from typing import Final, TypedDict
 
 class Proxies(TypedDict):
     """Proxies for an account."""
+
     https: str
 
 
 class Account(TypedDict):
     """Account, as stored in the credentials file."""
+
     pwd: str
     api_key: str
     type: str
@@ -19,7 +21,12 @@ class Account(TypedDict):
 
 
 APPLICATION_TITLE: Final[str] = "Report Tool"
-EMPTY_ACCOUNT: Final[Account] = {"pwd": "", "api_key": "", "type": "Live", "proxies": {"https": ""}}
+EMPTY_ACCOUNT: Final[Account] = {
+    "pwd": "",
+    "api_key": "",
+    "type": "Live",
+    "proxies": {"https": ""},
+}
 
 
 @lru_cache()

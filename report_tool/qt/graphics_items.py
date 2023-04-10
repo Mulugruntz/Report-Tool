@@ -16,13 +16,11 @@ class CustomLinearRegion(pg.LinearRegionItem):
     def __init__(
         self, values=[0, 1], orientation=None, brush=None, movable=True, bounds=None
     ):
-
         """See base base for kw arguments"""
 
         pg.LinearRegionItem.__init__(self)
 
     def set_pen(self, pen):
-
         """
         Set pen and hoverPen for the two
         infinite lines bounding the region
@@ -46,7 +44,6 @@ class DateAxis(pg.AxisItem):
     """
 
     def __init__(self, xdict, *args, **kwargs):
-
         """
         :param xdict: dict see funcMisc.create_dates_list
         """
@@ -57,7 +54,6 @@ class DateAxis(pg.AxisItem):
         self.x_strings = list(xdict.values())
 
     def update_axis(self, xdict, *args, **kwargs):
-
         """
         Update x_values and x_strings. called when new data are plotted
         :param xdict: dict see funcMisc.create_dates_list
@@ -82,20 +78,17 @@ class DateAxis(pg.AxisItem):
             self.setLabel(text=None)  # never set label
 
     def tickStrings(self, values, scale, spacing):
-
         """Reimplement base method"""
 
         strings = []
 
         for v in values:
-
             # vs is the original tick value
             vs = v * scale
 
             # if we have vs in our values, show the string
             # otherwise show nothing
             if vs in self.x_values:
-
                 # Find the string with x_values closest to vs
                 vstr = self.x_strings[np.abs(self.x_values - vs).argmin()]
 
@@ -123,14 +116,12 @@ class CustomCurvePoint(pg.CurvePoint):
     """
 
     def __init__(self, curve, index=0, pos=None, rotate=True):
-
         """See base class for arguments"""
 
         pg.CurvePoint.__init__(self, curve, index=0, pos=None, rotate=True)
         self._angle = 0
 
     def event(self, ev):
-
         """Reimplement base method. add 90° to angle"""
 
         if (
@@ -183,7 +174,6 @@ class CustomCurvePoint(pg.CurvePoint):
         self.resetTransform()
 
         if self._rotate:
-
             # set angle perpendicular to the curve"s tangent
             self.rotate((180 + ang * 180 / np.pi) + 90)
 
@@ -192,13 +182,11 @@ class CustomCurvePoint(pg.CurvePoint):
         return True
 
     def _get_angle(self):
-
         """Getter method"""
 
         return self._angle
 
     def _set_angle(self, ang):
-
         """Setter method"""
 
         self._angle = (180 + ang * 180 / np.pi) + 90  # add 90 to angle
@@ -216,7 +204,6 @@ class CustomCurveArrow(CustomCurvePoint):
     """
 
     def __init__(self, curve, index=0, pos=None, **opts):
-
         """See base class for arguments"""
 
         CustomCurvePoint.__init__(self, curve, index=index, pos=pos)
@@ -231,5 +218,4 @@ class CustomCurveArrow(CustomCurvePoint):
         self.arrow.setParentItem(self)
 
     def setStyle(self, **opts):
-
         return self.arrow.setStyle(**opts)
