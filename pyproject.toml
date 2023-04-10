@@ -1,12 +1,47 @@
 [tool.poetry]
 name = "report-tool"
-version = "3.0.0-alpha2"
+version = "3.0.0-alpha3"
 description = "Report Tool is an application that uses IG Rest API to show basic statistics about past trades."
-authors = ["Samuel Giffard <samuel@giffard.co>", "Tioneb Nadous <benoit.soudan@gmail.com>"]
+authors = [
+    "Samuel Giffard <samuel@giffard.co>",
+    "Tioneb Nadous <benoit.soudan@gmail.com>",
+]
+repository = "https://github.com/Mulugruntz/Report-Tool"
 license = "MIT"
 readme = "README.md"
 packages = [
     { include = "report_tool" },
+]
+keywords = [
+    "report",
+    "tool",
+    "trading",
+    "ig",
+    "lightstreamer",
+    "statistics",
+    "trades",
+    "positions",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: X11 Applications :: Qt",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Operating System :: Microsoft :: Windows :: Windows 10",
+    "Operating System :: Microsoft :: Windows :: Windows 11",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Office/Business :: Financial :: Investment",
+    "Topic :: Office/Business :: Financial :: Spreadsheet",
+    "Topic :: Utilities",
+]
+include = [
+    "README.md",
+    "LICENSE",
+    "changelog.txt",
+    "logging.ini",
+    "ig_config.json",
 ]
 
 [tool.poetry.dependencies]
@@ -15,7 +50,7 @@ numpy = "^1.24.2"
 PyQt5 = "^5.15.9"
 pyqtgraph = "^0.13.2"
 requests = "^2.28.2"
-pydantic = "^1.10.6"
+pydantic = "^1.10.7"
 
 [tool.poetry.group.dev.dependencies]
 cx-Freeze = "^6.14.7"

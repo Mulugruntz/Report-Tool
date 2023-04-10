@@ -112,3 +112,10 @@
 - Bugfix: logging, custom handler was heavy and broken.
 - Bugfix: namespacing issues
 - Bugfix: unicode issues
+
+####version 3.0.0-alpha2####
+- Feature: About Dialog has been reworked.
+
+####version 3.0.0-alpha3####
+- Bugfix: On Pypi, the README.md was not displayed correctly (images).
+- Improvement: Better information in the pyproject.toml file.

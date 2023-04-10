@@ -2,4 +2,4 @@
 
 from typing import Final
 
-__version__: Final[str] = "3.0.0-alpha2"
+__version__: Final[str] = "3.0.0-alpha3"
